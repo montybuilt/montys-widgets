@@ -8,6 +8,8 @@ let isPlaying = false;
 let playButton;
 let startButton;
 let stepButton;
+let outputs = [];
+let lastRecordedStepIndex = -1;
 
 const STEP_DURATION_MS = 1500;
 
@@ -21,7 +23,6 @@ const tableRows = [
 	{ key: "i", value: "" },
 	{ key: "total", value: "" },
 	{ key: "range", value: "1..4" },
-	{ key: "condition", value: "" },
 ];
 
 function setup() {
@@ -78,6 +79,8 @@ function startAnimation() {
 	currentStepIndex = 0;
 	stepElapsedMs = 0;
 	isPlaying = true;
+	outputs = [];
+	lastRecordedStepIndex = -1;
 	playButton.html("Pause");
 }
 
@@ -92,6 +95,7 @@ function stepOnce() {
 	stepElapsedMs = 0;
 	if (currentStepIndex < steps.length - 1) {
 		currentStepIndex += 1;
+		recordOutputForStep();
 	}
 }
 
@@ -106,9 +110,8 @@ function buildSteps() {
 	steps.push({
 		codeLine: 0,
 		tableFocus: "range",
-		iValue: "",
-		totalValue: total,
-		condition: "pending",
+		iValue: null,
+		totalValue: null,
 		output: "",
 	});
 
@@ -118,7 +121,6 @@ function buildSteps() {
 			tableFocus: "i",
 			iValue: i,
 			totalValue: total,
-			condition: `i <= ${endI} => true`,
 			output: "",
 		});
 
@@ -128,7 +130,6 @@ function buildSteps() {
 			tableFocus: "total",
 			iValue: i,
 			totalValue: total,
-			condition: `i <= ${endI} => true`,
 			output: "",
 		});
 
@@ -137,17 +138,15 @@ function buildSteps() {
 			tableFocus: "i",
 			iValue: i,
 			totalValue: total,
-			condition: `i <= ${endI} => true`,
 			output: `print -> ${i}`,
 		});
 	}
 
 	steps.push({
 		codeLine: 0,
-		tableFocus: "condition",
+		tableFocus: "range",
 		iValue: endI + 1,
 		totalValue: total,
-		condition: `i <= ${endI} => false`,
 		output: "loop ends",
 	});
 }
@@ -159,11 +158,21 @@ function advanceStep() {
 		stepElapsedMs = 0;
 		if (currentStepIndex < steps.length - 1) {
 			currentStepIndex += 1;
+			recordOutputForStep();
 		} else {
 			isPlaying = false;
 			playButton.html("Play");
 		}
 	}
+}
+
+function recordOutputForStep() {
+	if (currentStepIndex === lastRecordedStepIndex) return;
+	const step = steps[currentStepIndex];
+	if (step.output) {
+		outputs.push(step.output);
+	}
+	lastRecordedStepIndex = currentStepIndex;
 }
 
 function drawLayout() {
@@ -175,12 +184,17 @@ function drawLayout() {
 	const rightX = padding + leftWidth + gutter;
 	const topY = padding;
 	const panelHeight = height - padding * 2;
+	const rightGap = 18;
+	const rightTopHeight = panelHeight * 0.62;
+	const rightBottomHeight = panelHeight - rightTopHeight - rightGap;
 
 	drawPanel(leftX, topY, leftWidth, panelHeight, "Python Code");
-	drawPanel(rightX, topY, rightWidth, panelHeight, "Variable Explorer");
+	drawPanel(rightX, topY, rightWidth, rightTopHeight, "Object Explorer");
+	drawPanel(rightX, topY + rightTopHeight + rightGap, rightWidth, rightBottomHeight, "Output Explorer");
 
 	drawCodeBlock(leftX, topY, leftWidth, panelHeight);
-	drawTable(rightX, topY, rightWidth, panelHeight);
+	drawTable(rightX, topY, rightWidth, rightTopHeight);
+	drawOutputExplorer(rightX, topY + rightTopHeight + rightGap, rightWidth, rightBottomHeight);
 }
 
 function drawPanel(x, y, w, h, title) {
@@ -240,7 +254,9 @@ function drawTable(x, y, w, h) {
 		let value = row.value;
 		if (row.key === "i") value = step.iValue;
 		if (row.key === "total") value = step.totalValue;
-		if (row.key === "condition") value = step.condition;
+		if (value === null || value === undefined || value === "") {
+			value = "unassigned";
+		}
 
 		fill(20);
 		text(row.key, keyX + 26, rowY);
@@ -253,6 +269,20 @@ function drawTable(x, y, w, h) {
 		const arrowY = startY + focusIndex * rowHeight + 12;
 		drawArrow(x + 18, arrowY, 16, color(40, 180, 90));
 	}
+}
+
+function drawOutputExplorer(x, y, w, h) {
+	const startY = y + 60;
+	const lineHeight = 22;
+	const maxLines = Math.floor((h - 80) / lineHeight);
+	const visibleOutputs = outputs.slice(-maxLines);
+
+	fill(20);
+	textSize(15);
+	for (let i = 0; i < visibleOutputs.length; i += 1) {
+		text(visibleOutputs[i], x + 24, startY + i * lineHeight);
+	}
+	textSize(18);
 }
 
 function drawArrow(x, y, size, arrowColor) {
