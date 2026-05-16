@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini-App Widget</title>
+    
+    <!-- 1. Load the p5.js library from a CDN -->
+    <script src="p5.min.js"></script>
+    
+    <style>
+        /* 2. Reset styles so the animation fills the iframe perfectly */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevents scrollbars inside the iframe */
+            background-color: transparent; /* Allows your lesson background to show through if needed */
+        }
+        canvas {
+            display: block; /* Removes tiny gap at the bottom of the canvas */
+        }
+    </style>
+</head>
+<body>
+    <!-- 3. Link to your specific animation logic -->
+    <script src="sketch.js"></script>
+</body>
+</html>
