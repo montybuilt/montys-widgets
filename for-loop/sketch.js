@@ -16,7 +16,7 @@ const STEP_DURATION_MS = 1500;
 const codeLines = [
 	"for i in range(1, 5):",
 	"    total = total + i",
-	"    print(i)",
+	"    print(total)",
 ];
 
 const tableRows = [
@@ -105,13 +105,14 @@ function buildSteps() {
 	const endI = 4;
 
 	let total = startTotal;
+	let displayTotal = null;
 
 	// Initial state before loop starts.
 	steps.push({
 		codeLine: 0,
 		tableFocus: "range",
 		iValue: null,
-		totalValue: null,
+		totalValue: displayTotal,
 		output: "",
 	});
 
@@ -120,16 +121,17 @@ function buildSteps() {
 			codeLine: 0,
 			tableFocus: "i",
 			iValue: i,
-			totalValue: total,
+			totalValue: displayTotal,
 			output: "",
 		});
 
 		total += i;
+		displayTotal = total;
 		steps.push({
 			codeLine: 1,
 			tableFocus: "total",
 			iValue: i,
-			totalValue: total,
+			totalValue: displayTotal,
 			output: "",
 		});
 
@@ -137,8 +139,8 @@ function buildSteps() {
 			codeLine: 2,
 			tableFocus: "i",
 			iValue: i,
-			totalValue: total,
-			output: `print -> ${i}`,
+			totalValue: displayTotal,
+			output: `print -> ${displayTotal}`,
 		});
 	}
 
@@ -146,7 +148,7 @@ function buildSteps() {
 		codeLine: 0,
 		tableFocus: "range",
 		iValue: endI + 1,
-		totalValue: total,
+		totalValue: displayTotal,
 		output: "loop ends",
 	});
 }
@@ -229,7 +231,6 @@ function drawCodeBlock(x, y, w, h) {
 
 	fill(70);
 	textSize(14);
-	text(step.output, lineX + 26, startY + codeLines.length * lineHeight + 18);
 	textSize(18);
 }
 
