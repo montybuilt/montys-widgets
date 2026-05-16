@@ -113,6 +113,7 @@ function buildSteps() {
 		tableFocus: "range",
 		iValue: null,
 		totalValue: displayTotal,
+		status: "iterating",
 		output: "",
 	});
 
@@ -122,6 +123,7 @@ function buildSteps() {
 			tableFocus: "i",
 			iValue: i,
 			totalValue: displayTotal,
+			status: "iterating",
 			output: "",
 		});
 
@@ -132,6 +134,7 @@ function buildSteps() {
 			tableFocus: "total",
 			iValue: i,
 			totalValue: displayTotal,
+			status: "iterating",
 			output: "",
 		});
 
@@ -140,6 +143,7 @@ function buildSteps() {
 			tableFocus: "i",
 			iValue: i,
 			totalValue: displayTotal,
+			status: "iterating",
 			output: `print -> ${displayTotal}`,
 		});
 	}
@@ -149,6 +153,7 @@ function buildSteps() {
 		tableFocus: "range",
 		iValue: endI + 1,
 		totalValue: displayTotal,
+		status: "loop ends",
 		output: "loop ends",
 	});
 }
@@ -189,14 +194,18 @@ function drawLayout() {
 	const rightGap = 18;
 	const rightTopHeight = panelHeight * 0.62;
 	const rightBottomHeight = panelHeight - rightTopHeight - rightGap;
+	const statusHeight = 90;
+	const outputHeight = rightBottomHeight - statusHeight - rightGap;
 
 	drawPanel(leftX, topY, leftWidth, panelHeight, "Python Code");
 	drawPanel(rightX, topY, rightWidth, rightTopHeight, "Object Explorer");
-	drawPanel(rightX, topY + rightTopHeight + rightGap, rightWidth, rightBottomHeight, "Output Explorer");
+	drawPanel(rightX, topY + rightTopHeight + rightGap, rightWidth, statusHeight, "Iteration Status");
+	drawPanel(rightX, topY + rightTopHeight + rightGap + statusHeight + rightGap, rightWidth, outputHeight, "Output Explorer");
 
 	drawCodeBlock(leftX, topY, leftWidth, panelHeight);
 	drawTable(rightX, topY, rightWidth, rightTopHeight);
-	drawOutputExplorer(rightX, topY + rightTopHeight + rightGap, rightWidth, rightBottomHeight);
+	drawStatusBox(rightX, topY + rightTopHeight + rightGap, rightWidth, statusHeight);
+	drawOutputExplorer(rightX, topY + rightTopHeight + rightGap + statusHeight + rightGap, rightWidth, outputHeight);
 }
 
 function drawPanel(x, y, w, h, title) {
@@ -283,6 +292,19 @@ function drawOutputExplorer(x, y, w, h) {
 	for (let i = 0; i < visibleOutputs.length; i += 1) {
 		text(visibleOutputs[i], x + 24, startY + i * lineHeight);
 	}
+	textSize(18);
+}
+
+function drawStatusBox(x, y, w, h) {
+	const step = steps[currentStepIndex];
+	const message = step.status || "iterating";
+	const centerY = y + h * 0.6;
+
+	fill(20);
+	textSize(16);
+	textAlign(LEFT, CENTER);
+	text(message, x + 24, centerY);
+	textAlign(LEFT, BASELINE);
 	textSize(18);
 }
 
