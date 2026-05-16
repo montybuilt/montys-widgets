@@ -5,7 +5,7 @@ let steps = [];
 let currentStepIndex = 0;
 let stepElapsedMs = 0;
 
-const STEP_DURATION_MS = 900;
+const STEP_DURATION_MS = 1500;
 
 const codeLines = [
 	"for i in range(1, 5):",
