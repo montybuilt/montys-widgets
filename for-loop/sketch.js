@@ -236,7 +236,8 @@ function drawCodeBlock(x, y, w, h) {
 	const textHeight = textAscent() + textDescent();
 	const textCenterY = lineY - textAscent() + textHeight * 0.5;
 	const arrowY = textCenterY - arrowSize * 0.5;
-	drawArrow(lineX, arrowY, arrowSize, color(40, 180, 90));
+	const arrowColor = getArrowColor(step);
+	drawArrow(lineX, arrowY, arrowSize, arrowColor);
 
 	fill(70);
 	textSize(14);
@@ -277,7 +278,8 @@ function drawTable(x, y, w, h) {
 	const focusIndex = tableRows.findIndex((row) => row.key === steps[currentStepIndex].tableFocus);
 	if (focusIndex >= 0) {
 		const arrowY = startY + focusIndex * rowHeight + 12;
-		drawArrow(x + 18, arrowY, 16, color(40, 180, 90));
+		const arrowColor = getArrowColor(steps[currentStepIndex]);
+		drawArrow(x + 18, arrowY, 16, arrowColor);
 	}
 }
 
@@ -320,4 +322,11 @@ function drawArrow(x, y, size, arrowColor) {
 	vertex(size * 0.2, size * 0.5);
 	endShape(CLOSE);
 	pop();
+}
+
+function getArrowColor(step) {
+	if (step.status === "loop ends") {
+		return color(210, 70, 70);
+	}
+	return color(40, 180, 90);
 }
