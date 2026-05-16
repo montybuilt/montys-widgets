@@ -8,15 +8,27 @@ let graphAmplitude = 50;
 let graphPeriod = 300;
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(windowWidth, windowHeight);
   angleMode(DEGREES);
   describe(
     'Animated demonstration of a point moving around the unit circle, together with the corresponding sine and cosine values moving along their graphs.'
   );
 }
 
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+
 function draw() {
   background(0);
+
+  const scaleFactor = min(width, height) / 400;
+  const offsetX = (width - 400 * scaleFactor) / 2;
+  const offsetY = (height - 400 * scaleFactor) / 2;
+
+  push();
+  translate(offsetX, offsetY);
+  scale(scaleFactor);
 
   // Set angle based on frameCount, and display current value
 
@@ -123,4 +135,6 @@ function draw() {
 
   fill('red');
   circle(lineX, redY, 10);
+
+  pop();
 }
