@@ -4,6 +4,10 @@
 let steps = [];
 let currentStepIndex = 0;
 let stepElapsedMs = 0;
+let isPlaying = false;
+let playButton;
+let startButton;
+let stepButton;
 
 const STEP_DURATION_MS = 1500;
 
@@ -26,6 +30,7 @@ function setup() {
 	textSize(18);
 
 	buildSteps();
+	setupControls();
 }
 
 function draw() {
@@ -37,6 +42,57 @@ function draw() {
 
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
+	positionControls();
+}
+
+function setupControls() {
+	startButton = createButton("Start");
+	startButton.mousePressed(startAnimation);
+
+	playButton = createButton("Play");
+	playButton.mousePressed(togglePlay);
+
+	stepButton = createButton("Step");
+	stepButton.mousePressed(stepOnce);
+
+	const buttons = [startButton, playButton, stepButton];
+	buttons.forEach((btn) => {
+		btn.style("font-family", "Courier New");
+		btn.style("font-size", "14px");
+		btn.style("padding", "6px 12px");
+	});
+
+	positionControls();
+}
+
+function positionControls() {
+	if (!startButton || !playButton || !stepButton) return;
+	const padding = 28;
+	const y = padding + 8;
+	startButton.position(padding + 16, y);
+	playButton.position(padding + 86, y);
+	stepButton.position(padding + 156, y);
+}
+
+function startAnimation() {
+	currentStepIndex = 0;
+	stepElapsedMs = 0;
+	isPlaying = true;
+	playButton.html("Pause");
+}
+
+function togglePlay() {
+	isPlaying = !isPlaying;
+	playButton.html(isPlaying ? "Pause" : "Play");
+}
+
+function stepOnce() {
+	isPlaying = false;
+	playButton.html("Play");
+	stepElapsedMs = 0;
+	if (currentStepIndex < steps.length - 1) {
+		currentStepIndex += 1;
+	}
 }
 
 function buildSteps() {
@@ -97,10 +153,16 @@ function buildSteps() {
 }
 
 function advanceStep() {
+	if (!isPlaying) return;
 	stepElapsedMs += deltaTime;
 	if (stepElapsedMs >= STEP_DURATION_MS) {
 		stepElapsedMs = 0;
-		currentStepIndex = (currentStepIndex + 1) % steps.length;
+		if (currentStepIndex < steps.length - 1) {
+			currentStepIndex += 1;
+		} else {
+			isPlaying = false;
+			playButton.html("Play");
+		}
 	}
 }
 
@@ -144,8 +206,12 @@ function drawCodeBlock(x, y, w, h) {
 	}
 
 	const step = steps[currentStepIndex];
-	const arrowY = startY + step.codeLine * lineHeight - 8;
-	drawArrow(lineX, arrowY, 18, color(40, 180, 90));
+	const lineY = startY + step.codeLine * lineHeight;
+	const arrowSize = 18;
+	const textHeight = textAscent() + textDescent();
+	const textCenterY = lineY - textAscent() + textHeight * 0.5;
+	const arrowY = textCenterY - arrowSize * 0.5;
+	drawArrow(lineX, arrowY, arrowSize, color(40, 180, 90));
 
 	fill(70);
 	textSize(14);
