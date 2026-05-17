@@ -98,8 +98,8 @@ function setupControls() {
 	const buttons = [playButton, stepButton];
 	buttons.forEach((btn) => {
 		btn.style("font-family", "Courier New");
-		btn.style("font-size", `${Math.round(scaleValue(14))}px`);
-		btn.style("padding", `${Math.round(scaleValue(6))}px ${Math.round(scaleValue(12))}px`);
+		btn.style("font-size", `${Math.round(scaleFont(14))}px`);
+		btn.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(12))}px`);
 	});
 
 	positionControls();
@@ -111,10 +111,10 @@ function positionControls() {
 	const y = padding + scaleValue(8);
 	playButton.position(padding + scaleValue(16), y);
 	stepButton.position(padding + scaleValue(86), y);
-	playButton.style("font-size", `${Math.round(scaleValue(14))}px`);
-	stepButton.style("font-size", `${Math.round(scaleValue(14))}px`);
-	playButton.style("padding", `${Math.round(scaleValue(6))}px ${Math.round(scaleValue(12))}px`);
-	stepButton.style("padding", `${Math.round(scaleValue(6))}px ${Math.round(scaleValue(12))}px`);
+	playButton.style("font-size", `${Math.round(scaleFont(14))}px`);
+	stepButton.style("font-size", `${Math.round(scaleFont(14))}px`);
+	playButton.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(12))}px`);
+	stepButton.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(12))}px`);
 }
 
 function togglePlay() {
@@ -244,10 +244,10 @@ function drawPanel(x, y, w, h, title) {
 
 	fill(50);
 	textStyle(BOLD);
-	textSize(scaleValue(16));
+	textSize(scaleFont(16));
 	text(title, x + scaleValue(18), y + scaleValue(30));
 	textStyle(NORMAL);
-	textSize(scaleValue(18));
+	textSize(scaleFont(18));
 }
 
 function drawCodeBlock(x, y, w, h) {
@@ -257,9 +257,9 @@ function drawCodeBlock(x, y, w, h) {
 
 	if (!isTraceReady || steps.length === 0) {
 		fill(120);
-		textSize(scaleValue(14));
+		textSize(scaleFont(14));
 		text(traceError ? `Error: ${traceError}` : "Preparing trace...", lineX + scaleValue(26), startY + codeLines.length * lineHeight + scaleValue(18));
-		textSize(scaleValue(18));
+		textSize(scaleFont(18));
 		return;
 	}
 
@@ -289,6 +289,7 @@ function drawCodeBlock(x, y, w, h) {
 			textStyle(NORMAL);
 			fill(30);
 		}
+		textSize(scaleFont(18));
 		text(codeLines[idx], lineX + scaleValue(26), rowY);
 	}
 	textStyle(NORMAL);
@@ -328,11 +329,11 @@ function drawObjectExplorer(x, y, w, h) {
 		}
 
 		fill(20);
-		textSize(scaleValue(15));
+		textSize(scaleFont(15));
 		text(row.key, labelX, rowY + scaleValue(14));
 		fill(70);
 		text(row.value, valueX, rowY + scaleValue(14));
-		textSize(scaleValue(18));
+		textSize(scaleFont(18));
 	}
 }
 
@@ -359,11 +360,11 @@ function drawOutputExplorer(x, y, w, h) {
 	}
 
 	fill(20);
-	textSize(scaleValue(15));
+	textSize(scaleFont(15));
 	for (let i = 0; i < visibleOutputs.length; i += 1) {
 		text(visibleOutputs[i], x + scaleValue(24), startY + i * lineHeight);
 	}
-	textSize(scaleValue(18));
+	textSize(scaleFont(18));
 }
 
 function drawStatusBox(x, y, w, h) {
@@ -388,11 +389,11 @@ function drawStatusBox(x, y, w, h) {
 	}
 
 	fill(20);
-	textSize(scaleValue(16));
+	textSize(scaleFont(16));
 	textAlign(LEFT, CENTER);
 	text(message, x + scaleValue(24), centerY);
 	textAlign(LEFT, BASELINE);
-	textSize(scaleValue(18));
+	textSize(scaleFont(18));
 }
 
 function drawArrow(x, y, size, arrowColor) {
@@ -419,6 +420,10 @@ function updateUiScale() {
 
 function scaleValue(value) {
 	return value * uiScale;
+}
+
+function scaleFont(value) {
+	return value * uiScale * 1.25;
 }
 
 function getArrowColor(step) {
