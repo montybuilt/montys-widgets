@@ -11,6 +11,8 @@ let traceError = "";
 let playButton;
 let startButton;
 let stepButton;
+let highlightUntilByKey = {};
+let lastHighlightStepIndex = -1;
 
 const STEP_DURATION_MS = 1500;
 const PYTHON_SOURCE = `
@@ -199,6 +201,13 @@ function drawCodeBlock(x, y, w, h) {
 	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
 	const lineY = startY + lineIndex * lineHeight;
 	const arrowSize = 18;
+	const highlightX = lineX + 18;
+	const highlightY = lineY - lineHeight + 8;
+	const highlightW = w - 48;
+	const highlightH = lineHeight;
+	noStroke();
+	fill(180, 235, 200, 200);
+	rect(highlightX, highlightY, highlightW, highlightH, 6);
 	const textHeight = textAscent() + textDescent();
 	const textCenterY = lineY - textAscent() + textHeight * 0.5;
 	const arrowY = textCenterY - arrowSize * 0.5;
@@ -219,29 +228,27 @@ function drawObjectExplorer(x, y, w, h) {
 	const overrides = getLoopHeaderOverrides();
 	const variables = buildScopeList(step.locals, step.globals, "locals", overrides);
 	const rows = variables.map((item) => ({ type: "item", scope: "locals", key: item.key, value: item.value }));
+	updateValueHighlights();
 
 	const visibleRows = rows.slice(0, maxRows);
-	let arrowRowIndex = -1;
 	for (let i = 0; i < visibleRows.length; i += 1) {
 		const row = visibleRows[i];
 		const rowY = startY + i * rowHeight;
+		const highlightUntil = highlightUntilByKey[row.key] || 0;
+		if (highlightUntil > millis()) {
+			const remaining = highlightUntil - millis();
+			const alpha = Math.max(0, Math.min(180, (remaining / 1000) * 180));
+			noStroke();
+			fill(180, 235, 200, alpha);
+			rect(x + 14, rowY - 4, w - 28, rowHeight - 4, 6);
+		}
 
 		fill(20);
 		textSize(15);
 		text(row.key, labelX, rowY + 14);
 		fill(70);
 		text(row.value, valueX, rowY + 14);
-
-		if (step.focus && row.scope === step.focus.scope && row.key === step.focus.key) {
-			arrowRowIndex = i;
-		}
 		textSize(18);
-	}
-
-	if (arrowRowIndex >= 0) {
-		const arrowY = startY + arrowRowIndex * rowHeight + 4;
-		const arrowColor = getArrowColor(steps[currentStepIndex]);
-		drawArrow(x + 12, arrowY, 16, arrowColor);
 	}
 }
 
@@ -533,6 +540,29 @@ function findChangedKey(prevStep, step) {
 	return null;
 }
 
+function getChangedKeys(prevStep, step) {
+	if (!step) return [];
+	const prevLocals = (prevStep && prevStep.locals) || {};
+	const prevGlobals = (prevStep && prevStep.globals) || {};
+	const localKeys = new Set([...Object.keys(step.locals || {}), ...knownNames]);
+	const globalKeys = new Set([...Object.keys(step.globals || {}), ...knownNames]);
+	const changed = [];
+
+	for (const key of localKeys) {
+		const currentValue = step.locals && step.locals[key] !== undefined ? step.locals[key] : "unassigned";
+		const previousValue = prevLocals[key] !== undefined ? prevLocals[key] : "unassigned";
+		if (currentValue !== previousValue) changed.push(key);
+	}
+
+	for (const key of globalKeys) {
+		const currentValue = step.globals && step.globals[key] !== undefined ? step.globals[key] : "unassigned";
+		const previousValue = prevGlobals[key] !== undefined ? prevGlobals[key] : "unassigned";
+		if (currentValue !== previousValue && !changed.includes(key)) changed.push(key);
+	}
+
+	return changed;
+}
+
 function buildScopeList(localsObj, globalsObj, scope, overrides) {
 	const entries = [];
 	const localKeys = new Set([...Object.keys(localsObj || {}), ...knownNames]);
@@ -578,4 +608,16 @@ function getLoopHeaderOverrides() {
 		? prevStep.locals[loopVar]
 		: "unassigned";
 	return { [loopVar]: prevValue };
+}
+
+function updateValueHighlights() {
+	if (currentStepIndex === lastHighlightStepIndex) return;
+	const prevStep = currentStepIndex > 0 ? steps[currentStepIndex - 1] : null;
+	const currentStep = steps[currentStepIndex];
+	const changedKeys = getChangedKeys(prevStep, currentStep);
+	const now = millis();
+	changedKeys.forEach((key) => {
+		highlightUntilByKey[key] = now + 1000;
+	});
+	lastHighlightStepIndex = currentStepIndex;
 }
