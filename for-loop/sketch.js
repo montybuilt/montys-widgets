@@ -336,8 +336,7 @@ function instrumentSource(source) {
 			trimmed === "" ||
 			trimmed.startsWith("#") ||
 			trimmed.startsWith("@") ||
-			/^(elif|else|except|finally)\b/.test(trimmed) ||
-			isLoopHeader;
+			/^(elif|else|except|finally)\b/.test(trimmed);
 
 		if (!isSkippable) {
 			instrumented.push(`${indent}__trace__(${i + 1}, globals(), __trace_stack)`);
@@ -351,7 +350,7 @@ function instrumentSource(source) {
 		instrumented.push(line);
 
 		if (isLoopHeader) {
-			instrumented.push(`${nestedIndent}__trace__(${i + 1}, globals(), __trace_stack)`);
+			instrumented.push(`${nestedIndent}__trace__(${i + 2}, globals(), __trace_stack)`);
 		}
 
 		if (/^def\s+/.test(trimmed)) {
@@ -486,10 +485,22 @@ function formatValue(value) {
 }
 
 function applyStepStatus(traceSteps) {
-	return traceSteps.map((step, index) => ({
+	if (traceSteps.length === 0) return [];
+	const stepsWithStatus = traceSteps.map((step) => ({
 		...step,
-		status: index === traceSteps.length - 1 ? "loop ends" : "iterating",
+		status: "iterating",
 	}));
+
+	const lastStep = stepsWithStatus[stepsWithStatus.length - 1];
+	const terminalLineNo = Math.min(lastStep.lineNo + 1, codeLines.length || lastStep.lineNo);
+	stepsWithStatus.push({
+		...lastStep,
+		lineNo: terminalLineNo,
+		status: "loop ends",
+		stdoutLines: [],
+	});
+
+	return stepsWithStatus;
 }
 
 function computeStepFocus(traceSteps) {
