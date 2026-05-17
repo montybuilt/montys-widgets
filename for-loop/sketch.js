@@ -215,7 +215,8 @@ function drawObjectExplorer(x, y, w, h) {
 
 	if (!isTraceReady || steps.length === 0) return;
 
-	const step = steps[currentStepIndex];
+	const displayStepIndex = getDisplayStepIndex();
+	const step = steps[displayStepIndex];
 	const variables = buildScopeList(step.locals, step.globals, "locals");
 	const rows = variables.map((item) => ({ type: "item", scope: "locals", key: item.key, value: item.value }));
 
@@ -239,7 +240,7 @@ function drawObjectExplorer(x, y, w, h) {
 
 	if (arrowRowIndex >= 0) {
 		const arrowY = startY + arrowRowIndex * rowHeight + 4;
-		const arrowColor = getArrowColor(step);
+		const arrowColor = getArrowColor(steps[currentStepIndex]);
 		drawArrow(x + 12, arrowY, 16, arrowColor);
 	}
 }
@@ -322,17 +323,21 @@ function instrumentSource(source) {
 		const line = lines[i];
 		const trimmed = line.trim();
 		const indent = line.match(/^\s*/)[0];
+		const indentUnit = indent.includes("\t") ? "\t" : "    ";
+		const nestedIndent = indent + indentUnit;
 		if (trimmed !== "" && !trimmed.startsWith("#")) {
 			while (defStack.length > 0 && indent.length <= defStack[defStack.length - 1].indent) {
 				defStack.pop();
 			}
 		}
 
+		const isLoopHeader = /^for\s+/.test(trimmed) || /^while\s+/.test(trimmed);
 		const isSkippable =
 			trimmed === "" ||
 			trimmed.startsWith("#") ||
 			trimmed.startsWith("@") ||
-			/^(elif|else|except|finally)\b/.test(trimmed);
+			/^(elif|else|except|finally)\b/.test(trimmed) ||
+			isLoopHeader;
 
 		if (!isSkippable) {
 			instrumented.push(`${indent}__trace__(${i + 1}, globals(), __trace_stack)`);
@@ -344,6 +349,10 @@ function instrumentSource(source) {
 		}
 
 		instrumented.push(line);
+
+		if (isLoopHeader) {
+			instrumented.push(`${nestedIndent}__trace__(${i + 1}, globals(), __trace_stack)`);
+		}
 
 		if (/^def\s+/.test(trimmed)) {
 			const nameMatch = trimmed.match(/^def\s+([A-Za-z_]\w*)/);
@@ -550,4 +559,9 @@ function buildScopeList(localsObj, globalsObj, scope) {
 
 function clamp(value, minValue, maxValue) {
 	return Math.max(minValue, Math.min(maxValue, value));
+}
+
+function getDisplayStepIndex() {
+	if (currentStepIndex <= 0) return 0;
+	return currentStepIndex - 1;
 }
