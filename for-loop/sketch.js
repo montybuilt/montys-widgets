@@ -799,6 +799,14 @@ function getDisplayMapForStep(stepIndex) {
 		return buildScopeMap({}, {}, "locals", null);
 	}
 	const step = steps[stepIndex];
+	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
+	const lineText = codeLines[lineIndex] || "";
+	if (/^\s*(for|while)\b/.test(lineText)) {
+		const prevStep = steps[stepIndex - 1];
+		if (!prevStep) return buildScopeMap({}, {}, "locals", null);
+		const prevOverrides = getLoopHeaderOverrides(stepIndex - 1);
+		return buildScopeMap(prevStep.locals, prevStep.globals, "locals", prevOverrides);
+	}
 	const overrides = getLoopHeaderOverrides(stepIndex);
 	return buildScopeMap(step.locals, step.globals, "locals", overrides);
 }
