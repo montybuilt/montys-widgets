@@ -563,5 +563,12 @@ function clamp(value, minValue, maxValue) {
 
 function getDisplayStepIndex() {
 	if (currentStepIndex <= 0) return 0;
-	return currentStepIndex - 1;
+	const step = steps[currentStepIndex];
+	if (!step) return currentStepIndex;
+	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
+	const lineText = codeLines[lineIndex] || "";
+	if (/^\s*(for|while)\b/.test(lineText)) {
+		return currentStepIndex - 1;
+	}
+	return currentStepIndex;
 }
