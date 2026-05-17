@@ -16,9 +16,10 @@ let outputHighlightUntil = 0;
 let lastOutputCount = 0;
 let statusHighlightUntil = 0;
 let lastStatusValue = "";
+let pythonSource = "";
 
 const STEP_DURATION_MS = 1500;
-const PYTHON_SOURCE = `
+const DEFAULT_PYTHON_SOURCE = `
 total = 0
 for i in range(1, 5):
     total = total + i
@@ -32,6 +33,21 @@ const BLOCKED_GLOBALS = new Set([
 	"__loader__",
 	"__spec__",
 ]);
+
+function preload() {
+	pythonSource = DEFAULT_PYTHON_SOURCE;
+	loadStrings(
+		"program.py",
+		(lines) => {
+			if (lines && lines.length > 0) {
+				pythonSource = lines.join("\n");
+			}
+		},
+		() => {
+			pythonSource = DEFAULT_PYTHON_SOURCE;
+		}
+	);
+}
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);
@@ -117,7 +133,7 @@ function resetRunState() {
 }
 
 function buildTrace() {
-	const normalized = normalizeSource(PYTHON_SOURCE);
+	const normalized = normalizeSource(pythonSource);
 	codeLines = normalized.split("\n");
 	knownNames = extractKnownNames(codeLines);
 
@@ -168,7 +184,7 @@ function drawLayout() {
 	const statusHeight = 90;
 	const outputHeight = rightBottomHeight - statusHeight - rightGap;
 
-	drawPanel(leftX, topY, leftWidth, panelHeight, "Python Code");
+	drawPanel(leftX, topY, leftWidth, panelHeight, "");
 	drawPanel(rightX, topY, rightWidth, rightTopHeight, "Object Explorer");
 	drawPanel(rightX, topY + rightTopHeight + rightGap, rightWidth, statusHeight, "Iteration Status");
 	drawPanel(rightX, topY + rightTopHeight + rightGap + statusHeight + rightGap, rightWidth, outputHeight, "Output Explorer");
