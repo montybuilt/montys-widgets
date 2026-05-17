@@ -251,10 +251,10 @@ function drawObjectExplorer(x, y, w, h) {
 		const rowY = startY + i * rowHeight;
 		const highlightUntil = highlightUntilByKey[row.key] || 0;
 		if (highlightUntil > millis()) {
-			const remaining = highlightUntil - millis();
+			fill(0);
 			const alpha = Math.max(0, Math.min(180, (remaining / 1000) * 180));
 			noStroke();
-			fill(180, 235, 200, alpha);
+			fill(30);
 			rect(x + 14, rowY - 4, w - 28, rowHeight - 4, 6);
 		}
 
@@ -266,7 +266,11 @@ function drawObjectExplorer(x, y, w, h) {
 		textSize(18);
 	}
 }
-
+	if (step.status === "loop ends") {
+		fill(245, 200, 210, 200);
+	} else {
+		fill(180, 235, 200, 200);
+	}
 function drawOutputExplorer(x, y, w, h) {
 	if (!isTraceReady || steps.length === 0) return;
 	const startY = y + 60;
