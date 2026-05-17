@@ -215,9 +215,9 @@ function drawObjectExplorer(x, y, w, h) {
 
 	if (!isTraceReady || steps.length === 0) return;
 
-	const displayStepIndex = getDisplayStepIndex();
-	const step = steps[displayStepIndex];
-	const variables = buildScopeList(step.locals, step.globals, "locals");
+	const step = steps[currentStepIndex];
+	const overrides = getLoopHeaderOverrides();
+	const variables = buildScopeList(step.locals, step.globals, "locals", overrides);
 	const rows = variables.map((item) => ({ type: "item", scope: "locals", key: item.key, value: item.value }));
 
 	const visibleRows = rows.slice(0, maxRows);
@@ -533,7 +533,7 @@ function findChangedKey(prevStep, step) {
 	return null;
 }
 
-function buildScopeList(localsObj, globalsObj, scope) {
+function buildScopeList(localsObj, globalsObj, scope, overrides) {
 	const entries = [];
 	const localKeys = new Set([...Object.keys(localsObj || {}), ...knownNames]);
 	const globalKeys = new Set([...Object.keys(globalsObj || {}), ...knownNames]);
@@ -541,7 +541,10 @@ function buildScopeList(localsObj, globalsObj, scope) {
 	if (scope === "locals") {
 		localKeys.forEach((key) => {
 			if (key.startsWith("__")) return;
-			const value = localsObj && localsObj[key] !== undefined ? localsObj[key] : "unassigned";
+			let value = localsObj && localsObj[key] !== undefined ? localsObj[key] : "unassigned";
+			if (overrides && Object.prototype.hasOwnProperty.call(overrides, key)) {
+				value = overrides[key];
+			}
 			entries.push({ key, value });
 		});
 	} else {
@@ -561,14 +564,18 @@ function clamp(value, minValue, maxValue) {
 	return Math.max(minValue, Math.min(maxValue, value));
 }
 
-function getDisplayStepIndex() {
-	if (currentStepIndex <= 0) return 0;
+function getLoopHeaderOverrides() {
+	if (currentStepIndex <= 0) return null;
 	const step = steps[currentStepIndex];
-	if (!step) return currentStepIndex;
+	if (!step) return null;
 	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
 	const lineText = codeLines[lineIndex] || "";
-	if (/^\s*(for|while)\b/.test(lineText)) {
-		return currentStepIndex - 1;
-	}
-	return currentStepIndex;
+	const match = lineText.match(/^\s*for\s+([A-Za-z_]\w*)\s+in\b/);
+	if (!match) return null;
+	const loopVar = match[1];
+	const prevStep = steps[currentStepIndex - 1];
+	const prevValue = prevStep && prevStep.locals && prevStep.locals[loopVar] !== undefined
+		? prevStep.locals[loopVar]
+		: "unassigned";
+	return { [loopVar]: prevValue };
 }
