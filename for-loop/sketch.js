@@ -203,17 +203,6 @@ function drawCodeBlock(x, y, w, h) {
 
 	const step = steps[currentStepIndex];
 	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
-	fill(30);
-	for (let idx = 0; idx < codeLines.length; idx += 1) {
-		const lineY = startY + idx * lineHeight;
-		if (idx === lineIndex) {
-			textStyle(BOLD);
-		} else {
-			textStyle(NORMAL);
-		}
-		text(codeLines[idx], lineX + 26, lineY);
-	}
-	textStyle(NORMAL);
 	const lineY = startY + lineIndex * lineHeight;
 	const arrowSize = 18;
 	const highlightX = lineX + 18;
@@ -221,8 +210,26 @@ function drawCodeBlock(x, y, w, h) {
 	const highlightW = w - 48;
 	const highlightH = lineHeight;
 	noStroke();
-	fill(180, 235, 200, 200);
+	if (step.status === "loop ends") {
+		fill(245, 200, 210, 200);
+	} else {
+		fill(180, 235, 200, 200);
+	}
 	rect(highlightX, highlightY, highlightW, highlightH, 6);
+
+	fill(30);
+	for (let idx = 0; idx < codeLines.length; idx += 1) {
+		const rowY = startY + idx * lineHeight;
+		if (idx === lineIndex) {
+			textStyle(BOLD);
+			fill(0);
+		} else {
+			textStyle(NORMAL);
+			fill(30);
+		}
+		text(codeLines[idx], lineX + 26, rowY);
+	}
+	textStyle(NORMAL);
 	const textHeight = textAscent() + textDescent();
 	const textCenterY = lineY - textAscent() + textHeight * 0.5;
 	const arrowY = textCenterY - arrowSize * 0.5;
