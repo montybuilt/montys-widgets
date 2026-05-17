@@ -1,10 +1,13 @@
-// p5.js animation: step through a simple Python for-loop with a code pointer
-// and a variable explorer table.
+// Skulpt-powered step-through widget.
 
 let steps = [];
+let codeLines = [];
+let knownNames = new Set();
 let currentStepIndex = 0;
 let stepElapsedMs = 0;
 let isPlaying = false;
+let isTraceReady = false;
+let traceError = "";
 let playButton;
 let startButton;
 let stepButton;
@@ -12,26 +15,28 @@ let outputs = [];
 let lastRecordedStepIndex = -1;
 
 const STEP_DURATION_MS = 1500;
+const PYTHON_SOURCE = `
+total = 0
+for i in range(1, 5):
+    total = total + i
+    print(total)
+`;
 
-const codeLines = [
-	"for i in range(1, 5):",
-	"    total = total + i",
-	"    print(total)",
-];
-
-const tableRows = [
-	{ key: "i", value: "" },
-	{ key: "total", value: "" },
-	{ key: "range", value: "1..4" },
-];
+const BLOCKED_GLOBALS = new Set([
+	"__name__",
+	"__doc__",
+	"__package__",
+	"__loader__",
+	"__spec__",
+]);
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	textFont("Courier New");
 	textSize(18);
 
-	buildSteps();
 	setupControls();
+	buildTrace();
 }
 
 function draw() {
@@ -76,20 +81,24 @@ function positionControls() {
 }
 
 function startAnimation() {
+	if (!isTraceReady || steps.length === 0) return;
 	currentStepIndex = 0;
 	stepElapsedMs = 0;
 	isPlaying = true;
 	outputs = [];
 	lastRecordedStepIndex = -1;
+	recordOutputForStep();
 	playButton.html("Pause");
 }
 
 function togglePlay() {
+	if (!isTraceReady || steps.length === 0) return;
 	isPlaying = !isPlaying;
 	playButton.html(isPlaying ? "Pause" : "Play");
 }
 
 function stepOnce() {
+	if (!isTraceReady || steps.length === 0) return;
 	isPlaying = false;
 	playButton.html("Play");
 	stepElapsedMs = 0;
@@ -99,67 +108,33 @@ function stepOnce() {
 	}
 }
 
-function buildSteps() {
-	const startTotal = 0;
-	const startI = 1;
-	const endI = 4;
+function buildTrace() {
+	const normalized = normalizeSource(PYTHON_SOURCE);
+	codeLines = normalized.split("\n");
+	knownNames = extractKnownNames(codeLines);
 
-	let total = startTotal;
-	let displayTotal = null;
+	steps = [];
+	outputs = [];
+	currentStepIndex = 0;
+	lastRecordedStepIndex = -1;
+	isTraceReady = false;
+	traceError = "";
 
-	// Initial state before loop starts.
-	steps.push({
-		codeLine: 0,
-		tableFocus: "range",
-		iValue: null,
-		totalValue: displayTotal,
-		status: "iterating",
-		output: "",
-	});
-
-	for (let i = startI; i <= endI; i += 1) {
-		steps.push({
-			codeLine: 0,
-			tableFocus: "i",
-			iValue: i,
-			totalValue: displayTotal,
-			status: "iterating",
-			output: "",
+	const instrumented = instrumentSource(normalized);
+	runSkulptTrace(instrumented)
+		.then((traceSteps) => {
+			steps = applyStepStatus(traceSteps);
+			computeStepFocus(steps);
+			isTraceReady = true;
+		})
+		.catch((err) => {
+			traceError = err;
+			isTraceReady = false;
 		});
-
-		total += i;
-		displayTotal = total;
-		steps.push({
-			codeLine: 1,
-			tableFocus: "total",
-			iValue: i,
-			totalValue: displayTotal,
-			status: "iterating",
-			output: "",
-		});
-
-		steps.push({
-			codeLine: 2,
-			tableFocus: "i",
-			iValue: i,
-			totalValue: displayTotal,
-			status: "iterating",
-			output: `print -> ${displayTotal}`,
-		});
-	}
-
-	steps.push({
-		codeLine: 0,
-		tableFocus: "range",
-		iValue: endI + 1,
-		totalValue: displayTotal,
-		status: "loop ends",
-		output: "loop ends",
-	});
 }
 
 function advanceStep() {
-	if (!isPlaying) return;
+	if (!isPlaying || !isTraceReady || steps.length === 0) return;
 	stepElapsedMs += deltaTime;
 	if (stepElapsedMs >= STEP_DURATION_MS) {
 		stepElapsedMs = 0;
@@ -176,8 +151,8 @@ function advanceStep() {
 function recordOutputForStep() {
 	if (currentStepIndex === lastRecordedStepIndex) return;
 	const step = steps[currentStepIndex];
-	if (step.output) {
-		outputs.push(step.output);
+	if (step && step.stdoutLines) {
+		outputs.push(...step.stdoutLines);
 	}
 	lastRecordedStepIndex = currentStepIndex;
 }
@@ -203,7 +178,7 @@ function drawLayout() {
 	drawPanel(rightX, topY + rightTopHeight + rightGap + statusHeight + rightGap, rightWidth, outputHeight, "Output Explorer");
 
 	drawCodeBlock(leftX, topY, leftWidth, panelHeight);
-	drawTable(rightX, topY, rightWidth, rightTopHeight);
+	drawObjectExplorer(rightX, topY, rightWidth, rightTopHeight);
 	drawStatusBox(rightX, topY + rightTopHeight + rightGap, rightWidth, statusHeight);
 	drawOutputExplorer(rightX, topY + rightTopHeight + rightGap + statusHeight + rightGap, rightWidth, outputHeight);
 }
@@ -220,66 +195,92 @@ function drawPanel(x, y, w, h, title) {
 }
 
 function drawCodeBlock(x, y, w, h) {
-	const lineHeight = 30;
+	const lineHeight = 28;
 	const startY = y + 70;
 	const lineX = x + 28;
 
+	fill(30);
 	for (let idx = 0; idx < codeLines.length; idx += 1) {
 		const lineY = startY + idx * lineHeight;
-		fill(30);
 		text(codeLines[idx], lineX + 26, lineY);
 	}
 
+	if (!isTraceReady || steps.length === 0) {
+		fill(120);
+		textSize(14);
+		text(traceError ? `Error: ${traceError}` : "Preparing trace...", lineX + 26, startY + codeLines.length * lineHeight + 18);
+		textSize(18);
+		return;
+	}
+
 	const step = steps[currentStepIndex];
-	const lineY = startY + step.codeLine * lineHeight;
+	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
+	const lineY = startY + lineIndex * lineHeight;
 	const arrowSize = 18;
 	const textHeight = textAscent() + textDescent();
 	const textCenterY = lineY - textAscent() + textHeight * 0.5;
 	const arrowY = textCenterY - arrowSize * 0.5;
 	const arrowColor = getArrowColor(step);
 	drawArrow(lineX, arrowY, arrowSize, arrowColor);
-
-	fill(70);
-	textSize(14);
-	textSize(18);
 }
 
-function drawTable(x, y, w, h) {
-	const startY = y + 70;
-	const rowHeight = 38;
-	const keyX = x + 22;
+function drawObjectExplorer(x, y, w, h) {
+	const startY = y + 60;
+	const rowHeight = 24;
+	const labelX = x + 26;
 	const valueX = x + w * 0.52;
+	const maxRows = Math.floor((h - 80) / rowHeight);
 
-	stroke(230);
-	for (let i = 0; i <= tableRows.length; i += 1) {
-		const rowY = startY + i * rowHeight;
-		line(x + 12, rowY, x + w - 12, rowY);
-	}
-	noStroke();
+	if (!isTraceReady || steps.length === 0) return;
 
 	const step = steps[currentStepIndex];
-	for (let i = 0; i < tableRows.length; i += 1) {
-		const row = tableRows[i];
-		const rowY = startY + i * rowHeight + 24;
+	const localsList = buildScopeList(step.locals, step.globals, "locals");
+	const globalsList = buildScopeList(step.locals, step.globals, "globals");
+	const stackList = step.stack && step.stack.length > 0 ? step.stack.slice().reverse() : ["<module>"];
 
-		let value = row.value;
-		if (row.key === "i") value = step.iValue;
-		if (row.key === "total") value = step.totalValue;
-		if (value === null || value === undefined || value === "") {
-			value = "unassigned";
+	const rows = [
+		{ type: "section", label: "Locals" },
+		...localsList.map((item) => ({ type: "item", scope: "locals", key: item.key, value: item.value })),
+		{ type: "section", label: "Globals" },
+		...globalsList.map((item) => ({ type: "item", scope: "globals", key: item.key, value: item.value })),
+		{ type: "section", label: "Call Stack" },
+		...stackList.map((name) => ({ type: "stack", value: name })),
+	];
+
+	const visibleRows = rows.slice(0, maxRows);
+	let arrowRowIndex = -1;
+	for (let i = 0; i < visibleRows.length; i += 1) {
+		const row = visibleRows[i];
+		const rowY = startY + i * rowHeight;
+
+		if (row.type === "section") {
+			fill(80);
+			textSize(14);
+			text(row.label, labelX, rowY + 14);
+			textSize(18);
+			continue;
 		}
 
 		fill(20);
-		text(row.key, keyX + 26, rowY);
-		fill(70);
-		text(value, valueX, rowY);
+		textSize(15);
+		if (row.type === "item") {
+			text(row.key, labelX, rowY + 14);
+			fill(70);
+			text(row.value, valueX, rowY + 14);
+
+			if (step.focus && row.scope === step.focus.scope && row.key === step.focus.key) {
+				arrowRowIndex = i;
+			}
+		} else if (row.type === "stack") {
+			text(row.value, labelX, rowY + 14);
+		}
+		textSize(18);
 	}
 
-	const focusIndex = tableRows.findIndex((row) => row.key === steps[currentStepIndex].tableFocus);
-	if (focusIndex >= 0) {
-		const arrowY = startY + focusIndex * rowHeight + 12;
-		const arrowColor = getArrowColor(steps[currentStepIndex]);
-		drawArrow(x + 18, arrowY, 16, arrowColor);
+	if (arrowRowIndex >= 0) {
+		const arrowY = startY + arrowRowIndex * rowHeight + 4;
+		const arrowColor = getArrowColor(step);
+		drawArrow(x + 12, arrowY, 16, arrowColor);
 	}
 }
 
@@ -299,7 +300,11 @@ function drawOutputExplorer(x, y, w, h) {
 
 function drawStatusBox(x, y, w, h) {
 	const step = steps[currentStepIndex];
-	const message = step.status || "iterating";
+	const message = traceError
+		? "error"
+		: step && step.status
+		? step.status
+		: "iterating";
 	const centerY = y + h * 0.6;
 
 	fill(20);
@@ -325,8 +330,249 @@ function drawArrow(x, y, size, arrowColor) {
 }
 
 function getArrowColor(step) {
-	if (step.status === "loop ends") {
+	if (step && step.status === "loop ends") {
 		return color(210, 70, 70);
 	}
 	return color(40, 180, 90);
+}
+
+function normalizeSource(source) {
+	const trimmed = source.replace(/\r\n/g, "\n").trim();
+	return trimmed.length === 0 ? "" : trimmed;
+}
+
+function instrumentSource(source) {
+	const lines = source.split("\n");
+	const instrumented = [
+		"__trace_stack = []",
+		"def __trace_call__(name):",
+		"    __trace_stack.append(name)",
+		"def __trace_return__(name):",
+		"    if __trace_stack and __trace_stack[-1] == name:",
+		"        __trace_stack.pop()",
+		"",
+	];
+
+	const defStack = [];
+	for (let i = 0; i < lines.length; i += 1) {
+		const line = lines[i];
+		const trimmed = line.trim();
+		const indent = line.match(/^\s*/)[0];
+
+		if (trimmed !== "" && !trimmed.startsWith("#")) {
+			while (defStack.length > 0 && indent.length <= defStack[defStack.length - 1].indent) {
+				defStack.pop();
+			}
+		}
+
+		const isSkippable =
+			trimmed === "" ||
+			trimmed.startsWith("#") ||
+			trimmed.startsWith("@") ||
+			/^(elif|else|except|finally)\b/.test(trimmed);
+
+		if (!isSkippable) {
+			instrumented.push(`${indent}__trace__(${i + 1}, locals(), globals(), __trace_stack)`);
+		}
+
+		const activeFunc = defStack.length > 0 ? defStack[defStack.length - 1] : null;
+		if (activeFunc && /^return\b/.test(trimmed)) {
+			instrumented.push(`${indent}__trace_return__('${activeFunc.name}')`);
+		}
+
+		instrumented.push(line);
+
+		if (/^def\s+/.test(trimmed)) {
+			const nameMatch = trimmed.match(/^def\s+([A-Za-z_]\w*)/);
+			if (nameMatch) {
+				defStack.push({ name: nameMatch[1], indent: indent.length });
+				instrumented.push(`${indent}    __trace_call__('${nameMatch[1]}')`);
+			}
+		}
+	}
+
+	return instrumented.join("\n");
+}
+
+function extractKnownNames(lines) {
+	const names = new Set();
+	const assignPattern = /^\s*([A-Za-z_]\w*)\s*=/;
+	const forPattern = /^\s*for\s+([A-Za-z_]\w*)\s+in\b/;
+	const globalPattern = /^\s*global\s+(.+)/;
+	const defPattern = /^\s*def\s+([A-Za-z_]\w*)\s*\(/;
+
+	lines.forEach((line) => {
+		const trimmed = line.trim();
+		if (trimmed.startsWith("#") || trimmed === "") return;
+		const assignMatch = line.match(assignPattern);
+		if (assignMatch) names.add(assignMatch[1]);
+		const forMatch = line.match(forPattern);
+		if (forMatch) names.add(forMatch[1]);
+		const defMatch = line.match(defPattern);
+		if (defMatch) names.add(defMatch[1]);
+		const globalMatch = line.match(globalPattern);
+		if (globalMatch) {
+			globalMatch[1].split(",").forEach((name) => {
+				const trimmedName = name.trim();
+				if (trimmedName) names.add(trimmedName);
+			});
+		}
+	});
+
+	return names;
+}
+
+function runSkulptTrace(source) {
+	return new Promise((resolve, reject) => {
+		if (typeof Sk === "undefined") {
+			reject("Skulpt not loaded");
+			return;
+		}
+
+		const traceSteps = [];
+		let pendingOutput = "";
+
+		function output(text) {
+			pendingOutput += text;
+		}
+
+		function flushOutputIntoLastStep() {
+			if (!pendingOutput || traceSteps.length === 0) return;
+			const lines = pendingOutput.replace(/\r\n/g, "\n").split("\n").filter((line) => line.length > 0);
+			if (lines.length > 0) {
+				traceSteps[traceSteps.length - 1].stdoutLines.push(...lines);
+			}
+			pendingOutput = "";
+		}
+
+		function builtinRead(path) {
+			if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][path] === undefined) {
+				throw new Error(`File not found: '${path}'`);
+			}
+			return Sk.builtinFiles["files"][path];
+		}
+
+		Sk.builtins.__trace__ = new Sk.builtin.func((lineNo, localsObj, globalsObj, stackObj) => {
+			flushOutputIntoLastStep();
+
+			const locals = sanitizeScope(Sk.ffi.remapToJs(localsObj));
+			const globals = sanitizeScope(Sk.ffi.remapToJs(globalsObj));
+			const stack = Array.isArray(Sk.ffi.remapToJs(stackObj)) ? Sk.ffi.remapToJs(stackObj) : [];
+
+			traceSteps.push({
+				lineNo: Number(Sk.ffi.remapToJs(lineNo)),
+				locals,
+				globals,
+				stack,
+				stdoutLines: [],
+			});
+			return Sk.builtin.none.none$;
+		});
+
+		Sk.configure({
+			output,
+			read: builtinRead,
+			__future__: Sk.python3,
+		});
+
+		Sk.misceval
+			.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, source, true))
+			.then(() => {
+				flushOutputIntoLastStep();
+				resolve(traceSteps);
+			})
+			.catch((err) => {
+				reject(err.toString());
+			});
+	});
+}
+
+function sanitizeScope(scopeObj) {
+	const sanitized = {};
+	Object.keys(scopeObj || {}).forEach((key) => {
+		if (key.startsWith("__") || BLOCKED_GLOBALS.has(key)) return;
+		sanitized[key] = formatValue(scopeObj[key]);
+	});
+	return sanitized;
+}
+
+function formatValue(value) {
+	if (value === null || value === undefined) return "unassigned";
+	if (typeof value === "string") return value;
+	if (typeof value === "number" || typeof value === "boolean") return String(value);
+	if (Array.isArray(value)) {
+		return `[${value.map((item) => formatValue(item)).join(", ")}]`;
+	}
+	if (typeof value === "object") {
+		try {
+			return JSON.stringify(value);
+		} catch (err) {
+			return String(value);
+		}
+	}
+	return String(value);
+}
+
+function applyStepStatus(traceSteps) {
+	return traceSteps.map((step, index) => ({
+		...step,
+		status: index === traceSteps.length - 1 ? "loop ends" : "iterating",
+	}));
+}
+
+function computeStepFocus(traceSteps) {
+	for (let i = 0; i < traceSteps.length; i += 1) {
+		const prev = i > 0 ? traceSteps[i - 1] : null;
+		traceSteps[i].focus = findChangedKey(prev, traceSteps[i]);
+	}
+}
+
+function findChangedKey(prevStep, step) {
+	if (!step) return null;
+	const prevLocals = (prevStep && prevStep.locals) || {};
+	const prevGlobals = (prevStep && prevStep.globals) || {};
+	const localKeys = new Set([...Object.keys(step.locals || {}), ...knownNames]);
+	const globalKeys = new Set([...Object.keys(step.globals || {}), ...knownNames]);
+
+	for (const key of localKeys) {
+		const currentValue = step.locals && step.locals[key] !== undefined ? step.locals[key] : "unassigned";
+		const previousValue = prevLocals[key] !== undefined ? prevLocals[key] : "unassigned";
+		if (currentValue !== previousValue) return { scope: "locals", key };
+	}
+
+	for (const key of globalKeys) {
+		const currentValue = step.globals && step.globals[key] !== undefined ? step.globals[key] : "unassigned";
+		const previousValue = prevGlobals[key] !== undefined ? prevGlobals[key] : "unassigned";
+		if (currentValue !== previousValue) return { scope: "globals", key };
+	}
+
+	return null;
+}
+
+function buildScopeList(localsObj, globalsObj, scope) {
+	const entries = [];
+	const localKeys = new Set([...Object.keys(localsObj || {}), ...knownNames]);
+	const globalKeys = new Set([...Object.keys(globalsObj || {}), ...knownNames]);
+
+	if (scope === "locals") {
+		localKeys.forEach((key) => {
+			if (key.startsWith("__")) return;
+			const value = localsObj && localsObj[key] !== undefined ? localsObj[key] : "unassigned";
+			entries.push({ key, value });
+		});
+	} else {
+		globalKeys.forEach((key) => {
+			if (key.startsWith("__") || BLOCKED_GLOBALS.has(key)) return;
+			if (localsObj && localsObj[key] !== undefined) return;
+			const value = globalsObj && globalsObj[key] !== undefined ? globalsObj[key] : "unassigned";
+			entries.push({ key, value });
+		});
+	}
+
+	entries.sort((a, b) => a.key.localeCompare(b.key));
+	return entries;
+}
+
+function clamp(value, minValue, maxValue) {
+	return Math.max(minValue, Math.min(maxValue, value));
 }
