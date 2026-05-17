@@ -299,7 +299,9 @@ function drawCodeBlock(x, y, w, h) {
 			fill(30);
 		}
 		textSize(scaleFont(18));
-		text(codeLines[idx], lineX + scaleValue(26), rowY);
+		const maxTextWidth = w - scaleValue(60);
+		const displayLine = truncateLineToWidth(codeLines[idx], maxTextWidth);
+		text(displayLine, lineX + scaleValue(26), rowY);
 	}
 	textStyle(NORMAL);
 	const textHeight = textAscent() + textDescent();
@@ -417,6 +419,16 @@ function drawArrow(x, y, size, arrowColor) {
 	vertex(size * 0.2, size * 0.5);
 	endShape(CLOSE);
 	pop();
+}
+
+function truncateLineToWidth(textLine, maxWidth) {
+	if (textWidth(textLine) <= maxWidth) return textLine;
+	const ellipsis = "...";
+	let truncated = textLine;
+	while (truncated.length > 0 && textWidth(truncated + ellipsis) > maxWidth) {
+		truncated = truncated.slice(0, -1);
+	}
+	return truncated.length > 0 ? truncated + ellipsis : ellipsis;
 }
 
 function updateUiScale() {
