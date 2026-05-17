@@ -201,20 +201,40 @@ function drawLayout() {
 	const topY = padding;
 	const panelHeight = height - padding * 2;
 	const rightGap = scaleValue(18);
-	const rightTopHeight = panelHeight * 0.62;
-	const rightBottomHeight = panelHeight - rightTopHeight - rightGap;
-	const statusHeight = scaleValue(90);
-	const outputHeight = rightBottomHeight - statusHeight - rightGap;
+	const leftStatusHeight = scaleValue(90);
+	const leftCodeHeight = panelHeight - leftStatusHeight - rightGap;
+	const objectRowHeight = scaleValue(24);
+	const outputRowHeight = scaleValue(22);
+	const objectHeaderPad = scaleValue(70);
+	const outputHeaderPad = scaleValue(70);
+	const minRows = 5;
 
-	drawPanel(leftX, topY, leftWidth, panelHeight, "");
+	const objectRowCount = isTraceReady && steps.length > 0
+		? Math.max(minRows, buildScopeList(steps[currentStepIndex].locals, steps[currentStepIndex].globals, "locals", getLoopHeaderOverrides(currentStepIndex)).length)
+		: minRows;
+	const emittedOutputsCount = isTraceReady && steps.length > 0
+		? steps
+			.slice(0, currentStepIndex)
+			.flatMap((step) => (step.stdoutLines ? step.stdoutLines : [])).length
+		: 0;
+	const outputRowCount = Math.max(minRows, emittedOutputsCount);
+
+	const objectContentHeight = objectRowCount * objectRowHeight + objectHeaderPad;
+	const outputContentHeight = outputRowCount * outputRowHeight + outputHeaderPad;
+	const rightTotalHeight = objectContentHeight + rightGap + outputContentHeight;
+	const rightScale = rightTotalHeight > panelHeight ? panelHeight / rightTotalHeight : 1;
+	const rightTopHeight = objectContentHeight * rightScale;
+	const outputHeight = outputContentHeight * rightScale;
+
+	drawPanel(leftX, topY, leftWidth, leftCodeHeight, "");
+	drawPanel(leftX, topY + leftCodeHeight + rightGap, leftWidth, leftStatusHeight, "Iteration Status");
 	drawPanel(rightX, topY, rightWidth, rightTopHeight, "Object Explorer");
-	drawPanel(rightX, topY + rightTopHeight + rightGap, rightWidth, statusHeight, "Iteration Status");
-	drawPanel(rightX, topY + rightTopHeight + rightGap + statusHeight + rightGap, rightWidth, outputHeight, "Output Explorer");
+	drawPanel(rightX, topY + rightTopHeight + rightGap, rightWidth, outputHeight, "Output Explorer");
 
-	drawCodeBlock(leftX, topY, leftWidth, panelHeight);
+	drawCodeBlock(leftX, topY, leftWidth, leftCodeHeight);
 	drawObjectExplorer(rightX, topY, rightWidth, rightTopHeight);
-	drawStatusBox(rightX, topY + rightTopHeight + rightGap, rightWidth, statusHeight);
-	drawOutputExplorer(rightX, topY + rightTopHeight + rightGap + statusHeight + rightGap, rightWidth, outputHeight);
+	drawStatusBox(leftX, topY + leftCodeHeight + rightGap, leftWidth, leftStatusHeight);
+	drawOutputExplorer(rightX, topY + rightTopHeight + rightGap, rightWidth, outputHeight);
 }
 
 function drawPanel(x, y, w, h, title) {
