@@ -234,18 +234,8 @@ function drawObjectExplorer(x, y, w, h) {
 	if (!isTraceReady || steps.length === 0) return;
 
 	const step = steps[currentStepIndex];
-	const localsList = buildScopeList(step.locals, step.globals, "locals");
-	const globalsList = buildScopeList(step.locals, step.globals, "globals");
-	const stackList = step.stack && step.stack.length > 0 ? step.stack.slice().reverse() : ["<module>"];
-
-	const rows = [
-		{ type: "section", label: "Locals" },
-		...localsList.map((item) => ({ type: "item", scope: "locals", key: item.key, value: item.value })),
-		{ type: "section", label: "Globals" },
-		...globalsList.map((item) => ({ type: "item", scope: "globals", key: item.key, value: item.value })),
-		{ type: "section", label: "Call Stack" },
-		...stackList.map((name) => ({ type: "stack", value: name })),
-	];
+	const variables = buildScopeList(step.locals, step.globals, "locals");
+	const rows = variables.map((item) => ({ type: "item", scope: "locals", key: item.key, value: item.value }));
 
 	const visibleRows = rows.slice(0, maxRows);
 	let arrowRowIndex = -1;
@@ -253,26 +243,14 @@ function drawObjectExplorer(x, y, w, h) {
 		const row = visibleRows[i];
 		const rowY = startY + i * rowHeight;
 
-		if (row.type === "section") {
-			fill(80);
-			textSize(14);
-			text(row.label, labelX, rowY + 14);
-			textSize(18);
-			continue;
-		}
-
 		fill(20);
 		textSize(15);
-		if (row.type === "item") {
-			text(row.key, labelX, rowY + 14);
-			fill(70);
-			text(row.value, valueX, rowY + 14);
+		text(row.key, labelX, rowY + 14);
+		fill(70);
+		text(row.value, valueX, rowY + 14);
 
-			if (step.focus && row.scope === step.focus.scope && row.key === step.focus.key) {
-				arrowRowIndex = i;
-			}
-		} else if (row.type === "stack") {
-			text(row.value, labelX, rowY + 14);
+		if (step.focus && row.scope === step.focus.scope && row.key === step.focus.key) {
+			arrowRowIndex = i;
 		}
 		textSize(18);
 	}
@@ -358,6 +336,8 @@ function instrumentSource(source) {
 		const line = lines[i];
 		const trimmed = line.trim();
 		const indent = line.match(/^\s*/)[0];
+		const indentUnit = indent.includes("\t") ? "\t" : "    ";
+		const nestedIndent = indent + indentUnit;
 
 		if (trimmed !== "" && !trimmed.startsWith("#")) {
 			while (defStack.length > 0 && indent.length <= defStack[defStack.length - 1].indent) {
@@ -381,6 +361,10 @@ function instrumentSource(source) {
 		}
 
 		instrumented.push(line);
+
+		if (/^for\s+/.test(trimmed) || /^while\s+/.test(trimmed)) {
+			instrumented.push(`${nestedIndent}__trace__(${i + 1}, globals(), __trace_stack)`);
+		}
 
 		if (/^def\s+/.test(trimmed)) {
 			const nameMatch = trimmed.match(/^def\s+([A-Za-z_]\w*)/);
