@@ -8,6 +8,7 @@ let stepElapsedMs = 0;
 let isPlaying = false;
 let isTraceReady = false;
 let traceError = "";
+let hasStarted = false;
 let playButton;
 let stepButton;
 let highlightUntilByKey = {};
@@ -134,6 +135,11 @@ function togglePlay() {
 		return;
 	}
 
+	if (!hasStarted) {
+		hasStarted = true;
+		currentStepIndex = 0;
+	}
+
 	if (currentStepIndex >= steps.length - 1) {
 		resetRunState();
 	}
@@ -147,6 +153,11 @@ function stepOnce() {
 	isPlaying = false;
 	playButton.html("Play");
 	stepElapsedMs = 0;
+	if (!hasStarted) {
+		hasStarted = true;
+		currentStepIndex = 0;
+		return;
+	}
 	if (currentStepIndex < steps.length - 1) {
 		currentStepIndex += 1;
 	}
@@ -155,6 +166,7 @@ function stepOnce() {
 function resetRunState() {
 	currentStepIndex = 0;
 	stepElapsedMs = 0;
+	hasStarted = false;
 	lastHighlightStepIndex = -1;
 	highlightUntilByKey = {};
 	outputHighlightUntil = 0;
@@ -273,6 +285,20 @@ function drawCodeBlock(x, y, w, h) {
 	}
 
 	const step = steps[currentStepIndex];
+	if (!hasStarted) {
+		fill(30);
+		textSize(scaleFont(18));
+		for (let idx = 0; idx < codeLines.length; idx += 1) {
+			const rowY = startY + idx * lineHeight;
+			textStyle(NORMAL);
+			fill(30);
+			const maxTextWidth = w - scaleValue(60);
+			const displayLine = truncateLineToWidth(codeLines[idx], maxTextWidth);
+			text(displayLine, lineX + scaleValue(26), rowY);
+		}
+		textStyle(NORMAL);
+		return;
+	}
 	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
 	const lineY = startY + lineIndex * lineHeight;
 	const arrowSize = scaleValue(18);
@@ -318,7 +344,7 @@ function drawObjectExplorer(x, y, w, h) {
 	const valueX = x + w * 0.52;
 	const maxRows = Math.floor((h - scaleValue(80)) / rowHeight);
 
-	if (!isTraceReady || steps.length === 0) return;
+	if (!isTraceReady || steps.length === 0 || !hasStarted) return;
 
 	const step = steps[currentStepIndex];
 	const overrides = getLoopHeaderOverrides(currentStepIndex);
@@ -349,7 +375,7 @@ function drawObjectExplorer(x, y, w, h) {
 }
 
 function drawOutputExplorer(x, y, w, h) {
-	if (!isTraceReady || steps.length === 0) return;
+	if (!isTraceReady || steps.length === 0 || !hasStarted) return;
 	const startY = y + scaleValue(60);
 	const lineHeight = scaleValue(22);
 	const maxLines = Math.floor((h - scaleValue(80)) / lineHeight);
@@ -382,6 +408,8 @@ function drawStatusBox(x, y, w, h) {
 	const step = steps[currentStepIndex];
 	const message = traceError
 		? "error"
+		: !hasStarted
+		? "paused"
 		: step && step.status
 		? step.status
 		: "iterating";
