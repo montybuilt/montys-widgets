@@ -231,7 +231,7 @@ function drawLayout() {
 	const minRows = 5;
 
 	const objectRowCount = isTraceReady && steps.length > 0
-		? Math.max(minRows, buildScopeList(steps[currentStepIndex].locals, steps[currentStepIndex].globals, "locals", getLoopHeaderOverrides(currentStepIndex)).length)
+		? Math.max(minRows, Object.keys(getDisplayMapForStep(currentStepIndex)).length)
 		: minRows;
 	const emittedOutputsCount = isTraceReady && steps.length > 0
 		? steps
@@ -795,6 +795,9 @@ function buildScopeMap(localsObj, globalsObj, scope, overrides) {
 
 function getDisplayMapForStep(stepIndex) {
 	if (stepIndex < 0 || stepIndex >= steps.length) return {};
+	if (stepIndex === 0) {
+		return buildScopeMap({}, {}, "locals", null);
+	}
 	const step = steps[stepIndex];
 	const overrides = getLoopHeaderOverrides(stepIndex);
 	return buildScopeMap(step.locals, step.globals, "locals", overrides);
