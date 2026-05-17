@@ -322,16 +322,12 @@ function instrumentSource(source) {
 		const line = lines[i];
 		const trimmed = line.trim();
 		const indent = line.match(/^\s*/)[0];
-		const indentUnit = indent.includes("\t") ? "\t" : "    ";
-		const nestedIndent = indent + indentUnit;
-
 		if (trimmed !== "" && !trimmed.startsWith("#")) {
 			while (defStack.length > 0 && indent.length <= defStack[defStack.length - 1].indent) {
 				defStack.pop();
 			}
 		}
 
-		const isLoopHeader = /^for\s+/.test(trimmed) || /^while\s+/.test(trimmed);
 		const isSkippable =
 			trimmed === "" ||
 			trimmed.startsWith("#") ||
@@ -348,10 +344,6 @@ function instrumentSource(source) {
 		}
 
 		instrumented.push(line);
-
-		if (isLoopHeader) {
-			instrumented.push(`${nestedIndent}__trace__(${i + 2}, globals(), __trace_stack)`);
-		}
 
 		if (/^def\s+/.test(trimmed)) {
 			const nameMatch = trimmed.match(/^def\s+([A-Za-z_]\w*)/);
