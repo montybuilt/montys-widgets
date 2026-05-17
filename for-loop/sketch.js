@@ -11,8 +11,6 @@ let traceError = "";
 let playButton;
 let startButton;
 let stepButton;
-let outputs = [];
-let lastRecordedStepIndex = -1;
 
 const STEP_DURATION_MS = 1500;
 const PYTHON_SOURCE = `
@@ -85,9 +83,6 @@ function startAnimation() {
 	currentStepIndex = 0;
 	stepElapsedMs = 0;
 	isPlaying = true;
-	outputs = [];
-	lastRecordedStepIndex = -1;
-	recordOutputForStep();
 	playButton.html("Pause");
 }
 
@@ -104,7 +99,6 @@ function stepOnce() {
 	stepElapsedMs = 0;
 	if (currentStepIndex < steps.length - 1) {
 		currentStepIndex += 1;
-		recordOutputForStep();
 	}
 }
 
@@ -114,9 +108,7 @@ function buildTrace() {
 	knownNames = extractKnownNames(codeLines);
 
 	steps = [];
-	outputs = [];
 	currentStepIndex = 0;
-	lastRecordedStepIndex = -1;
 	isTraceReady = false;
 	traceError = "";
 
@@ -140,21 +132,11 @@ function advanceStep() {
 		stepElapsedMs = 0;
 		if (currentStepIndex < steps.length - 1) {
 			currentStepIndex += 1;
-			recordOutputForStep();
 		} else {
 			isPlaying = false;
 			playButton.html("Play");
 		}
 	}
-}
-
-function recordOutputForStep() {
-	if (currentStepIndex === lastRecordedStepIndex) return;
-	const step = steps[currentStepIndex];
-	if (step && step.stdoutLines) {
-		outputs.push(...step.stdoutLines);
-	}
-	lastRecordedStepIndex = currentStepIndex;
 }
 
 function drawLayout() {
@@ -263,10 +245,14 @@ function drawObjectExplorer(x, y, w, h) {
 }
 
 function drawOutputExplorer(x, y, w, h) {
+	if (!isTraceReady || steps.length === 0) return;
 	const startY = y + 60;
 	const lineHeight = 22;
 	const maxLines = Math.floor((h - 80) / lineHeight);
-	const visibleOutputs = outputs.slice(-maxLines);
+	const emittedOutputs = steps
+		.slice(0, currentStepIndex)
+		.flatMap((step) => (step.stdoutLines ? step.stdoutLines : []));
+	const visibleOutputs = emittedOutputs.slice(-maxLines);
 
 	fill(20);
 	textSize(15);
@@ -345,11 +331,13 @@ function instrumentSource(source) {
 			}
 		}
 
+		const isLoopHeader = /^for\s+/.test(trimmed) || /^while\s+/.test(trimmed);
 		const isSkippable =
 			trimmed === "" ||
 			trimmed.startsWith("#") ||
 			trimmed.startsWith("@") ||
-			/^(elif|else|except|finally)\b/.test(trimmed);
+			/^(elif|else|except|finally)\b/.test(trimmed) ||
+			isLoopHeader;
 
 		if (!isSkippable) {
 			instrumented.push(`${indent}__trace__(${i + 1}, globals(), __trace_stack)`);
@@ -362,7 +350,7 @@ function instrumentSource(source) {
 
 		instrumented.push(line);
 
-		if (/^for\s+/.test(trimmed) || /^while\s+/.test(trimmed)) {
+		if (isLoopHeader) {
 			instrumented.push(`${nestedIndent}__trace__(${i + 1}, globals(), __trace_stack)`);
 		}
 
