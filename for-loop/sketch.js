@@ -13,6 +13,10 @@ let startButton;
 let stepButton;
 let highlightUntilByKey = {};
 let lastHighlightStepIndex = -1;
+let outputHighlightUntil = 0;
+let lastOutputCount = 0;
+let statusHighlightUntil = 0;
+let lastStatusValue = "";
 
 const STEP_DURATION_MS = 1500;
 const PYTHON_SOURCE = `
@@ -85,6 +89,12 @@ function startAnimation() {
 	currentStepIndex = 0;
 	stepElapsedMs = 0;
 	isPlaying = true;
+	lastHighlightStepIndex = -1;
+	highlightUntilByKey = {};
+	outputHighlightUntil = 0;
+	lastOutputCount = 0;
+	statusHighlightUntil = 0;
+	lastStatusValue = "";
 	playButton.html("Pause");
 }
 
@@ -186,8 +196,14 @@ function drawCodeBlock(x, y, w, h) {
 	fill(30);
 	for (let idx = 0; idx < codeLines.length; idx += 1) {
 		const lineY = startY + idx * lineHeight;
+		if (isTraceReady && steps.length > 0 && idx === lineIndex) {
+			textStyle(BOLD);
+		} else {
+			textStyle(NORMAL);
+		}
 		text(codeLines[idx], lineX + 26, lineY);
 	}
+	textStyle(NORMAL);
 
 	if (!isTraceReady || steps.length === 0) {
 		fill(120);
@@ -225,7 +241,7 @@ function drawObjectExplorer(x, y, w, h) {
 	if (!isTraceReady || steps.length === 0) return;
 
 	const step = steps[currentStepIndex];
-	const overrides = getLoopHeaderOverrides();
+	const overrides = getLoopHeaderOverrides(currentStepIndex);
 	const variables = buildScopeList(step.locals, step.globals, "locals", overrides);
 	const rows = variables.map((item) => ({ type: "item", scope: "locals", key: item.key, value: item.value }));
 	updateValueHighlights();
@@ -261,6 +277,18 @@ function drawOutputExplorer(x, y, w, h) {
 		.slice(0, currentStepIndex)
 		.flatMap((step) => (step.stdoutLines ? step.stdoutLines : []));
 	const visibleOutputs = emittedOutputs.slice(-maxLines);
+	const now = millis();
+	if (emittedOutputs.length > lastOutputCount) {
+		outputHighlightUntil = now + 1000;
+		lastOutputCount = emittedOutputs.length;
+	}
+	if (outputHighlightUntil > now) {
+		const remaining = outputHighlightUntil - now;
+		const alpha = Math.max(0, Math.min(160, (remaining / 1000) * 160));
+		noStroke();
+		fill(180, 235, 200, alpha);
+		rect(x + 12, y + 48, w - 24, h - 70, 8);
+	}
 
 	fill(20);
 	textSize(15);
@@ -278,6 +306,18 @@ function drawStatusBox(x, y, w, h) {
 		? step.status
 		: "iterating";
 	const centerY = y + h * 0.6;
+	const now = millis();
+	if (message !== lastStatusValue) {
+		statusHighlightUntil = now + 1000;
+		lastStatusValue = message;
+	}
+	if (statusHighlightUntil > now) {
+		const remaining = statusHighlightUntil - now;
+		const alpha = Math.max(0, Math.min(160, (remaining / 1000) * 160));
+		noStroke();
+		fill(180, 235, 200, alpha);
+		rect(x + 12, y + 40, w - 24, h - 56, 8);
+	}
 
 	fill(20);
 	textSize(16);
@@ -565,6 +605,37 @@ function getChangedKeys(prevStep, step) {
 
 function buildScopeList(localsObj, globalsObj, scope, overrides) {
 	const entries = [];
+	const map = buildScopeMap(localsObj, globalsObj, scope, overrides);
+	Object.keys(map)
+		.sort((a, b) => a.localeCompare(b))
+		.forEach((key) => {
+			entries.push({ key, value: map[key] });
+		});
+	return entries;
+}
+
+function clamp(value, minValue, maxValue) {
+	return Math.max(minValue, Math.min(maxValue, value));
+}
+
+function getLoopHeaderOverrides(stepIndex) {
+	if (stepIndex <= 0) return null;
+	const step = steps[stepIndex];
+	if (!step) return null;
+	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
+	const lineText = codeLines[lineIndex] || "";
+	const match = lineText.match(/^\s*for\s+([A-Za-z_]\w*)\s+in\b/);
+	if (!match) return null;
+	const loopVar = match[1];
+	const prevStep = steps[stepIndex - 1];
+	const prevValue = prevStep && prevStep.locals && prevStep.locals[loopVar] !== undefined
+		? prevStep.locals[loopVar]
+		: "unassigned";
+	return { [loopVar]: prevValue };
+}
+
+function buildScopeMap(localsObj, globalsObj, scope, overrides) {
+	const map = {};
 	const localKeys = new Set([...Object.keys(localsObj || {}), ...knownNames]);
 	const globalKeys = new Set([...Object.keys(globalsObj || {}), ...knownNames]);
 
@@ -575,46 +646,33 @@ function buildScopeList(localsObj, globalsObj, scope, overrides) {
 			if (overrides && Object.prototype.hasOwnProperty.call(overrides, key)) {
 				value = overrides[key];
 			}
-			entries.push({ key, value });
+			map[key] = value;
 		});
 	} else {
 		globalKeys.forEach((key) => {
 			if (key.startsWith("__") || BLOCKED_GLOBALS.has(key)) return;
 			if (localsObj && localsObj[key] !== undefined) return;
-			const value = globalsObj && globalsObj[key] !== undefined ? globalsObj[key] : "unassigned";
-			entries.push({ key, value });
+			map[key] = globalsObj && globalsObj[key] !== undefined ? globalsObj[key] : "unassigned";
 		});
 	}
 
-	entries.sort((a, b) => a.key.localeCompare(b.key));
-	return entries;
+	return map;
 }
 
-function clamp(value, minValue, maxValue) {
-	return Math.max(minValue, Math.min(maxValue, value));
-}
-
-function getLoopHeaderOverrides() {
-	if (currentStepIndex <= 0) return null;
-	const step = steps[currentStepIndex];
-	if (!step) return null;
-	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
-	const lineText = codeLines[lineIndex] || "";
-	const match = lineText.match(/^\s*for\s+([A-Za-z_]\w*)\s+in\b/);
-	if (!match) return null;
-	const loopVar = match[1];
-	const prevStep = steps[currentStepIndex - 1];
-	const prevValue = prevStep && prevStep.locals && prevStep.locals[loopVar] !== undefined
-		? prevStep.locals[loopVar]
-		: "unassigned";
-	return { [loopVar]: prevValue };
+function getDisplayMapForStep(stepIndex) {
+	if (stepIndex < 0 || stepIndex >= steps.length) return {};
+	const step = steps[stepIndex];
+	const overrides = getLoopHeaderOverrides(stepIndex);
+	return buildScopeMap(step.locals, step.globals, "locals", overrides);
 }
 
 function updateValueHighlights() {
 	if (currentStepIndex === lastHighlightStepIndex) return;
-	const prevStep = currentStepIndex > 0 ? steps[currentStepIndex - 1] : null;
-	const currentStep = steps[currentStepIndex];
-	const changedKeys = getChangedKeys(prevStep, currentStep);
+	const previousDisplay = getDisplayMapForStep(currentStepIndex - 1);
+	const currentDisplay = getDisplayMapForStep(currentStepIndex);
+	const changedKeys = Object.keys(currentDisplay).filter(
+		(key) => currentDisplay[key] !== previousDisplay[key]
+	);
 	const now = millis();
 	changedKeys.forEach((key) => {
 		highlightUntilByKey[key] = now + 1000;
