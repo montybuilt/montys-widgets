@@ -111,8 +111,9 @@ function positionControls() {
 	if (!playButton || !stepButton) return;
 	const padding = scaleValue(28);
 	const y = padding + scaleValue(8);
-	playButton.position(padding + scaleValue(16), y);
-	stepButton.position(padding + scaleValue(86), y);
+	const playX = padding + scaleValue(16);
+	const gap = scaleValue(12);
+	playButton.position(playX, y);
 	playButton.style("font-size", `${Math.round(scaleFont(14))}px`);
 	stepButton.style("font-size", `${Math.round(scaleFont(14))}px`);
 	playButton.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(16))}px`);
@@ -121,6 +122,8 @@ function positionControls() {
 	stepButton.style("min-width", `${Math.round(scaleFont(130))}px`);
 	playButton.style("text-align", "center");
 	stepButton.style("text-align", "center");
+	const playWidth = playButton.elt ? playButton.elt.offsetWidth : scaleFont(130);
+	stepButton.position(playX + playWidth + gap, y);
 }
 
 function togglePlay() {
