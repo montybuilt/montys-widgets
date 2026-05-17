@@ -99,7 +99,7 @@ function setupControls() {
 	buttons.forEach((btn) => {
 		btn.style("font-family", "Courier New");
 		btn.style("font-size", `${Math.round(scaleFont(14))}px`);
-		btn.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(12))}px`);
+		btn.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(16))}px`);
 	});
 
 	positionControls();
@@ -113,8 +113,8 @@ function positionControls() {
 	stepButton.position(padding + scaleValue(86), y);
 	playButton.style("font-size", `${Math.round(scaleFont(14))}px`);
 	stepButton.style("font-size", `${Math.round(scaleFont(14))}px`);
-	playButton.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(12))}px`);
-	stepButton.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(12))}px`);
+	playButton.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(16))}px`);
+	stepButton.style("padding", `${Math.round(scaleFont(6))}px ${Math.round(scaleFont(16))}px`);
 }
 
 function togglePlay() {
