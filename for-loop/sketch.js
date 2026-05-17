@@ -36,8 +36,9 @@ const BLOCKED_GLOBALS = new Set([
 
 function preload() {
 	pythonSource = DEFAULT_PYTHON_SOURCE;
+	const programPath = getProgramPath();
 	loadStrings(
-		"program.py",
+		programPath,
 		(lines) => {
 			if (lines && lines.length > 0) {
 				pythonSource = lines.join("\n");
@@ -47,6 +48,19 @@ function preload() {
 			pythonSource = DEFAULT_PYTHON_SOURCE;
 		}
 	);
+}
+
+function getProgramPath() {
+	try {
+		const params = new URLSearchParams(window.location.search);
+		const requested = params.get("program");
+		if (requested && /^[A-Za-z0-9._-]+\.py$/.test(requested)) {
+			return requested;
+		}
+	} catch (err) {
+		return "program.py";
+	}
+	return "program.py";
 }
 
 function setup() {
