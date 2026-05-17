@@ -9,7 +9,6 @@ let isPlaying = false;
 let isTraceReady = false;
 let traceError = "";
 let playButton;
-let startButton;
 let stepButton;
 let highlightUntilByKey = {};
 let lastHighlightStepIndex = -1;
@@ -56,16 +55,13 @@ function windowResized() {
 }
 
 function setupControls() {
-	startButton = createButton("Start");
-	startButton.mousePressed(startAnimation);
-
 	playButton = createButton("Play");
 	playButton.mousePressed(togglePlay);
 
 	stepButton = createButton("Step");
 	stepButton.mousePressed(stepOnce);
 
-	const buttons = [startButton, playButton, stepButton];
+	const buttons = [playButton, stepButton];
 	buttons.forEach((btn) => {
 		btn.style("font-family", "Courier New");
 		btn.style("font-size", "14px");
@@ -76,32 +72,27 @@ function setupControls() {
 }
 
 function positionControls() {
-	if (!startButton || !playButton || !stepButton) return;
+	if (!playButton || !stepButton) return;
 	const padding = 28;
 	const y = padding + 8;
-	startButton.position(padding + 16, y);
-	playButton.position(padding + 86, y);
-	stepButton.position(padding + 156, y);
-}
-
-function startAnimation() {
-	if (!isTraceReady || steps.length === 0) return;
-	currentStepIndex = 0;
-	stepElapsedMs = 0;
-	isPlaying = true;
-	lastHighlightStepIndex = -1;
-	highlightUntilByKey = {};
-	outputHighlightUntil = 0;
-	lastOutputCount = 0;
-	statusHighlightUntil = 0;
-	lastStatusValue = "";
-	playButton.html("Pause");
+	playButton.position(padding + 16, y);
+	stepButton.position(padding + 86, y);
 }
 
 function togglePlay() {
 	if (!isTraceReady || steps.length === 0) return;
-	isPlaying = !isPlaying;
-	playButton.html(isPlaying ? "Pause" : "Play");
+	if (isPlaying) {
+		isPlaying = false;
+		playButton.html("Play");
+		return;
+	}
+
+	if (currentStepIndex >= steps.length - 1) {
+		resetRunState();
+	}
+
+	isPlaying = true;
+	playButton.html("Pause");
 }
 
 function stepOnce() {
@@ -112,6 +103,17 @@ function stepOnce() {
 	if (currentStepIndex < steps.length - 1) {
 		currentStepIndex += 1;
 	}
+}
+
+function resetRunState() {
+	currentStepIndex = 0;
+	stepElapsedMs = 0;
+	lastHighlightStepIndex = -1;
+	highlightUntilByKey = {};
+	outputHighlightUntil = 0;
+	lastOutputCount = 0;
+	statusHighlightUntil = 0;
+	lastStatusValue = "";
 }
 
 function buildTrace() {
