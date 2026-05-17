@@ -17,6 +17,7 @@ let lastOutputCount = 0;
 let statusHighlightUntil = 0;
 let lastStatusValue = "";
 let pythonSource = "";
+let uiScale = 1;
 
 const STEP_DURATION_MS = 1500;
 const DEFAULT_PYTHON_SOURCE = `
@@ -66,7 +67,8 @@ function getProgramPath() {
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	textFont("Courier New");
-	textSize(18);
+	updateUiScale();
+	textSize(scaleValue(18));
 
 	setupControls();
 	buildTrace();
@@ -74,6 +76,7 @@ function setup() {
 
 function draw() {
 	background(245, 247, 250);
+	updateUiScale();
 	drawLayout();
 
 	advanceStep();
@@ -81,6 +84,7 @@ function draw() {
 
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
+	updateUiScale();
 	positionControls();
 }
 
@@ -94,8 +98,8 @@ function setupControls() {
 	const buttons = [playButton, stepButton];
 	buttons.forEach((btn) => {
 		btn.style("font-family", "Courier New");
-		btn.style("font-size", "14px");
-		btn.style("padding", "6px 12px");
+		btn.style("font-size", `${Math.round(scaleValue(14))}px`);
+		btn.style("padding", `${Math.round(scaleValue(6))}px ${Math.round(scaleValue(12))}px`);
 	});
 
 	positionControls();
@@ -103,10 +107,14 @@ function setupControls() {
 
 function positionControls() {
 	if (!playButton || !stepButton) return;
-	const padding = 28;
-	const y = padding + 8;
-	playButton.position(padding + 16, y);
-	stepButton.position(padding + 86, y);
+	const padding = scaleValue(28);
+	const y = padding + scaleValue(8);
+	playButton.position(padding + scaleValue(16), y);
+	stepButton.position(padding + scaleValue(86), y);
+	playButton.style("font-size", `${Math.round(scaleValue(14))}px`);
+	stepButton.style("font-size", `${Math.round(scaleValue(14))}px`);
+	playButton.style("padding", `${Math.round(scaleValue(6))}px ${Math.round(scaleValue(12))}px`);
+	stepButton.style("padding", `${Math.round(scaleValue(6))}px ${Math.round(scaleValue(12))}px`);
 }
 
 function togglePlay() {
@@ -184,18 +192,18 @@ function advanceStep() {
 }
 
 function drawLayout() {
-	const padding = 28;
-	const gutter = 30;
+	const padding = scaleValue(28);
+	const gutter = scaleValue(30);
 	const leftWidth = (width - padding * 2 - gutter) * 0.52;
 	const rightWidth = (width - padding * 2 - gutter) * 0.48;
 	const leftX = padding;
 	const rightX = padding + leftWidth + gutter;
 	const topY = padding;
 	const panelHeight = height - padding * 2;
-	const rightGap = 18;
+	const rightGap = scaleValue(18);
 	const rightTopHeight = panelHeight * 0.62;
 	const rightBottomHeight = panelHeight - rightTopHeight - rightGap;
-	const statusHeight = 90;
+	const statusHeight = scaleValue(90);
 	const outputHeight = rightBottomHeight - statusHeight - rightGap;
 
 	drawPanel(leftX, topY, leftWidth, panelHeight, "");
@@ -216,30 +224,32 @@ function drawPanel(x, y, w, h, title) {
 
 	fill(50);
 	textStyle(BOLD);
-	text(title, x + 18, y + 30);
+	textSize(scaleValue(16));
+	text(title, x + scaleValue(18), y + scaleValue(30));
 	textStyle(NORMAL);
+	textSize(scaleValue(18));
 }
 
 function drawCodeBlock(x, y, w, h) {
-	const lineHeight = 28;
-	const startY = y + 70;
-	const lineX = x + 28;
+	const lineHeight = scaleValue(28);
+	const startY = y + scaleValue(70);
+	const lineX = x + scaleValue(28);
 
 	if (!isTraceReady || steps.length === 0) {
 		fill(120);
-		textSize(14);
-		text(traceError ? `Error: ${traceError}` : "Preparing trace...", lineX + 26, startY + codeLines.length * lineHeight + 18);
-		textSize(18);
+		textSize(scaleValue(14));
+		text(traceError ? `Error: ${traceError}` : "Preparing trace...", lineX + scaleValue(26), startY + codeLines.length * lineHeight + scaleValue(18));
+		textSize(scaleValue(18));
 		return;
 	}
 
 	const step = steps[currentStepIndex];
 	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
 	const lineY = startY + lineIndex * lineHeight;
-	const arrowSize = 18;
-	const highlightX = lineX + 18;
-	const highlightY = lineY - lineHeight + 8;
-	const highlightW = w - 48;
+	const arrowSize = scaleValue(18);
+	const highlightX = lineX + scaleValue(18);
+	const highlightY = lineY - lineHeight + scaleValue(8);
+	const highlightW = w - scaleValue(48);
 	const highlightH = lineHeight;
 	noStroke();
 	if (step.status === "loop ends") {
@@ -259,7 +269,7 @@ function drawCodeBlock(x, y, w, h) {
 			textStyle(NORMAL);
 			fill(30);
 		}
-		text(codeLines[idx], lineX + 26, rowY);
+		text(codeLines[idx], lineX + scaleValue(26), rowY);
 	}
 	textStyle(NORMAL);
 	const textHeight = textAscent() + textDescent();
@@ -270,11 +280,11 @@ function drawCodeBlock(x, y, w, h) {
 }
 
 function drawObjectExplorer(x, y, w, h) {
-	const startY = y + 60;
-	const rowHeight = 24;
-	const labelX = x + 26;
+	const startY = y + scaleValue(60);
+	const rowHeight = scaleValue(24);
+	const labelX = x + scaleValue(26);
 	const valueX = x + w * 0.52;
-	const maxRows = Math.floor((h - 80) / rowHeight);
+	const maxRows = Math.floor((h - scaleValue(80)) / rowHeight);
 
 	if (!isTraceReady || steps.length === 0) return;
 
@@ -294,23 +304,23 @@ function drawObjectExplorer(x, y, w, h) {
 			const alpha = Math.max(0, Math.min(180, (remaining / 1000) * 180));
 			noStroke();
 			fill(180, 235, 200, alpha);
-			rect(x + 14, rowY - 4, w - 28, rowHeight - 4, 6);
+			rect(x + scaleValue(14), rowY - scaleValue(4), w - scaleValue(28), rowHeight - scaleValue(4), scaleValue(6));
 		}
 
 		fill(20);
-		textSize(15);
-		text(row.key, labelX, rowY + 14);
+		textSize(scaleValue(15));
+		text(row.key, labelX, rowY + scaleValue(14));
 		fill(70);
-		text(row.value, valueX, rowY + 14);
-		textSize(18);
+		text(row.value, valueX, rowY + scaleValue(14));
+		textSize(scaleValue(18));
 	}
 }
 
 function drawOutputExplorer(x, y, w, h) {
 	if (!isTraceReady || steps.length === 0) return;
-	const startY = y + 60;
-	const lineHeight = 22;
-	const maxLines = Math.floor((h - 80) / lineHeight);
+	const startY = y + scaleValue(60);
+	const lineHeight = scaleValue(22);
+	const maxLines = Math.floor((h - scaleValue(80)) / lineHeight);
 	const emittedOutputs = steps
 		.slice(0, currentStepIndex)
 		.flatMap((step) => (step.stdoutLines ? step.stdoutLines : []));
@@ -325,15 +335,15 @@ function drawOutputExplorer(x, y, w, h) {
 		const alpha = Math.max(0, Math.min(160, (remaining / 1000) * 160));
 		noStroke();
 		fill(180, 235, 200, alpha);
-		rect(x + 12, y + 48, w - 24, h - 70, 8);
+		rect(x + scaleValue(12), y + scaleValue(48), w - scaleValue(24), h - scaleValue(70), scaleValue(8));
 	}
 
 	fill(20);
-	textSize(15);
+	textSize(scaleValue(15));
 	for (let i = 0; i < visibleOutputs.length; i += 1) {
-		text(visibleOutputs[i], x + 24, startY + i * lineHeight);
+		text(visibleOutputs[i], x + scaleValue(24), startY + i * lineHeight);
 	}
-	textSize(18);
+	textSize(scaleValue(18));
 }
 
 function drawStatusBox(x, y, w, h) {
@@ -354,15 +364,15 @@ function drawStatusBox(x, y, w, h) {
 		const alpha = Math.max(0, Math.min(160, (remaining / 1000) * 160));
 		noStroke();
 		fill(180, 235, 200, alpha);
-		rect(x + 12, y + 40, w - 24, h - 56, 8);
+		rect(x + scaleValue(12), y + scaleValue(40), w - scaleValue(24), h - scaleValue(56), scaleValue(8));
 	}
 
 	fill(20);
-	textSize(16);
+	textSize(scaleValue(16));
 	textAlign(LEFT, CENTER);
-	text(message, x + 24, centerY);
+	text(message, x + scaleValue(24), centerY);
 	textAlign(LEFT, BASELINE);
-	textSize(18);
+	textSize(scaleValue(18));
 }
 
 function drawArrow(x, y, size, arrowColor) {
@@ -377,6 +387,18 @@ function drawArrow(x, y, size, arrowColor) {
 	vertex(size * 0.2, size * 0.5);
 	endShape(CLOSE);
 	pop();
+}
+
+function updateUiScale() {
+	const baseWidth = 900;
+	const baseHeight = 600;
+	const scaleW = width / baseWidth;
+	const scaleH = height / baseHeight;
+	uiScale = Math.max(0.6, Math.min(1.2, Math.min(scaleW, scaleH)));
+}
+
+function scaleValue(value) {
+	return value * uiScale;
 }
 
 function getArrowColor(step) {
