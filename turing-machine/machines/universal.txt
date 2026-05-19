@@ -1,0 +1,5 @@
+; Universal Turing machine sample (placeholder)
+; $INITIAL_TAPE: 1101
+
+; Placeholder content
+0 _ _ r halt

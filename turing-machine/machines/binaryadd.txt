@@ -1,0 +1,5 @@
+; Binary addition sample program
+; $INITIAL_TAPE: 101+11
+
+; Placeholder program - replace with full version as needed
+0 _ _ r 0

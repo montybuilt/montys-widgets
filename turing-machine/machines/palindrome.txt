@@ -1,0 +1,10 @@
+; Palindrome detector sample program
+; $INITIAL_TAPE: abba
+
+; This is a very small illustrative example only.
+; For a full working example, replace with the original program.
+
+0 _ _ r 1
+1 a a r 1
+1 b b r 1
+1 _ _ l halt-accept
