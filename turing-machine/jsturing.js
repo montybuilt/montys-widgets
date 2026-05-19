@@ -256,22 +256,28 @@ function Compile()
 	
 	sSource = sSource.replace( /\r/g, "" );	/* Internet Explorer uses \n\r, other browsers use \n */
 
-	/* If the source contains an $INITIAL_TAPE directive, seed the InitialInput
-	   field with that value — but only if the user hasn't provided any input yet.
+	/* If the source contains an $INITIAL_TAPE directive, seed or override the InitialInput
+	   field with that value. Behavior is controlled by the checkbox #UseInitialTape:
+	   - if checked (default) the $INITIAL_TAPE will override the field
+	   - if unchecked the field is only seeded when empty
 	   Do not remove the line from sSource here to preserve textarea line numbers. */
-	try {
-		var oInitRe = new RegExp(";.*\\$INITIAL_TAPE:? *(.+)$","m");
+	(function(){
+		var oInitRe = /;.*\$INITIAL_TAPE:? *(.+)$/m;
 		var aInit = oInitRe.exec(sSource);
 		if( aInit && aInit.length >= 2 ) {
-			var curInit = $.trim( $("#InitialInput")[0].value );
-			if( !curInit || curInit == "" ) {
-				$("#InitialInput")[0].value = aInit[1];
-				ShowResetMsg(true);
+			var oInput = document.getElementById("InitialInput");
+			if( oInput ) {
+				var curInit = (oInput.value || "").trim();
+				var useOverride = true;
+				var chk = document.getElementById("UseInitialTape");
+				if( chk ) useOverride = chk.checked;
+				if( useOverride || !curInit ) {
+					oInput.value = aInit[1];
+					ShowResetMsg(true);
+				}
 			}
 		}
-	} catch(e) {
-		/* ignore regex errors */
-	}
+	})();
 	
 	var aLines = sSource.split("\n");
 	for( var i = 0; i < aLines.length; i++ )

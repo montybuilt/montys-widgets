@@ -122,6 +122,9 @@
        <div id="InitialTapeDisplay"  title="This initial data will be loaded on the tape when the machine starts">
         Initial input:<input type="text" id="InitialInput" value="" onchange="ShowResetMsg(true);">
        </div>
+      <div id="InitialTapeOptions" style="font-size: small; margin-top: 0.25em;">
+       <label><input type="checkbox" id="UseInitialTape" checked> Use program's $INITIAL_TAPE to override Initial input</label>
+      </div>
        <div style="font-size: small;">
         <a href="javascript:" onclick="$('#AdvancedOptions').slideToggle();" title="Show advanced machine options">Advanced options</a>
        </div>
