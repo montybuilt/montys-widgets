@@ -207,11 +207,13 @@ body {
   padding-top: 8px;
   text-align: center;
   overflow: hidden;
+  width: 100%;
 }
 
 #MachineProgramBlock2 {
   padding: 4px;
-  display: inline-block;
+  display: block;
+  width: 100%;
 }
 
 #MachineControlBlock {
