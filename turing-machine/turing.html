@@ -7,7 +7,14 @@
   <title>
    Turing machine simulator
   </title>
-  <script type="text/javascript" defer="defer" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script>
+    if( !window.jQuery ) {
+      var s = document.createElement('script');
+      s.src = 'jquery-1.11.1.min.js';
+      document.head.appendChild(s);
+    }
+  </script>
   <!--[if lte IE 9]>
    <script type="text/javascript" src="polyfills.js"></script>
    <script type="text/javascript" src="json2.js"></script>
