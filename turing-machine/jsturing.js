@@ -255,6 +255,23 @@ function Compile()
 	aProgram = new Object;
 	
 	sSource = sSource.replace( /\r/g, "" );	/* Internet Explorer uses \n\r, other browsers use \n */
+
+	/* If the source contains an $INITIAL_TAPE directive, seed the InitialInput
+	   field with that value — but only if the user hasn't provided any input yet.
+	   Do not remove the line from sSource here to preserve textarea line numbers. */
+	try {
+		var oInitRe = new RegExp(";.*\\$INITIAL_TAPE:? *(.+)$","m");
+		var aInit = oInitRe.exec(sSource);
+		if( aInit && aInit.length >= 2 ) {
+			var curInit = $.trim( $("#InitialInput")[0].value );
+			if( !curInit || curInit == "" ) {
+				$("#InitialInput")[0].value = aInit[1];
+				ShowResetMsg(true);
+			}
+		}
+	} catch(e) {
+		/* ignore regex errors */
+	}
 	
 	var aLines = sSource.split("\n");
 	for( var i = 0; i < aLines.length; i++ )
