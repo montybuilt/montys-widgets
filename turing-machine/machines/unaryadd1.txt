@@ -1,0 +1,9 @@
+; Unary add 1 - append one more 1 to the right
+; $INITIAL_TAPE: 111
+
+; State 0: scan right to blank, write 1, halt
+0 1 1 r 0
+0 _ 1 * halt-accept
+
+; Any other symbol => error
+0 * * * halt-error

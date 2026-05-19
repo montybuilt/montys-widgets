@@ -1,0 +1,10 @@
+; Double binary - append 0 to the right (shift left)
+; $INITIAL_TAPE: 1011
+
+; State 0: scan right to blank, then write 0 and halt
+0 0 0 r 0
+0 1 1 r 0
+0 _ 0 * halt-accept
+
+; Any other symbol => error
+0 * * * halt-error

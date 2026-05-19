@@ -1,0 +1,7 @@
+; Erase tape - replace all 0/1 with blanks, then halt
+; $INITIAL_TAPE: 1011011
+
+; State 0: overwrite 0/1 with blank and move right
+0 0 _ r 0
+0 1 _ r 0
+0 _ _ * halt-accept

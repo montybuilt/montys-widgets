@@ -1,0 +1,16 @@
+; Binary add 1 - add 1 to a binary number
+; $INITIAL_TAPE: 1011
+
+; State 0: move right to the end
+0 0 0 r 0
+0 1 1 r 0
+0 _ _ l carry
+
+; carry: flip 1->0 while carrying, or write 1 and halt
+carry 1 0 l carry
+carry 0 1 * halt-accept
+carry _ 1 * halt-accept
+
+; Any other symbol => error
+0 * * * halt-error
+carry * * * halt-error

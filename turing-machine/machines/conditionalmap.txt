@@ -1,0 +1,14 @@
+; Conditional map - swap letters and numbers
+; a,b,c,d -> 1,2,3,4 and 5,6,7,8 -> e,f,g,h
+; $INITIAL_TAPE: abcd5678
+
+; State 0: scan right, replace if matched
+0 a 1 r 0
+0 b 2 r 0
+0 c 3 r 0
+0 d 4 r 0
+0 5 e r 0
+0 6 f r 0
+0 7 g r 0
+0 8 h r 0
+0 _ _ * halt-accept
