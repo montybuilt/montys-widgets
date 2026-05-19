@@ -10,7 +10,7 @@
         mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
     </script>
     <style>
-        .lesson-inner .fsm-container {
+        .fsm-container {
         margin: 14px 0 10px;
         padding: 14px;
         background: #f8fafc;
@@ -18,13 +18,13 @@
         border-radius: 12px;
         }
 
-        .lesson-inner .fsm-title {
+        .fsm-title {
         font-weight: 600;
         margin-bottom: 10px;
         color: #111827;
         }
 
-        .lesson-inner .state-box {
+        .state-box {
         display: inline-block;
         margin: 8px;
         padding: 10px 16px;
@@ -35,20 +35,20 @@
         color: #0f172a;
         }
 
-        .lesson-inner .transition-arrow {
+        .transition-arrow {
         display: inline-block;
         margin: 0 6px;
         color: #4b5563;
         font-weight: 600;
         }
 
-        .lesson-inner .fsm-description {
+        .fsm-description {
         font-size: 0.95rem;
         line-height: 1.5;
         margin-bottom: 8px;
         }
 
-        .lesson-inner .code-example {
+        .code-example {
         margin-top: 10px;
         padding: 10px;
         background: #ffffff;
@@ -61,6 +61,22 @@
     </style>
 </head>
 <body>
+
+    <!-- 2. Create a container with the class "mermaid" -->
+    <!-- Note: The plain text inside is what generates the diagram! -->
+
+    <pre class="mermaid">
+        stateDiagram-v2
+            [*] --> LoggedOut : App Start
+            LoggedOut --> EnteredCredentials : click "Login"
+            EnteredCredentials --> LoggedOut : invalid password
+            EnteredCredentials --> LoggedIn : valid password
+            LoggedIn --> LoggedOut : click "Logout"
+            
+            %% Custom styling example
+            style LoggedIn fill:#d4edda,stroke:#28a745,stroke-width:2px;
+            style LoggedOut fill:#f8d7da,stroke:#dc3545,stroke-width:2px;
+    </pre>
 
     <h3>Real-world example: login flow</h3>
     <div class="fsm-container">
@@ -80,22 +96,6 @@
             </div>
         </div>
     </div>
-
-    <!-- 2. Create a container with the class "mermaid" -->
-    <!-- Note: The plain text inside is what generates the diagram! --
-
-    <pre class="mermaid">
-        stateDiagram-v2
-            [*] --> LoggedOut : App Start
-            LoggedOut --> EnteredCredentials : click "Login"
-            EnteredCredentials --> LoggedOut : invalid password
-            EnteredCredentials --> LoggedIn : valid password
-            LoggedIn --> LoggedOut : click "Logout"
-            
-            %% Custom styling example
-            style LoggedIn fill:#d4edda,stroke:#28a745,stroke-width:2px;
-            style LoggedOut fill:#f8d7da,stroke:#dc3545,stroke-width:2px;
-    </pre>
 
 </body>
 </html>
