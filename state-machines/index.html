@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>State Machine Widget</title>
+    <!-- 1. Include the Mermaid JS Library -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        // Initialize it to start looking for diagrams on the page
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+</head>
+<body>
+
+    <h1>Lesson Model: Authentication State Machine</h1>
+
+    <!-- 2. Create a container with the class "mermaid" -->
+    <!-- Note: The plain text inside is what generates the diagram! -->
+    <pre class="mermaid">
+        stateDiagram-v2
+            [*] --> LoggedOut : App Start
+            LoggedOut --> EnteredCredentials : click "Login"
+            EnteredCredentials --> LoggedOut : invalid password
+            EnteredCredentials --> LoggedIn : valid password
+            LoggedIn --> LoggedOut : click "Logout"
+            
+            %% Custom styling example
+            style LoggedIn fill:#d4edda,stroke:#28a745,stroke-width:2px;
+            style LoggedOut fill:#f8d7da,stroke:#dc3545,stroke-width:2px;
+    </pre>
+
+</body>
+</html>

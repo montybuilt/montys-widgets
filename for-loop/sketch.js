@@ -346,10 +346,10 @@ function drawObjectExplorer(x, y, w, h) {
 
 	if (!isTraceReady || steps.length === 0 || !hasStarted) return;
 
-	const step = steps[currentStepIndex];
-	const overrides = getLoopHeaderOverrides(currentStepIndex);
-	const variables = buildScopeList(step.locals, step.globals, "locals", overrides);
-	const rows = variables.map((item) => ({ type: "item", scope: "locals", key: item.key, value: item.value }));
+	const displayMap = getDisplayMapForStep(currentStepIndex);
+	const rows = Object.keys(displayMap)
+		.sort((a, b) => a.localeCompare(b))
+		.map((key) => ({ type: "item", scope: "locals", key, value: displayMap[key] }));
 	updateValueHighlights();
 
 	const visibleRows = rows.slice(0, maxRows);
