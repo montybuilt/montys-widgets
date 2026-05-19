@@ -3,34 +3,41 @@
 <head>
 <meta charset="utf-8">
 <title>9th Grade Turing Machine Lesson: Bit Flipper</title>
-<!-- We pull Morphett's exact style and engine sheets directly -->
+<!-- Pull Morphett's exact stylesheet to render the tape blocks, head arrow, and highlights -->
 <link rel="stylesheet" href="https://morphett.info/turing/turing.css" type="text/css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://morphett.info/turing/turing.js"></script>
 <style>
-    body { font-family: sans-serif; margin: 20px; background: #f9f9f9; }
-    .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
-    h1 { color: #333; margin-top: 0; }
-    .instructions { background: #eef6ff; padding: 15px; border-left: 4px solid #3182ce; margin-bottom: 20px; border-radius: 0 4px 4px 0; }
+    body { font-family: sans-serif; margin: 20px; background: #f4f6f8; }
+    .container { max-width: 950px; margin: 0 auto; background: white; padding: 25px; border: 1px solid #e1e4e8; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    h1 { color: #2d3748; margin-top: 0; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
+    .instructions { background: #ebf8ff; padding: 15px; border-left: 4px solid #3182ce; margin-bottom: 25px; border-radius: 0 4px 4px 0; color: #2b6cb0; }
+    /* Ensure the program text container looks clean and matches the layout */
+    #program { font-family: monospace; font-size: 14px; background: #fafafa; border: 1px solid #cbd5e0; padding: 10px; border-radius: 4px; }
 </style>
 </head>
 
 <body>
 <div class="container">
     <h1>Activity: The Binary Bit-Flipper</h1>
+    
     <div class="instructions">
         <strong>How to run this machine:</strong>
-        <ol>
-            <li>Look at the **Initial Input** box below. It already has `1001001` loaded for you.</li>
-            <li>Click the **Reset** button to load it onto the tape.</li>
-            <li>Use the **Step** button to watch the machine read and flip each bit one by one!</li>
+        <ol style="margin-top: 5px; margin-bottom: 0; padding-left: 20px;">
+            <li>Look at the **Initial Input** box below. It already has `1001001` set for you.</li>
+            <li>Click the **Reset** button to generate the live tape display.</li>
+            <li>Click **Step** to manually advance the head or **Run** to let it process automatically!</li>
         </ol>
     </div>
 
-    <!-- This is Anthony Morphett's exact simulator layout structure -->
+    <!-- MAIN SIMULATOR INFRASTRUCTURE -->
     <div id="turingmachine">
-        <div id="tapecontainer">
-            <div id="tape"></div>
+
+        <!-- This wrapper is critical; the JS targets these exact IDs to build the physical tape and the arrow -->
+        <div id="tapebackground">
+            <div id="tapecontainer">
+                <div id="tape"></div>
+            </div>
         </div>
         
         <div id="controls">
@@ -41,17 +48,16 @@
             <span id="speedcontainer">Speed: <input type="range" id="speedrange" min="1" max="100" value="50"></span>
         </div>
 
-        <div id="inputcontainer">
-            Initial Input: <input type="text" id="initialinput" value="1001001">
+        <div id="inputcontainer" style="margin: 15px 0;">
+            <strong>Initial Input:</strong> <input type="text" id="initialinput" value="1001001" style="padding: 4px; font-size: 14px; width: 200px;">
         </div>
 
-        <div id="mainwindows">
-            <div id="programwindow">
-                <div class="windowlabel">Transition Table (Your Code)</div>
-                <!-- We inject your custom bit-flipper code right here as the default text -->
-                <textarea id="program" rows="20" cols="40" spellcheck="false">
+        <div id="mainwindows" style="display: flex; gap: 20px;">
+            <div id="programwindow" style="flex: 1;">
+                <div class="windowlabel" style="font-weight: bold; margin-bottom: 5px;">Transition Table (Your Code)</div>
+                <textarea id="program" rows="18" cols="45" spellcheck="false">
 ; This program is a bit-flipper
-; Input: a string of 0's and 1's, eg '1001001'
+; Input: a string of 0's and 1's
 
 ; Machine starts in state 0.
 
@@ -65,13 +71,14 @@
                 </textarea>
             </div>
             
-            <div id="statewindow">
-                <div class="windowlabel">Machine State</div>
-                <div id="statetext">Current State: <span id="currentstate">0</span></div>
-                <div id="steptext">Steps taken: <span id="stepcount">0</span></div>
-                <div id="message"></div>
+            <div id="statewindow" style="width: 250px; background: #f7fafc; padding: 15px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                <div class="windowlabel" style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Machine Status</div>
+                <div id="statetext" style="margin-bottom: 8px;">Current State: <span id="currentstate" style="font-family: monospace; font-weight: bold;">0</span></div>
+                <div id="steptext" style="margin-bottom: 8px;">Steps taken: <span id="stepcount" style="font-weight: bold;">0</span></div>
+                <div id="message" style="margin-top: 15px; font-weight: bold; color: #e53e3e;"></div>
             </div>
         </div>
+
     </div>
 </div>
 </body>
