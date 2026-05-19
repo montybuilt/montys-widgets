@@ -10,16 +10,17 @@
 	overflow: hidden;
 	font-size: 15px;
 	font-family: monospace;
-/*	width: 100%;*/
+	width: 100%;
 }
 
 #Source {
 	background-color: transparent;
 	display: inline;
-	width: 800px;
-	min-width: 600px;
-	height: 400px;
-	min-height: 250px;
+	width: 100%;
+	min-width: 0;
+	height: 40vh;
+	min-height: 220px;
+	max-height: 60vh;
 /*	margin-left: 46px; */
 	font-family: monospace;
 	font-size: 15px;
