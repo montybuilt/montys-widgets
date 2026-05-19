@@ -2,60 +2,53 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>9th Grade Turing Machine Lesson: Bit Flipper</title>
-<!-- Pull Morphett's exact stylesheet to render the tape blocks, head arrow, and highlights -->
+<title>Turing Machine Simulator</title>
+<!-- Absolute links to ensure GitHub Pages pulls the engines cleanly -->
 <link rel="stylesheet" href="https://morphett.info/turing/turing.css" type="text/css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://morphett.info/turing/turing.js"></script>
-<style>
-    body { font-family: sans-serif; margin: 20px; background: #f4f6f8; }
-    .container { max-width: 950px; margin: 0 auto; background: white; padding: 25px; border: 1px solid #e1e4e8; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    h1 { color: #2d3748; margin-top: 0; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
-    .instructions { background: #ebf8ff; padding: 15px; border-left: 4px solid #3182ce; margin-bottom: 25px; border-radius: 0 4px 4px 0; color: #2b6cb0; }
-    /* Ensure the program text container looks clean and matches the layout */
-    #program { font-family: monospace; font-size: 14px; background: #fafafa; border: 1px solid #cbd5e0; padding: 10px; border-radius: 4px; }
-</style>
 </head>
 
 <body>
-<div class="container">
-    <h1>Activity: The Binary Bit-Flipper</h1>
-    
-    <div class="instructions">
-        <strong>How to run this machine:</strong>
-        <ol style="margin-top: 5px; margin-bottom: 0; padding-left: 20px;">
-            <li>Look at the **Initial Input** box below. It already has `1001001` set for you.</li>
-            <li>Click the **Reset** button to generate the live tape display.</li>
-            <li>Click **Step** to manually advance the head or **Run** to let it process automatically!</li>
-        </ol>
-    </div>
 
-    <!-- MAIN SIMULATOR INFRASTRUCTURE -->
-    <div id="turingmachine">
+<div id="header">
+<h1>Turing Machine Simulator</h1>
+</div>
 
-        <!-- This wrapper is critical; the JS targets these exact IDs to build the physical tape and the arrow -->
-        <div id="tapebackground">
-            <div id="tapecontainer">
-                <div id="tape"></div>
-            </div>
-        </div>
-        
-        <div id="controls">
-            <input type="button" id="stepbtn" value="Step">
-            <input type="button" id="runbtn" value="Run">
-            <input type="button" id="stopbtn" value="Pause">
-            <input type="button" id="resetbtn" value="Reset">
-            <span id="speedcontainer">Speed: <input type="range" id="speedrange" min="1" max="100" value="50"></span>
-        </div>
+<div id="turingmachine">
 
-        <div id="inputcontainer" style="margin: 15px 0;">
-            <strong>Initial Input:</strong> <input type="text" id="initialinput" value="1001001" style="padding: 4px; font-size: 14px; width: 200px;">
-        </div>
+<div id="tapebackground">
+<div id="tapecontainer">
+<div id="pointer"></div>
+<div id="tape"></div>
+</div>
+</div>
 
-        <div id="mainwindows" style="display: flex; gap: 20px;">
-            <div id="programwindow" style="flex: 1;">
-                <div class="windowlabel" style="font-weight: bold; margin-bottom: 5px;">Transition Table (Your Code)</div>
-                <textarea id="program" rows="18" cols="45" spellcheck="false">
+<div id="controls">
+<input type="button" id="stepbtn" value="Step" title="Run one program step">
+<input type="button" id="runbtn" value="Run" title="Run the program until it halts">
+<input type="button" id="stopbtn" value="Pause" title="Pause the program" disabled="disabled">
+<input type="button" id="resetbtn" value="Reset" title="Reset the machine to initial state">
+<span id="speedcontainer">
+Speed:
+<input type="range" id="speedrange" min="1" max="100" value="70" title="Execution speed">
+</span>
+<span id="legacybuttons" style="display:none">
+<input type="button" id="fwdbtn" value="&gt;">
+<input type="button" id="ffbtn" value="&gt;&gt;">
+</span>
+</div>
+
+<div id="inputcontainer">
+Initial input: <input type="text" id="initialinput" value="1001001" title="Initial tape contents">
+</div>
+
+<div id="mainwindows">
+
+<div id="programwindow">
+<div class="windowlabel">Transition Table</div>
+<!-- Injected your custom bit-flipper script right here as default -->
+<textarea id="program" rows="20" cols="45" spellcheck="false" title="Enter your transition table rules here">
 ; This program is a bit-flipper
 ; Input: a string of 0's and 1's
 
@@ -68,18 +61,23 @@
 ; State 1
 1 0 1 r 1
 1 1 0 r 0
-                </textarea>
-            </div>
-            
-            <div id="statewindow" style="width: 250px; background: #f7fafc; padding: 15px; border: 1px solid #e2e8f0; border-radius: 4px;">
-                <div class="windowlabel" style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Machine Status</div>
-                <div id="statetext" style="margin-bottom: 8px;">Current State: <span id="currentstate" style="font-family: monospace; font-weight: bold;">0</span></div>
-                <div id="steptext" style="margin-bottom: 8px;">Steps taken: <span id="stepcount" style="font-weight: bold;">0</span></div>
-                <div id="message" style="margin-top: 15px; font-weight: bold; color: #e53e3e;"></div>
-            </div>
-        </div>
-
-    </div>
+</textarea>
 </div>
+
+<div id="statewindow">
+<div class="windowlabel">Machine State</div>
+<div id="statetext">Current state: <span id="currentstate">0</span></div>
+<div id="steptext">Steps taken: <span id="stepcount">0</span></div>
+<div id="message"></div>
+</div>
+
+</div>
+
+</div>
+
+<div id="about">
+<p>This is Anthony Morphett's Turing Machine simulator engine, configured for classroom use.</p>
+</div>
+
 </body>
 </html>
