@@ -10,6 +10,64 @@
         mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
     </script>
     <style>
+        .comparison-layout {
+        display: flex;
+        gap: 16px;
+        align-items: stretch;
+        margin-top: 12px;
+        }
+
+        .comparison-panel {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 14px;
+        background: #ffffff;
+        border: 1px solid #dbe2ea;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+        }
+
+        .comparison-panel h3 {
+        margin-top: 0;
+        }
+
+        .diagram-panel {
+        flex: 0.8 1 0;
+        display: flex;
+        justify-content: flex-start;
+        align-items: stretch;
+        overflow-x: auto;
+        padding: 12px;
+        }
+
+        .diagram-panel .panel-body {
+        justify-content: center;
+        }
+
+        .diagram-panel pre.mermaid {
+        margin: 0 auto;
+        max-width: 100%;
+        }
+
+        .comparison-layout > .comparison-panel:not(.diagram-panel) {
+        flex: 1.2 1 0;
+        }
+
+        .panel-title {
+        margin: 0 0 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #111827;
+        }
+
+        .panel-body {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        }
+
         .fsm-container {
         margin: 14px 0 10px;
         padding: 14px;
@@ -58,14 +116,23 @@
         font-size: 0.9rem;
         overflow-x: auto;
         }
+
+        @media (max-width: 900px) {
+        .comparison-layout {
+            flex-direction: column;
+        }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 2. Create a container with the class "mermaid" -->
-    <!-- Note: The plain text inside is what generates the diagram! -->
-
-    <pre class="mermaid">
+    <div class="comparison-layout">
+        <div class="comparison-panel diagram-panel">
+            <h3 class="panel-title">Login Logic Flow</h3>
+            <div class="panel-body">
+                <!-- 2. Create a container with the class "mermaid" -->
+                <!-- Note: The plain text inside is what generates the diagram! -->
+                <pre class="mermaid">
         stateDiagram-v2
             [*] --> LoggedOut : App Start
             LoggedOut --> EnteredCredentials : click "Login"
@@ -76,26 +143,30 @@
             %% Custom styling example
             style LoggedIn fill:#d4edda,stroke:#28a745,stroke-width:2px;
             style LoggedOut fill:#f8d7da,stroke:#dc3545,stroke-width:2px;
-    </pre>
-
-    <h3>Real-world example: login flow</h3>
-    <div class="fsm-container">
-        <div class="fsm-description">
-            <strong>State transitions:</strong>
-            <div style="margin-top: 10px; font-family: Consolas, Monaco, 'Courier New', monospace; font-size: 0.95rem; line-height: 1.8; color: #111827;">
-            <div><strong>STATE: Logged Out</strong> → click "Login" → <strong>STATE: Entered Credentials</strong></div>
-            <div style="margin-left: 20px; color: #4b5563;">
-                <div>↓ (submit valid password) ↓</div>
-                <div><strong>STATE: Logged In</strong></div>
-            </div>
-            <div style="margin-left: 20px; color: #ef4444;">
-                <div>↓ (invalid password) ↓</div>
-                <div><strong>STATE: Logged Out</strong></div>
-            </div>
-            <div style="margin-top: 8px;"><strong>STATE: Logged In</strong> → click "Logout" → <strong>STATE: Logged Out</strong></div>
+                </pre>
             </div>
         </div>
-    </div>
 
+        <div class="comparison-panel">
+            <h3 class="panel-title">Login Pseudocode</h3>
+            <div class="panel-body">
+                <div class="fsm-container" style="margin: 0; width: 100%;">
+                    <div class="fsm-description">
+                        <strong>State transitions:</strong>
+                        <div style="margin-top: 10px; font-family: Consolas, Monaco, 'Courier New', monospace; font-size: 0.95rem; line-height: 1.8; color: #111827;">
+                        <div><strong>STATE: Logged Out</strong> → click "Login" → <strong>STATE: Entered Credentials</strong></div>
+                        <div style="margin-left: 20px; color: #4b5563;">
+                            <div>↓ (submit valid password) ↓</div>
+                            <div><strong>STATE: Logged In</strong></div>
+                        </div>
+                        <div style="margin-left: 20px; color: #ef4444;">
+                            <div>↓ (invalid password) ↓</div>
+                            <div><strong>STATE: Logged Out</strong></div>
+                        </div>
+                        <div style="margin-top: 8px;"><strong>STATE: Logged In</strong> → click "Logout" → <strong>STATE: Logged Out</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 </body>
 </html>
