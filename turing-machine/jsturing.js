@@ -813,7 +813,33 @@ function LoadSampleProgram( zName, zFriendlyName, bInitial )
 	var zFileName = "machines/" + zName + ".txt";
 	
 	StopTimer();   /* Stop machine, if currently running */
-	
+	/* If a local JS map of sample machines exists, load from it to avoid ajax/file:// issues */
+	if( window.SAMPLE_MACHINES && window.SAMPLE_MACHINES[zName] ) {
+		var sData = window.SAMPLE_MACHINES[zName];
+		/* Load the default initial tape, if any */
+		var oRegExp = new RegExp( ";.*\\$INITIAL_TAPE:? *(.+)$" );
+		var aRegexpResult = oRegExp.exec( sData );
+		if( aRegexpResult != null && aRegexpResult.length >= 2 ) {
+			$("#InitialInput")[0].value = aRegexpResult[1];
+			sData = sData.replace( /^.*\$INITIAL_TAPE:.*$/m, "" );
+		}
+		$("#InitialState")[0].value = "0";
+		nVariant = 0;
+		$("#MachineVariant").val(0);
+		VariantChanged(false);
+		/* Load the program */
+		oTextarea.value = sData;
+		TextareaChanged();
+		Compile();
+		/* Reset the machine  */
+		Reset();
+		if( !bInitial ) SetStatusMessage( zFriendlyName + " successfully loaded", 1 );
+		$("#LoadMenu").slideUp();
+		ClearSaveMessage();
+		return;
+	}
+
+	/* Fallback to ajax load (used when SAMPLE_MACHINES not present) */
 	$.ajax({
 		url: zFileName,
 		type: "GET",
@@ -847,7 +873,7 @@ function LoadSampleProgram( zName, zFriendlyName, bInitial )
 			SetStatusMessage( "Error loading " + zFriendlyName + " :(", 2 );
 		}
 	});
-	
+
 	$("#LoadMenu").slideUp();
 	ClearSaveMessage();
 }
@@ -971,7 +997,7 @@ function OnLoad()
 		LoadFromCloud( window.location.search.substring( 1 ) );
 		window.history.replaceState( null, "", window.location.pathname );  /* Remove query string from URL */
 	} else {
-		LoadSampleProgram( 'palindrome', 'Default program', true );
+		LoadSampleProgram( 'bitflipper', 'Bit flipper', true );
 		SetStatusMessage( 'Load or write a Turing machine program and click Run!' );
 	}
 }

@@ -1,0 +1,8 @@
+; Bit flipper - flips every 0 to 1 and 1 to 0 on the tape
+; $INITIAL_TAPE: 10110
+
+; Simple program: stay in state 0, flip bits and move right; halt on blank.
+
+0 0 1 r 0
+0 1 0 r 0
+0 _ _ * halt-accept
