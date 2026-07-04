@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Turing Machine vs. Modern Computer Diagram</title>
+    <!-- Load Mermaid.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            logLevel: 'error'
+        });
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 15px;
+            background-color: #f8fafc;
+        }
+        .diagram-container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        h3 {
+            margin-top: 0;
+            text-align: center;
+            color: #1e293b;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="diagram-container">
+    <h3>Mapping the Turing Machine to Your Computer</h3>
+
+    <div class="mermaid">
+        graph LR
+            %% Left Column: The Abstract Turing Concepts
+            subgraph TM ["THE TURING MODEL (Theory)"]
+                style TM fill:#f8fafc,stroke:#cbd5e1,stroke-width:2px
+                Tape["<b>The Infinite Tape</b><br>Stores data symbols and rules"]
+                Head["<b>The Read/Write Head</b><br>Moves around to access data"]
+                Rules["<b>The State & Rule Table</b><br>The instructions for what to do"]
+            end
+
+            %% Right Column: Modern Equivalent Hardware
+            subgraph MC ["YOUR COMPUTER (Hardware)"]
+                style MC fill:#f8fafc,stroke:#cbd5e1,stroke-width:2px
+                RAM["<b>RAM / Storage</b><br>Holds the active data and apps"]
+                Wires["<b>The System Bus</b><br>Wires that fetch and move data"]
+                CPU["<b>The CPU (Processor)</b><br>Executes logic and switch states"]
+            end
+
+            %% Software Column: stacked layers (Programs -> OS -> Firmware) on the right
+            subgraph SW ["SOFTWARE (Stacked)"]
+                direction TB
+                Apps["<b>Programs / Runtimes</b><br>Python, Browsers, Services"]
+                OSLayer["<b>OS / Kernel</b><br>Manages resources & processes"]
+                Firmware["<b>Firmware</b><br>Embedded device controllers"]
+            end
+
+            %% Center Mapping Arrows (Theory -> Hardware)
+            Tape --> RAM
+            Head --> Wires
+            Rules --> CPU
+
+            %% Software -> Hardware (software controls/uses hardware items)
+            Apps --> RAM
+            OSLayer --> RAM
+            Firmware --> RAM
+
+            Firmware --> Wires
+
+            Apps --> CPU
+            OSLayer --> CPU
+            Firmware --> CPU
+
+            %% OS relations: OS points at Firmware and Programs
+            OSLayer --> Firmware
+            OSLayer --> Apps
+
+            %% Adjust node text styling
+            classDef default fill:#ffffff,stroke:#94a3b8,stroke-width:1px,font-size:13px;
+            class Tape,Head,Rules fill:#eff6ff,stroke:#3b82f6,stroke-width:1.5px;
+            class RAM,Wires,CPU fill:#f0fdf4,stroke:#22c55e,stroke-width:1.5px;
+            class Firmware,OSLayer,Apps fill:#fff1ff,stroke:#7c3aed,stroke-width:1.5px;
+    </div>
+</div>
+
+</body>
+</html>

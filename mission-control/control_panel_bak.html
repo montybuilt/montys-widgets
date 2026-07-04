@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Control</title>
+    <!-- Link to CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+    body {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #111;
+        color: #FF9900; /* Retro orange */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; /* Full height */
+        margin: 0; /* Remove default margin */
+        padding: 0; /* Ensure there's no extra padding */
+    }
+    
+    .top-container {
+        display: flex;
+        justify-content: flex-start; /* Ensures containers are left-aligned */
+        gap: 5px; /* Adds a 5px gap between the containers */
+        width: 90%; /* Allows for responsiveness */
+        margin: 20px auto; /* Centers the top container */
+    }
+    
+    .group {
+        flex: 1 1 200px; /* Allows the groups to resize while keeping a minimum width of 200px */
+        background: #222;
+        border: 2px solid #444;
+        border-radius: 5px;
+        padding: 5px;
+        text-align: center;
+        box-sizing: border-box;
+        min-width: 100px; /* Prevents the group from becoming too small */
+    }
+    
+    .switch-container-horizontal, .switch-container-vertical {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+    
+    .switch-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1 10px;
+    }
+    
+    .switch-container-horizontal {
+        justify-content: space-around;
+    }
+    
+    .switch {
+        width: 20px;
+        height: 40px;
+        background: #444;
+        border: 2px solid #000;
+        border-radius: 10px;
+        position: relative;
+        cursor: pointer;
+    }
+    
+    .switch::before {
+        content: '';
+        width: 18px;
+        height: 18px;
+        background: #f00;
+        border: 2px solid #000;
+        border-radius: 50%;
+        position: absolute;
+        left: 0;
+        top: 20px;
+        right: 0;
+        margin: auto;
+        transition: 0.2s;
+    }
+    
+    .switch.active::before {
+        top: 2px;
+        background: #0f0;
+    }
+    
+    .indicator {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #500;
+        border: 1px solid #222;
+        box-shadow: 0 0 5px #500;
+    }
+    
+    .indicator.on {
+        background: #0f0;
+        box-shadow: 0 0 5px #0f0;
+    }
+    
+    .controls-container {
+        display: flex;
+        gap: 5px; /* Adds a 5px gap between each control group */
+        flex-wrap: nowrap; /* Allows control groups to wrap onto the next line if necessary */
+        justify-content: space-around;
+        align-items: center;
+        width: 90%;
+    }
+    
+    .function-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 20%;
+    }
+    
+    .gear-icon {
+        display: block;
+        text-align: center;
+        margin-bottom: 10px;
+        cursor: pointer;
+        font-size: 1.5em;
+        color: #FF9900 !important;
+    }
+    
+    .gear-icon:hover {
+        color: #FFA500 !important;
+    }
+
+    .function-btn {
+        flex: 1;
+        padding: 10px;
+        font-size: 1em;
+        background: #444;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+     .function-btn:hover {
+         background: #FF9900;
+         color: #111;
+     }
+     
+     .function-btn:active {
+         transform: translateY(2px); /* Adds a slight press effect */
+     }
+     
+    .parameter-input {
+        flex: 1;
+        margin-top: 5px;
+        padding: 5px;
+        font-size: 1em;
+        background: #222;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .parameter-input::placeholder {
+        color: #888;
+    }
+
+    .main-container {
+        display: flex;
+        justify-content: space-around;
+        width: 90%;
+        margin: 20px auto; /* Centers the containers and applies equal margin on all sides */
+    }
+    
+    .screen {
+        background: #000;
+        border: 2px solid #FF9900;
+        color: #FF9900;
+        text-align: center;
+        padding: 10px;
+        border-radius: 3px;
+        font-size: 1.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45%;
+    }
+    
+    .code-editor-container {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 45%;
+        gap: 5px;
+        padding: 0px;
+    }
+    
+    #code-editor {
+        flex-shrink: 0;
+        background: #111;
+        color: #FF9900;
+        border: 2px solid #555;
+        border-radius: 3px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1em;
+        resize: none;
+    }
+    
+    .console-window {
+        height: 100px;
+        background: #111;
+        color: #FF9900;
+        border: 2px solid #555;
+        border-radius: 3px;
+        padding: 0px;
+        overflow: auto;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    
+    .CodeMirror {
+        font-size: 15px;
+        line-height: 1;
+    }
+    
+    #submit-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 1em;
+        background: #444;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    #submit-btn:hover {
+        background: #FF9900;
+        color: #111;
+    }
+    
+    #submit-btn:active {
+        transform: translateY(2px); /* Adds a slight press effect */
+    }
+    
+    /* Modal Container */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1000; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 50%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0); /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    }
+    
+    /* Modal Content */
+    .modal-content {
+        background-color: #111;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+    }
+    
+    /* Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .mission-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 20%;
+        background: #222;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .mission-label {
+        text-align: center;
+        margin-bottom: 8px;
+        color: #FF9900;
+    }
+
+    .mission-select {
+        padding: 6px;
+        background: #111;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        font-family: 'Courier New', Courier, monospace;
+        margin-bottom: 8px;
+    }
+
+    .mission-btn {
+        padding: 10px;
+        font-size: 1em;
+        background: #444;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .mission-btn:hover {
+        background: #FF9900;
+        color: #111;
+    }
+
+
+    </style>
+</head>
+<body>
+    <div class="top-container">
+        <div class="group">
+            <h3>Engines</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-1"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-2"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-3"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch"id="switch-4"></div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h3>Thrusters</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-5"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-6"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-7"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch" id="switch-8"></div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h3>Stabilizers</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-9"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-10"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-11"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch" id="switch-12"></div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h3>Diagnostics</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-13"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-14"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-15"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch" id="switch-16"></div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h3>Life Support</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-17"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-18"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-19"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch" id="switch-20"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="controls-container">
+        <div class="mission-group">
+            <select id="mission-select" class="mission-select"></select>
+            <button id="load-mission-btn" class="mission-btn">Load Mission</button>
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-1"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-1" class="function-btn">F1</button>
+            <input type="text" id="arg-1" class="parameter-input" placeholder="Enter param" />
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-2"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-2" class="function-btn">F2</button>
+            <input type="text" id="arg-2" class="parameter-input" placeholder="Enter param" />
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-3"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-3" class="function-btn">F3</button>
+            <input type="text" id="arg-3" class="parameter-input" placeholder="Enter param" />
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-4"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-4" class="function-btn">F4</button>
+            <input type="text" id="arg-4" class="parameter-input" placeholder="Enter param" />
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-5"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-5" class="function-btn">F5</button>
+            <input type="text" id="arg-5" class="parameter-input" placeholder="Enter param" />
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="code-editor-container">
+            <textarea id="code-editor" placeholder="Write your code here..."></textarea>
+            <div id="console-window" class="console-window"></div>
+        </div>
+        <div class="screen">
+            Mission Control... Awaiting Input
+        </div>
+    </div>
+    
+    <button id="submit-btn">Activate Systems</button>
+    
+    <!-- Modal Structure -->
+    <div id="codeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Edit Code for Button</h3>
+            <textarea id="code-editor-modal"></textarea>
+            <button id="save-code" class="function-btn">Save Code</button>
+        </div>
+    </div>
+
+
+    
+    <!-- Link to JS libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+    
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+
+<script>
+/* =======================
+   GLOBAL STATE
+======================= */
+
+let pyodideReady = false;
+let pyodide;
+
+/* =======================
+   STORYBOARD
+======================= */
+
+const storyboard = {
+    "sandbox": {
+        "title": "Sandbox Mode",
+        "seed_allsys": 0,
+        "sandbox": true,
+        "prompt": "SANDBOX MODE — Use the terminal and function buttons to explore how allsys controls the spacecraft systems."
+    },
+    "training_day_1": {
+        "title": "Training Day 1",
+        "seed_allsys": 0,
+
+        "task_1": {
+            "prompt": "TRAINING DAY 1 — Terminal Systems Check. Confirm your console link is live. Leave all systems OFF. Resulting state: all systems OFF (allsys = 0). Enter as a DECIMAL integer literal.",
+            "allsys": 0,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_2": {
+            "prompt": "Life Support warmup. From current state, turn ON Life Support Unit 1 ONLY. All other units must remain OFF. Resulting state: LS1 ON (allsys = 1). Enter using a BINARY literal (must contain 0b).",
+            "allsys": 1,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_3": {
+            "prompt": "Life Support full power. From current state, turn ON Life Support Units 1–4. All other systems remain OFF. Resulting state: all Life Support ON (allsys = 15). Enter using a BINARY literal (0b...).",
+            "allsys": 15,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_4": {
+            "prompt": "Life Support trim. From current state, turn OFF Life Support Unit 2 AND Unit 4 (leaving Units 1 and 3 ON). All other systems remain OFF. Resulting state: LS1+LS3 ON (allsys = 10). Enter using a BINARY literal (0b...).",
+            "allsys": 10,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_5": {
+            "prompt": "Diagnostics bring-up. From current state, turn ON Diagnostics Unit 1 ONLY. Keep Life Support exactly as-is. Resulting state: Diagnostics1 ON + LS1&LS3 ON (allsys = 138). Enter as a DECIMAL integer literal.",
+            "allsys": 138,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_6": {
+            "prompt": "Diagnostics expand. From current state, turn ON Diagnostics Unit 4 ALSO (so Diagnostics 1 and 4 are ON). Keep everything else unchanged. Resulting state: (allsys = 154). Enter using a BINARY literal (0b...).",
+            "allsys": 154,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_7": {
+            "prompt": "Stabilizers partial. From current state, turn ON Stabilizers Unit 2 AND Unit 3. Keep Diagnostics and Life Support unchanged. Resulting state: (allsys = 1690). Enter as a DECIMAL integer literal.",
+            "allsys": 1690,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_8": {
+            "prompt": "Thrusters full. From current state, turn ON Thrusters Units 1–4 (all thrusters). Leave Engines OFF. Keep Stabilizers/Diagnostics/Life Support unchanged. Resulting state: (allsys = 63130). Enter using a BINARY literal (0b...).",
+            "allsys": 63130,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_9": {
+            "prompt": "Engines ignition. From current state, turn ON Engines Unit 1 ONLY. Keep every other unit unchanged. Resulting state: (allsys = 587418). Enter as a DECIMAL integer literal.",
+            "allsys": 587418,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_10": {
+            "prompt": "Engines boost. From current state, turn ON Engines Unit 3 ALSO (so Engines 1 and 3 are ON). Keep all other systems unchanged. Resulting state: (allsys = 718490). Enter using a BINARY literal (0b...).",
+            "allsys": 718490,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_11": {
+            "prompt": "Thruster cutback. From current state, turn OFF Thrusters Unit 2 AND Unit 4 (leaving Thrusters 1 and 3 ON). Keep all other systems unchanged. Resulting state: (allsys = 698010). Enter as a DECIMAL integer literal.",
+            "allsys": 698010,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_12": {
+            "prompt": "Diagnostics blackout. From current state, turn OFF ALL Diagnostics units (1–4). Keep Engines/Thrusters/Stabilizers/Life Support unchanged. Resulting state: (allsys = 697866). Enter using a BINARY literal (0b...).",
+            "allsys": 697866,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_13": {
+            "prompt": "Life Support restore. From current state, turn ON ALL Life Support units (1–4). Keep all other systems unchanged. Resulting state: (allsys = 697871). Enter as a DECIMAL integer literal.",
+            "allsys": 697871,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_14": {
+            "prompt": "Stabilizers full. From current state, turn ON ALL Stabilizers units (1–4). Keep Engines/Thrusters/Life Support unchanged. Resulting state: (allsys = 700175). Enter using a BINARY literal (0b...).",
+            "allsys": 700175,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_15": {
+            "prompt": "Engines full. From current state, turn ON ALL Engines units (1–4). Keep all other systems unchanged. Resulting state: (allsys = 1027855). Enter as a DECIMAL integer literal.",
+            "allsys": 1027855,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_16": {
+            "prompt": "All systems GO. From current state, turn ON every unit on the board (all 20 switches ON). Resulting state: (allsys = 1048575). Enter using a BINARY literal (0b...).",
+            "allsys": 1048575,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_17": {
+            "prompt": "Emergency power-down. From current state, shut down ALL Engines and ALL Thrusters (top 8 switches OFF). Keep Stabilizers/Diagnostics/Life Support all ON. Resulting state: (allsys = 4095). Enter as a DECIMAL integer literal.",
+            "allsys": 4095,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_18": {
+            "prompt": "Diagnostics pattern test. From current state, set Diagnostics to: Unit 1 ON, Unit 2 OFF, Unit 3 OFF, Unit 4 ON (pattern 1001). Keep Stabilizers ON and Life Support ON; Engines/Thrusters OFF. Resulting state: (allsys = 3999). Enter using a BINARY literal (0b...).",
+            "allsys": 3999,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_19": {
+            "prompt": "Thruster relight. From current state, turn ON Thrusters Unit 1 AND Unit 2 ONLY (Units 3 and 4 OFF). Keep all other systems unchanged. Resulting state: (allsys = 53151). Enter as a DECIMAL integer literal.",
+            "allsys": 53151,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_20": {
+            "prompt": "Final mixed configuration. From current state, set EXACTLY this board state: Engines Units 2 and 4 ON; Thrusters Units 1 and 3 ON; Stabilizers Units 2 and 4 ON; Diagnostics Unit 3 ON only; Life Support Unit 1 ON only. Resulting state: (allsys = 369960). Enter using a BINARY literal (0b...).",
+            "allsys": 369960,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        }
+    },
+    "training_day_2": {
+        "title": "Training Day 2",
+        "seed_allsys": 0,
+
+        "task_1": {
+            "prompt": "TRAINING DAY 2 — Terminal only. Bring Life Support Unit 1 ONLINE. All other units must remain OFF. Enter using a DECIMAL literal.",
+            "allsys": 8,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_2": {
+            "prompt": "From current state, bring Life Support Units 3 and 4 ONLINE (LS1 must remain ON; LS2 must remain OFF). Enter using a BINARY literal.",
+            "allsys": 11,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_3": {
+            "prompt": "From current state, bring Diagnostics Unit 1 ONLINE. Do not change any other unit. Enter using a HEX literal.",
+            "allsys": 139,
+            "allsys_format": "0x",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_4": {
+            "prompt": "From current state, bring Stabilizers Unit 4 ONLINE. Do not change any other unit. Enter using an OCTAL literal.",
+            "allsys": 395,
+            "allsys_format": "0o",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_5": {
+            "prompt": "From current state, bring Thrusters Unit 2 ONLINE. Do not change any other unit. Enter using a DECIMAL literal.",
+            "allsys": 16779,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_6": {
+            "prompt": "From current state, bring Engines Unit 1 ONLINE. Do not change any other unit. Enter using a BINARY literal.",
+            "allsys": 541067,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_7": {
+            "prompt": "From current state, shut OFF Life Support Unit 3 only. Leave every other unit exactly as-is. Enter using a HEX literal.",
+            "allsys": 541065,
+            "allsys_format": "0x",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_8": {
+            "prompt": "From current state, bring Thrusters Unit 4 ONLINE (so Thrusters 2 and 4 are ON; Thrusters 1 and 3 are OFF). Do not change any other unit. Enter using an OCTAL literal.",
+            "allsys": 541161,
+            "allsys_format": "0o",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_9": {
+            "prompt": "From current state, bring Diagnostics Units 2 and 3 ONLINE (Diagnostics 1 must remain ON; Diagnostics 4 must remain OFF). Do not change any other unit. Enter using a DECIMAL literal.",
+            "allsys": 545257,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_10": {
+            "prompt": "Final check. From current state, shut OFF Engines Unit 1 only. Leave all other units unchanged. Enter using a BINARY literal.",
+            "allsys": 20969,
+            "allsys_format": "0b",
+            "param_format": "na",
+            "terminal_status": 1
+        }
+    }
+
+};
+
+/*const SEED_ALLSYS = storyboard.mission_1.seed_allsys ?? 0;
+let allsys = SEED_ALLSYS;
+sessionStorage.setItem("allsys", allsys);*/
+
+let allsys = 0;
+
+/* =======================
+    HELPER FUNCTIONS
+======================= */
+
+let currentMissionId = "sandbox";
+let missionKeys = [];
+let currentTaskIndex = 0;
+
+function getMission(missionId) {
+    return storyboard[missionId];
+}
+
+function isSandbox() {
+    return !!storyboard[currentMissionId]?.sandbox;
+}
+
+function loadMission(missionId) {
+    currentMissionId = missionId;
+    const mission = getMission(currentMissionId);
+
+    const seed = mission.seed_allsys ?? 0;
+    allsys = seed;
+    sessionStorage.setItem("allsys", allsys);
+    updateSwitchesFromAllsys(allsys);
+
+    if (mission.sandbox) {
+        missionKeys = [];
+        currentTaskIndex = 0;
+        updateCRT(mission.prompt ?? "SANDBOX MODE — Free Play");
+        return;
+    }
+
+    missionKeys = getTaskKeys(mission);
+    currentTaskIndex = 0;
+    updateCRT(currentTask().prompt);
+}
+
+function getTaskKeys(missionObj) {
+    return Object.keys(missionObj)
+        .filter(k => k.startsWith("task_"))
+        .sort((a, b) => {
+            const na = parseInt(a.split("_")[1], 10);
+            const nb = parseInt(b.split("_")[1], 10);
+            return na - nb;
+        });
+}
+
+function currentTask() {
+    const mission = getMission(currentMissionId);
+    return mission[missionKeys[currentTaskIndex]];
+}
+
+function updateCRT(text) {
+    document.querySelector(".screen").innerText = text;
+}
+
+function checkTaskCompletion() {
+    const task = currentTask();
+
+    if (allsys === task.allsys) {
+        currentTaskIndex++;
+        if (missionKeys[currentTaskIndex]) {
+            updateCRT(currentTask().prompt);
+        } else {
+            updateCRT("Mission complete. All systems nominal.");
+        }
+        return true;
+    }
+    return false;
+}
+
+/* =======================
+   PYODIDE INIT
+======================= */
+
+async function initPyodide() {
+    pyodide = await loadPyodide();
+    await pyodide.runPythonAsync(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+`);
+    pyodide.globals.set("allsys", allsys);
+    pyodideReady = true;
+}
+
+initPyodide();
+
+/* =======================
+   OUTPUT HANDLING
+======================= */
+
+function parsePythonOutput(stdout) {
+    stdout = stdout.trim();
+    try {
+        let obj = eval(`(${stdout})`);
+        if (obj && typeof obj === "object" && "allsys" in obj) {
+            return obj.allsys;
+        }
+    } catch {}
+    return null;
+}
+
+function displayOutput(output) {
+    const consoleDiv = document.getElementById("console-window");
+    consoleDiv.innerHTML = output.replace(/\n/g, "<br>");
+}
+
+/* =======================
+   PYTHON EXECUTION
+======================= */
+
+async function runPython(code) {
+    if (!pyodideReady) {
+        displayOutput("Python runtime loading...");
+        return;
+    }
+
+    const sandbox = isSandbox();
+
+    // In sandbox, allow state commits freely (no format enforcement)
+    const task = sandbox ? { allsys_format: "na", terminal_status: 1 } : currentTask();
+
+    pyodide.globals.set("allsys", allsys);
+
+    // FORMAT CHECK (terminal) — only meaningful when NOT sandbox
+    let formatOK = true;
+    if (!sandbox) {
+        if (task.allsys_format === "0b") {
+            formatOK = code.includes("0b") || code.includes("0B");
+        } else if (task.allsys_format === "0x") {
+            formatOK = code.includes("0x") || code.includes("0X");
+        } else if (task.allsys_format === "0o") {
+            formatOK = code.includes("0o") || code.includes("0O");
+        }
+    }
+
+    try {
+        await pyodide.runPythonAsync(code);
+
+        const stdout = pyodide.runPython(`import sys; sys.stdout.getvalue()`);
+        pyodide.runPython(`import sys; sys.stdout.truncate(0); sys.stdout.seek(0)`);
+
+        const stdoutStr = stdout.toString();
+        const newAllsys = parsePythonOutput(stdoutStr);
+
+        // Commit allsys if provided (sandbox always allows; mission obeys rules)
+        if (newAllsys !== null) {
+            if (sandbox || (task.terminal_status === 1 && formatOK)) {
+                allsys = newAllsys;
+                sessionStorage.setItem("allsys", allsys);
+                updateSwitchesFromAllsys(allsys);
+            } else {
+                // Mission-only feedback; sandbox should never say this
+                displayOutput("Command received – ERROR");
+                return;
+            }
+        }
+
+        // SANDBOX: stdout only, no progression, no messaging
+        if (sandbox) {
+            displayOutput(stdoutStr);
+            return;
+        }
+
+        // MISSION: progression + feedback
+        const completed = checkTaskCompletion();
+
+        if (!completed && newAllsys !== null) {
+            displayOutput("Command received – INCOMPLETE");
+        } else {
+            displayOutput(stdoutStr);
+        }
+
+    } catch (err) {
+        displayOutput("Error:\n" + err);
+    }
+}
+
+/* =======================
+   SWITCH UI
+======================= */
+
+function updateSwitchesFromAllsys(value) {
+    for (let i = 0; i < 20; i++) {
+        const el = document.getElementById(`switch-${i + 1}`);
+        if (!el) continue;
+        if (value & (1 << (19 - i))) el.classList.add("active");
+        else el.classList.remove("active");
+    }
+}
+
+/* =======================
+   DOM READY
+======================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const select = document.getElementById("mission-select");
+    const loadBtn = document.getElementById("load-mission-btn");
+
+    Object.keys(storyboard).forEach(mid => {
+        const opt = document.createElement("option");
+        opt.value = mid;
+        opt.textContent = mid;
+        select.appendChild(opt);
+    });
+
+    select.value = currentMissionId;
+
+    loadBtn.addEventListener("click", () => {
+        loadMission(select.value);
+    });
+
+    // initial load
+    loadMission(currentMissionId);
+    
+    /* CodeMirror */
+    const editor = CodeMirror.fromTextArea(
+        document.getElementById("code-editor"),
+        { lineNumbers: true, mode: "python", theme: "dracula" }
+    );
+
+    /* TERMINAL EXECUTION */
+    document.getElementById("submit-btn").onclick = () => {
+        const code = editor.getValue();
+        runPython(code);
+    };
+
+    /* FUNCTION BUTTONS */
+    document.querySelectorAll(".function-btn").forEach(button => {
+        button.addEventListener("click", async function () {
+
+            if (!pyodideReady) {
+                displayOutput("Python runtime loading...");
+                return;
+            }
+
+            const sandbox = isSandbox();
+
+            const id = this.id.replace("func-", "");
+            const rawParam = document.getElementById(`arg-${id}`).value.trim();
+            const code = localStorage.getItem(`code-gear-${id}`);
+
+            if (!code) {
+                displayOutput("No code assigned to this function.");
+                return;
+            }
+
+            const task = sandbox ? { param_format: "na" } : currentTask();
+
+            // PARAM FORMAT CHECK — mission-only
+            let paramOK = true;
+            if (!sandbox) {
+                if (task.param_format === "dec") {
+                    paramOK = /^[0-9]+$/.test(rawParam);
+                } else if (task.param_format === "0b") {
+                    paramOK = rawParam.startsWith("0b") || rawParam.startsWith("0B");
+                } else if (task.param_format === "0x") {
+                    paramOK = rawParam.startsWith("0x") || rawParam.startsWith("0X");
+                } else if (task.param_format === "0o") {
+                    paramOK = rawParam.startsWith("0o") || rawParam.startsWith("0O");
+                }
+            }
+
+            try {
+                pyodide.globals.set("allsys", allsys);
+
+                const wrappedCode = `mask = ${rawParam}
+${code}
+
+f${id}(mask)
+print({'allsys': allsys})
+`;
+
+                await pyodide.runPythonAsync(wrappedCode);
+
+                const stdout = pyodide.runPython(`import sys; sys.stdout.getvalue()`);
+                pyodide.runPython(`import sys; sys.stdout.truncate(0); sys.stdout.seek(0)`);
+
+                const stdoutStr = stdout.toString();
+                const newAllsys = parsePythonOutput(stdoutStr);
+
+                // Commit rules:
+                // - sandbox: always commit if dict exists
+                // - mission: commit only if paramOK
+                if (newAllsys !== null) {
+                    if (sandbox || paramOK) {
+                        allsys = newAllsys;
+                        sessionStorage.setItem("allsys", allsys);
+                        updateSwitchesFromAllsys(allsys);
+                    } else {
+                        // Mission-only feedback; sandbox should never say this
+                        displayOutput("Command received – ERROR");
+                        return;
+                    }
+                }
+
+                // SANDBOX: stdout only, no progression, no messaging
+                if (sandbox) {
+                    displayOutput(stdoutStr);
+                    return;
+                }
+
+                // MISSION: progression + feedback
+                const completed = checkTaskCompletion();
+
+                if (!completed && newAllsys !== null) {
+                    displayOutput("Command received – INCOMPLETE");
+                } else {
+                    displayOutput(stdoutStr);
+                }
+
+            } catch (err) {
+                displayOutput("Error:\n" + err);
+            }
+        });
+    });
+
+    /* MODAL CODE EDITOR */
+    const modal = document.getElementById("codeModal");
+    const closeBtn = document.querySelector(".close");
+    let modalEditor, currentGear;
+
+    document.querySelectorAll(".gear-icon").forEach(icon => {
+        icon.onclick = () => {
+            currentGear = icon.id.replace("gear-", "");
+            modal.style.display = "block";
+
+            if (!modalEditor) {
+                modalEditor = CodeMirror.fromTextArea(
+                    document.getElementById("code-editor-modal"),
+                    { lineNumbers: true, mode: "python", theme: "dracula" }
+                );
+            }
+
+            modalEditor.setValue(
+                localStorage.getItem(`code-gear-${currentGear}`) || ""
+            );
+        };
+    });
+
+    document.getElementById("save-code").onclick = () => {
+        localStorage.setItem(`code-gear-${currentGear}`, modalEditor.getValue());
+        modal.style.display = "none";
+    };
+
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+    /* INITIAL UI */
+    updateSwitchesFromAllsys(allsys);
+});
+</script>
+
+</body>
+</html>

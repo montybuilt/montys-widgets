@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Control</title>
+    <!-- Link to CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+    body {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #111;
+        color: #FF9900; /* Retro orange */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; /* Full height */
+        margin: 0; /* Remove default margin */
+        padding: 0; /* Ensure there's no extra padding */
+    }
+    
+    .top-container {
+        display: flex;
+        justify-content: flex-start; /* Ensures containers are left-aligned */
+        gap: 5px; /* Adds a 5px gap between the containers */
+        width: 90%; /* Allows for responsiveness */
+        margin: 20px auto; /* Centers the top container */
+    }
+    
+    .group {
+        flex: 1 1 200px; /* Allows the groups to resize while keeping a minimum width of 200px */
+        background: #222;
+        border: 2px solid #444;
+        border-radius: 5px;
+        padding: 5px;
+        text-align: center;
+        box-sizing: border-box;
+        min-width: 100px; /* Prevents the group from becoming too small */
+    }
+    
+    .switch-container-horizontal, .switch-container-vertical {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+    
+    .switch-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1 10px;
+    }
+    
+    .switch-container-horizontal {
+        justify-content: space-around;
+    }
+    
+    .switch {
+        width: 20px;
+        height: 40px;
+        background: #444;
+        border: 2px solid #000;
+        border-radius: 10px;
+        position: relative;
+        cursor: pointer;
+    }
+    
+    .switch::before {
+        content: '';
+        width: 18px;
+        height: 18px;
+        background: #f00;
+        border: 2px solid #000;
+        border-radius: 50%;
+        position: absolute;
+        left: 0;
+        top: 20px;
+        right: 0;
+        margin: auto;
+        transition: 0.2s;
+    }
+    
+    .switch.active::before {
+        top: 2px;
+        background: #0f0;
+    }
+    
+    .indicator {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #500;
+        border: 1px solid #222;
+        box-shadow: 0 0 5px #500;
+    }
+    
+    .indicator.on {
+        background: #0f0;
+        box-shadow: 0 0 5px #0f0;
+    }
+    
+    .controls-container {
+        display: flex;
+        gap: 5px; /* Adds a 5px gap between each control group */
+        flex-wrap: nowrap; /* Allows control groups to wrap onto the next line if necessary */
+        justify-content: space-around;
+        align-items: center;
+        width: 90%;
+    }
+    
+    .status-control-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+    }
+    
+    .status-control-group select,
+    .status-control-group .task-counter {
+        position: static;
+        bottom: auto;
+        right: auto;
+        margin: 0;
+    }
+    
+    .status-control-group select {
+        background: #222;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        padding: 8px 12px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9em;
+        cursor: pointer;
+    }
+    
+    .status-control-group .task-counter {
+        background: #222;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        padding: 10px 15px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1em;
+    }
+    
+    .function-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 20%;
+    }
+    
+    .gear-icon {
+        display: block;
+        text-align: center;
+        margin-bottom: 10px;
+        cursor: pointer;
+        font-size: 1.5em;
+        color: #FF9900 !important;
+    }
+    
+    .gear-icon.has-code {
+        color: #0f0 !important;
+    }
+    
+    .gear-icon:hover {
+        color: #FFA500 !important;
+    }
+
+    .function-btn {
+        flex: 1;
+        padding: 10px;
+        font-size: 1em;
+        background: #444;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+     .function-btn:hover {
+         background: #FF9900;
+         color: #111;
+     }
+     
+     .function-btn:active {
+         transform: translateY(2px); /* Adds a slight press effect */
+     }
+     
+    .parameter-input {
+        flex: 1;
+        margin-top: 5px;
+        padding: 5px;
+        font-size: 1em;
+        background: #222;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .parameter-input::placeholder {
+        color: #888;
+    }
+
+    .main-container {
+        display: flex;
+        justify-content: space-around;
+        width: 90%;
+        margin: 20px auto; /* Centers the containers and applies equal margin on all sides */
+    }
+    
+    .screen {
+        background: #000;
+        border: 2px solid #FF9900;
+        color: #FF9900;
+        text-align: center;
+        padding: 10px;
+        border-radius: 3px;
+        font-size: 1.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45%;
+    }
+    
+    .code-editor-container {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 45%;
+        gap: 5px;
+        padding: 0px;
+    }
+    
+    #code-editor {
+        flex-shrink: 0;
+        background: #111;
+        color: #FF9900;
+        border: 2px solid #555;
+        border-radius: 3px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1em;
+        resize: none;
+    }
+    
+    .console-window {
+        height: 100px;
+        background: #111;
+        color: #FF9900;
+        border: 2px solid #555;
+        border-radius: 3px;
+        padding: 0px;
+        overflow: auto;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    
+    .CodeMirror {
+        font-size: 15px;
+        line-height: 1;
+    }
+    
+    #submit-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 1em;
+        background: #444;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    #submit-btn:hover {
+        background: #FF9900;
+        color: #111;
+    }
+    
+    #submit-btn:active {
+        transform: translateY(2px); /* Adds a slight press effect */
+    }
+    
+    #reset-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 1em;
+        background: #444;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    #reset-btn:hover {
+        background: #FF9900;
+        color: #111;
+    }
+    
+    #reset-btn:active {
+        transform: translateY(2px);
+    }
+    
+    #pass-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 1em;
+        background: #444;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    #pass-btn:hover {
+        background: #FF9900;
+        color: #111;
+    }
+    
+    #pass-btn:active {
+        transform: translateY(2px);
+    }
+    
+    /* Modal Container */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1000; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 50%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0); /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    }
+    
+    /* Modal Content */
+    .modal-content {
+        background-color: #111;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+    }
+    
+    /* Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Video Modal */
+    .video-modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .video-modal-content {
+        background-color: #111;
+        margin: 5% auto;
+        padding: 20px;
+        border: 2px solid #FF9900;
+        width: 90%;
+        max-width: 800px;
+        text-align: center;
+    }
+
+    .video-modal-content iframe {
+        width: 100%;
+        aspect-ratio: 9/16;
+        max-height: 80vh;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+    }
+
+    .video-close {
+        color: #FF9900;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .video-close:hover,
+    .video-close:focus {
+        color: #FFA500;
+    }
+
+    .video-modal-text {
+        color: #FF9900;
+        margin-bottom: 20px;
+        font-size: 1.2em;
+    }
+
+    .mission-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 20%;
+        background: #222;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .mission-label {
+        text-align: center;
+        margin-bottom: 8px;
+        color: #FF9900;
+    }
+
+    .mission-select {
+        padding: 6px;
+        background: #111;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        font-family: 'Courier New', Courier, monospace;
+        margin-bottom: 8px;
+    }
+
+    .mission-btn {
+        padding: 10px;
+        font-size: 1em;
+        background: #444;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .mission-btn:hover {
+        background: #FF9900;
+        color: #111;
+    }
+
+    .task-counter {
+        /* Styling moved to status-control-group */
+    }
+
+    .task-selector {
+        /* Styling moved to status-control-group */
+    }
+
+    .task-selector select {
+        /* Styling moved to status-control-group */
+    }
+
+    .task-selector select option {
+        background: #222;
+        color: #FF9900;
+    }
+
+    .task-selector option.completed {
+        color: #00FF00;
+    }
+
+    .task-selector option.passed {
+        color: #FF0000;
+    }
+
+    .task-selector option.not-attempted {
+        color: #999;
+    }
+
+    #task-select option {
+        background: #222;
+        color: #FF9900;
+    }
+
+    #task-select option.completed {
+        color: #00FF00;
+    }
+
+    #task-select option.passed {
+        color: #FF0000;
+    }
+
+    #task-select option.not-attempted {
+        color: #999;
+    }
+
+
+    </style>
+</head>
+<body>
+    <div class="top-container">
+        <div class="group">
+            <h3>Engines</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-1"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-2"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-3"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch"id="switch-4"></div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h3>Thrusters</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-5"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-6"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-7"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch" id="switch-8"></div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h3>Stabilizers</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-9"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-10"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-11"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch" id="switch-12"></div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h3>Diagnostics</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-13"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-14"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-15"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch" id="switch-16"></div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h3>Life Support</h3>
+            <div class="switch-container-horizontal">
+                <div class="switch-group">
+                    <span>1</span>
+                    <div class="switch" id="switch-17"></div>
+                </div>
+                <div class="switch-group">
+                    <span>2</span>
+                    <div class="switch" id="switch-18"></div>
+                </div>
+                <div class="switch-group">
+                    <span>3</span>
+                    <div class="switch" id="switch-19"></div>
+                </div>
+                <div class="switch-group">
+                    <span>4</span>
+                    <div class="switch" id="switch-20"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="controls-container">
+        <div class="mission-group">
+            <select id="mission-select" class="mission-select"></select>
+            <button id="load-mission-btn" class="mission-btn">Load Mission</button>
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-1"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-1" class="function-btn">F1</button>
+            <input type="text" id="arg-1" class="parameter-input" placeholder="Enter param" />
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-2"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-2" class="function-btn">F2</button>
+            <input type="text" id="arg-2" class="parameter-input" placeholder="Enter param" />
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-3"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-3" class="function-btn">F3</button>
+            <input type="text" id="arg-3" class="parameter-input" placeholder="Enter param" />
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-4"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-4" class="function-btn">F4</button>
+            <input type="text" id="arg-4" class="parameter-input" placeholder="Enter param" />
+        </div>
+        <div class="function-group">
+            <span class="gear-icon" id="gear-5"><i class="fas fa-cog"></i></span> <!-- Gear Icon -->
+            <button id="func-5" class="function-btn">F5</button>
+            <input type="text" id="arg-5" class="parameter-input" placeholder="Enter param" />
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="code-editor-container">
+            <textarea id="code-editor" placeholder="Write your code here..."></textarea>
+            <div id="console-window" class="console-window"></div>
+        </div>
+        <div class="screen">
+            Mission Control... Awaiting Input
+        </div>
+    </div>
+    
+    <div style="display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 10px;">
+        <button id="submit-btn">Execute Terminal Commands</button>
+        <button id="reset-btn">Reset State</button>
+        <button id="pass-btn">PASS</button>
+        <select id="task-select" onchange="jumpToTask()" style="padding: 8px 12px; margin-top: 5px; background: #222; color: #FF9900; border: 2px solid #FF9900; border-radius: 5px; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; cursor: pointer;">
+            <option value="">Jump to Task</option>
+        </select>
+        <div id="task-counter" class="task-counter" style="position: static; bottom: auto; right: auto; margin: 0; margin-top: 5px; background: #222; color: #FF9900; border: 2px solid #FF9900; border-radius: 5px; padding: 10px 15px; font-family: 'Courier New', Courier, monospace; font-size: 1em;">0/0</div>
+    </div>
+    
+    <!-- Modal Structure -->
+    <div id="codeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Edit Code for Button</h3>
+            <textarea id="code-editor-modal"></textarea>
+            <button id="save-code" class="function-btn">Save Code</button>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="video-modal">
+        <div class="video-modal-content">
+            <span class="video-close">&times;</span>
+            <div class="video-modal-text" id="video-message"></div>
+            <iframe id="video-frame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </div>
+
+
+    
+    <!-- Link to JS libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+    
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+
+<script>
+/* =======================
+   GLOBAL STATE
+======================= */
+
+let pyodideReady = false;
+let pyodide;
+let engageCalled = false; // Track if engage() was called
+
+/* =======================
+   STORYBOARD
+======================= */
+
+const storyboard = {
+    "sandbox": {
+        "title": "Sandbox Mode",
+        "seed_allsys": 0,
+        "sandbox": true,
+        "prompt": "SANDBOX MODE — Use the terminal and function buttons to explore how allsys controls the spacecraft systems.  To change the state of the system, assign a value to allsys and then call engage(allsys).  You can also use the function buttons to manipulate allsys using bitwise operators.  Use the gear icons to edit the code for each function button."
+    },
+    "Jr. Astronaut": {
+        "title": "Jr. Astronaut Training",
+        "seed_allsys": 0,
+        
+        "task_1": {
+            "prompt": "Use the terminal to turn on all Life Support systems (1-4) only.  Enter the value as a DECIMAL integer literal.",
+            "allsys": 15,
+            "allsys_format": "dec",
+            "param_format": "dec",
+            "terminal_status": 1
+        }
+    },
+    "Mars Training Day": {
+        "title": "Mars Training Day 1",
+        "seed_allsys": 0,
+
+        "task_1": {
+            "prompt": "TRAINING DAY 1 — Terminal Systems Check. Confirm your console link is live. Leave all systems OFF. Resulting state: all systems OFF (allsys = 0). Enter as a DECIMAL integer literal.",
+            "allsys": 0,
+            "allsys_format": "dec",
+            "param_format": "dec",
+            "terminal_status": 1
+        },
+
+        "task_2": {
+            "prompt": "Life Support warmup. From current state, turn ON Life Support Unit 1 ONLY. All other units must remain OFF. Enter using a BINARY literal (must contain 0b).",
+            "allsys": 1,
+            "allsys_format": "0b",
+            "param_format": "dec",
+            "terminal_status": 1
+        },
+
+        "task_3": {
+            "prompt": "Life Support full power. From current state, turn ON Life Support Units 1–4. All other systems remain OFF. Enter using a BINARY literal.",
+            "allsys": 15,
+            "allsys_format": "0b",
+            "param_format": "dec",
+            "terminal_status": 1
+        },
+
+        "task_4": {
+            "prompt": "Life Support trim. From current state, turn OFF Life Support Unit 2 AND Unit 4 (leaving Units 1 and 3 ON). All other systems remain OFF. Enter using a BINARY literal.",
+            "allsys": 10,
+            "allsys_format": "0b",
+            "param_format": "dec",
+            "terminal_status": 1
+        },
+
+        "task_5": {
+            "prompt": "Diagnostics bring-up. From current state, turn ON Diagnostics Unit 1 ONLY. Keep Life Support exactly as-is. Enter as a DECIMAL integer literal.",
+            "allsys": 138,
+            "allsys_format": "dec",
+            "param_format": "dec",
+            "terminal_status": 1
+        },
+
+        "task_6": {
+            "prompt": "Diagnostics expand. From current state, turn ON Diagnostics Unit 4 ALSO (so Diagnostics 1 and 4 are ON). Keep everything else unchanged. Identify the correct mask and use the bitwise OR operator (|) in your engage() call. Enter using a BINARY literal.",
+            "allsys": 154,
+            "allsys_format": "0b",
+            "code_op": "|"
+        },
+
+        "task_7": {
+            "prompt": "Stabilizers partial. From current state, turn ON Stabilizers Unit 2 AND Unit 3. Keep Diagnostics and Life Support unchanged. Identify the correct mask using bitwise left shift (<<) to position the bits. Enter as a DECIMAL integer literal.",
+            "allsys": 1690,
+            "allsys_format": "dec",
+            "code_op": "<<"
+        },
+
+        "task_8": {
+            "prompt": "Thrusters full. From current state, turn ON Thrusters Units 1–4 (all thrusters). Leave Engines OFF. Keep Stabilizers/Diagnostics/Life Support unchanged. Identify the correct mask and use the bitwise OR operator (|) to set the necessary bits. Enter using a BINARY literal.",
+            "allsys": 63130,
+            "allsys_format": "0b",
+            "code_op": "|"
+        },
+
+        "task_9": {
+            "prompt": "Engines ignition. It's time to fire up the engines.  Use bitwise XOR and an appropriate mask to turn OFF all systems except Engines Units 1 - 4. Enter mask as a DECIMAL integer literal.",
+            "allsys": 983040,
+            "allsys_format": "dec",
+            "code_op": "^"
+        },
+
+        "task_10": {
+            "prompt": "Engine feathering. Use bitwise AND with an appropriate decimal mask to turn off engines 2 and 3 only.",
+            "allsys": 589824,
+            "allsys_format": "dec",
+            "code_op": "&"
+        },
+
+        "task_11": {
+            "prompt": "System shutdown.  Program F1 to apply a mask (parameter) to allsys using bitwise AND.  Be sure to use the global keyword to declare allsys.  Then, use that function and an approprite decimal mask to shutdown ALL systems.",
+            "allsys": 0,
+            "allsys_format": "dec",
+            "param_format": "dec",
+            "func_op": "&",
+            "terminal_status": 1
+        },
+
+        "task_12": {
+            "prompt": "Diagnostics check. Program F2 to apply a mask to allsys that will turn ON any system you pass as a parameter and leave other systems unchanged.  Use that function and an appropriate HEX mask to turn on Diagnostic system 1.",
+            "allsys": 128,
+            "allsys_format": "dec",
+            "param_format": "0x",
+            "func_op": "|",
+            "terminal_status": 0
+        },
+
+        "task_13": {
+            "prompt": "Stabilizer toggle.  Program F3 to apply a mask to allsys that will TOGGLE any system you pass as a parameter (ON to OFF, or OFF to ON) and leave other systems unchanged.  Use that function and an appropriate OCTAL mask to toggle Stabilizers Unit 1.",
+            "allsys": 2176,
+            "allsys_format": "dec",
+            "param_format": "0o",
+            "func_op": "^",
+            "terminal_status": 0
+        },
+
+        "task_14": {
+            "prompt": "Program F4 so you can quickly activate 1 of 3 power system states using a decimal parameter.  State 1: Engines, Thrusters, Stabilizers 1 and 3 on (all other systems off). State 2: Engines, Thrusters, Stabilizers 2 and 4 on (all other systems off). State 3: All Engines, Thrusters, Stabilizers on. Use the function to set to state 1.",
+            "allsys": 698880,
+            "allsys_format": "dec",
+            "param_format": "dec",
+            "terminal_status": 0
+        },
+
+        "task_15": {
+            "prompt": "Use F4 to activate power state 2 from current state.",
+            "allsys": 349440,
+            "allsys_format": "dec",
+            "param_format": "dec",
+            "terminal_status": 0
+        },
+
+        "task_16": {
+            "prompt": "Use the appropriate function with a hex mask to toggle off ALL Thrusters.",
+            "allsys": 328960,
+            "allsys_format": "0x",
+            "param_format": "0x",
+            "terminal_status": 0
+        },
+
+        "task_17": {
+            "prompt": "Use the appropriate function with a decimal mask to turn on Diagnostics Units 2 and 4. Use bitwise shift in your mask.",
+            "allsys": 329040,
+            "allsys_format": "dec",
+            "param_format": "dec",
+            "param_op": "<<",
+            "terminal_status": 0
+        },
+
+        "task_18": {
+            "prompt": "Use any function and a HEX mask to power all systems OFF except Life Support Units 1 and 4.",
+            "allsys": 9,
+            "param_format": "0x",
+            "terminal_status": 0
+        },
+
+        "task_19": {
+            "prompt": "Thruster relight. From current state, use the terminal to turn ON Thrusters Unit 1 AND Unit 2 ONLY. Keep all other systems unchanged.",
+            "allsys": 49161,
+            "allsys_format": "na",
+            "param_format": "na",
+            "terminal_status": 1
+        },
+
+        "task_20": {
+            "prompt": "Final mixed configuration. From current state, Use any function and an approporiate DECIMAL mask to turn on Engines Units 1-4, Thrusters 2 and 3, Stabilizers 1 and 4, Diagnostics 3, and turn off all Life Support.",
+            "allsys": 1009952,
+            "param_format": "dec",
+            "terminal_status": 0
+        }
+    }
+};
+
+let allsys = 0;
+
+/* =======================
+    HELPER FUNCTIONS
+======================= */
+
+let currentMissionId = "sandbox";
+let missionKeys = [];
+let currentTaskIndex = 0;
+let completedCorrectly = 0;
+let completedByPass = 0;
+
+function getMission(missionId) {
+    return storyboard[missionId];
+}
+
+function isSandbox() {
+    return !!storyboard[currentMissionId]?.sandbox;
+}
+
+// Operator validation helper
+function hasOperator(text, operator) {
+    if (!operator || operator === "") return true; // empty string = no requirement
+    return text.includes(operator);
+}
+
+// Parameter format validation helper
+function checkParamFormat(param, format) {
+    if (format === "na" || format === "") return true; // no restriction
+    if (format === "dec") {
+        // Enforce decimal-only operands/expressions:
+        // - Disallow binary/hex/octal prefixes
+        // - Restrict characters to digits, whitespace, parentheses, and common operators
+        const hasNonDecimalPrefix = /0[bBoOxX]/.test(param);
+        if (hasNonDecimalPrefix) return false;
+        const invalidChars = /[^0-9\s\(\)\+\-\*\/\|\&\^\<\>]/.test(param);
+        return !invalidChars;
+    }
+    if (format === "0b") return param.startsWith("0b") || param.startsWith("0B");
+    if (format === "0o") return param.startsWith("0o") || param.startsWith("0O");
+    if (format === "0x") return param.startsWith("0x") || param.startsWith("0X");
+    return true; // unknown format = pass
+}
+
+function loadMission(missionId) {
+    currentMissionId = missionId;
+    const mission = getMission(currentMissionId);
+
+    if (mission.sandbox) {
+        const seed = mission.seed_allsys ?? 0;
+        allsys = seed;
+        sessionStorage.setItem("allsys", allsys);
+        updateSwitchesFromAllsys(allsys);
+        missionKeys = [];
+        currentTaskIndex = 0;
+        completedCorrectly = 0;
+        completedByPass = 0;
+        updateCRT(mission.prompt ?? "SANDBOX MODE — Free Play");
+        updateTaskCounter();
+        return;
+    }
+
+    missionKeys = getTaskKeys(mission);
+    
+    // Load progress from localStorage
+    const progress = loadMissionProgress(currentMissionId);
+    completedCorrectly = progress.completed.length;
+    completedByPass = progress.passed.length;
+    
+    // Find next incomplete task
+    currentTaskIndex = getNextIncompleteTask(currentMissionId, missionKeys.length);
+    
+    // Check if mission is already complete
+    if (currentTaskIndex >= missionKeys.length) {
+        updateCRT("MISSION COMPLETE");
+        updateTaskCounter();
+        showMissionCompletionVideo();
+        return;
+    }
+    
+    // Set allsys to the expected starting state for this task
+    const expectedState = getExpectedStartState(currentTaskIndex);
+    allsys = expectedState;
+    sessionStorage.setItem("allsys", allsys);
+    updateSwitchesFromAllsys(allsys);
+    
+    updateCRT(currentTask().prompt);
+    updateTaskCounter();
+}
+
+function getTaskKeys(missionObj) {
+    return Object.keys(missionObj)
+        .filter(k => k.startsWith("task_"))
+        .sort((a, b) => {
+            const na = parseInt(a.split("_")[1], 10);
+            const nb = parseInt(b.split("_")[1], 10);
+            return na - nb;
+        });
+}
+
+function currentTask() {
+    const mission = getMission(currentMissionId);
+    return mission[missionKeys[currentTaskIndex]];
+}
+
+function updateCRT(text) {
+    document.querySelector(".screen").innerText = text;
+}
+
+function checkTaskCompletion() {
+    const task = currentTask();
+
+    if (allsys === task.allsys) {
+        completedCorrectly++;
+        recordTaskCompletion(currentMissionId, currentTaskIndex);
+        currentTaskIndex++;
+        updateTaskCounter();
+        if (missionKeys[currentTaskIndex]) {
+            updateCRT(currentTask().prompt);
+        } else {
+            updateCRT("Mission complete. All systems nominal.");
+            // Show completion video
+            setTimeout(() => showMissionCompletionVideo(), 500);
+        }
+        return true;
+    }
+    return false;
+}
+
+function getExpectedStartState(index) {
+    // Returns the expected starting state for the given task index (or current if undefined)
+    const mission = getMission(currentMissionId);
+    const idx = (typeof index === "number") ? index : currentTaskIndex;
+    
+    if (mission.sandbox) {
+        return mission.seed_allsys ?? 0;
+    }
+    
+    // For first task, use mission seed
+    if (idx === 0) {
+        return mission.seed_allsys ?? 0;
+    }
+    
+    // For other tasks, return the previous task's target allsys
+    const keys = getTaskKeys(mission);
+    const prevTaskKey = keys[idx - 1];
+    return mission[prevTaskKey].allsys;
+}
+
+function jumpToTask(taskNum) {
+    // Admin: Jump to a specific task number and reset state to expected start
+    const mission = getMission(currentMissionId);
+    const keys = getTaskKeys(mission);
+    const idx = taskNum - 1;
+
+    if (!Number.isInteger(taskNum) || idx < 0 || idx >= keys.length) {
+        displayOutput("Admin: invalid task number");
+        return;
+    }
+
+    currentTaskIndex = idx;
+    const expectedState = getExpectedStartState(idx);
+    allsys = expectedState;
+    sessionStorage.setItem("allsys", allsys);
+    updateSwitchesFromAllsys(allsys);
+    updateCRT(currentTask().prompt);
+    displayOutput(`Admin: jumped to task ${taskNum}. State reset to ${expectedState}.`);
+}
+
+/* =======================
+   PYODIDE INIT
+======================= */
+
+async function initPyodide() {
+    pyodide = await loadPyodide();
+    await pyodide.runPythonAsync(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+`);
+    
+    // Define engage() function accessible from Python
+    pyodide.globals.set("engage", (value) => {
+        pyodide.globals.set("allsys", value);
+        engageCalled = true;
+    });
+    
+    pyodide.globals.set("allsys", allsys);
+    pyodideReady = true;
+}
+
+initPyodide();
+
+/* =======================
+   OUTPUT HANDLING
+======================= */
+
+function displayOutput(output) {
+    const consoleDiv = document.getElementById("console-window");
+    consoleDiv.innerHTML = output.replace(/\n/g, "<br>");
+}
+
+/* =======================
+   PYTHON EXECUTION
+======================= */
+
+async function runPython(code) {
+    if (!pyodideReady) {
+        displayOutput("Python runtime loading...");
+        return;
+    }
+
+    const sandbox = isSandbox();
+
+    // In sandbox, allow state commits freely (no format enforcement)
+    const task = sandbox ? { allsys_format: "na", terminal_status: 1 } : currentTask();
+
+    pyodide.globals.set("allsys", allsys);
+
+    // FORMAT CHECK (terminal) — only meaningful when NOT sandbox
+    let formatOK = true;
+    if (!sandbox) {
+        if (task.allsys_format === "0b") {
+            formatOK = code.includes("0b") || code.includes("0B");
+        } else if (task.allsys_format === "0x") {
+            formatOK = code.includes("0x") || code.includes("0X");
+        } else if (task.allsys_format === "0o") {
+            formatOK = code.includes("0o") || code.includes("0O");
+        } else if (task.allsys_format === "dec") {
+            // Enforce decimal-only in terminal: disallow binary/hex/octal prefixes
+            formatOK = !/(0[bB]|0[xX]|0[oO])/.test(code);
+        }
+    }
+
+    // CODE OPERATOR CHECK (terminal) — only meaningful when NOT sandbox
+    let codeOpOK = true;
+    if (!sandbox) {
+        const codeOp = task.code_op ?? "";
+        if (codeOp && !hasOperator(code, codeOp)) {
+            codeOpOK = false;
+        }
+    }
+
+    try {
+        engageCalled = false; // Reset flag
+        await pyodide.runPythonAsync(code);
+
+        const stdout = pyodide.runPython(`import sys; sys.stdout.getvalue()`);
+        pyodide.runPython(`import sys; sys.stdout.truncate(0); sys.stdout.seek(0)`);
+
+        const stdoutStr = stdout.toString();
+
+        // Commit allsys ONLY if engage() was called
+        if (engageCalled) {
+            const newAllsys = pyodide.globals.get("allsys");
+            const terminalEnabled = task.terminal_status ?? 1; // default to enabled
+            if (sandbox || (terminalEnabled === 1 && formatOK && codeOpOK)) {
+                allsys = newAllsys;
+                sessionStorage.setItem("allsys", allsys);
+                updateSwitchesFromAllsys(allsys);
+            } else {
+                // Validation failed in mission mode
+                displayOutput("Command received – INCOMPLETE");
+                return;
+            }
+        }
+
+        // SANDBOX: stdout only, no progression, no messaging
+        if (sandbox) {
+            displayOutput(stdoutStr);
+            return;
+        }
+
+        // MISSION: progression + feedback
+        const completed = checkTaskCompletion();
+
+        if (!completed && engageCalled) {
+            displayOutput("Command received – INCOMPLETE");
+        } else {
+            displayOutput(stdoutStr);
+        }
+
+    } catch (err) {
+        displayOutput("Error:\n" + err);
+    }
+}
+
+/* =======================
+   SWITCH UI
+======================= */
+
+function updateSwitchesFromAllsys(value) {
+    for (let i = 0; i < 20; i++) {
+        const el = document.getElementById(`switch-${i + 1}`);
+        if (!el) continue;
+        if (value & (1 << (19 - i))) el.classList.add("active");
+        else el.classList.remove("active");
+    }
+}
+
+/* =======================
+   GEAR CODE PERSISTENCE
+======================= */
+
+function loadGearCodes() {
+    const stored = localStorage.getItem('gearCodes');
+    if (!stored) return {};
+    try {
+        return JSON.parse(stored);
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveGearCode(gearId, code) {
+    const codes = loadGearCodes();
+    codes[gearId] = code;
+    localStorage.setItem('gearCodes', JSON.stringify(codes));
+}
+
+function getGearCode(gearId) {
+    const codes = loadGearCodes();
+    return codes[gearId] || "";
+}
+
+/* =======================
+   MISSION PROGRESS PERSISTENCE
+======================= */
+
+function loadMissionProgress(missionId) {
+    const stored = localStorage.getItem('missionProgress');
+    if (!stored) return { completed: [], passed: [] };
+    try {
+        const progress = JSON.parse(stored);
+        return progress[missionId] || { completed: [], passed: [] };
+    } catch (e) {
+        return { completed: [], passed: [] };
+    }
+}
+
+function saveMissionProgress(missionId, progress) {
+    const stored = localStorage.getItem('missionProgress');
+    let allProgress = {};
+    try {
+        allProgress = JSON.parse(stored) || {};
+    } catch (e) {
+        allProgress = {};
+    }
+    allProgress[missionId] = progress;
+    localStorage.setItem('missionProgress', JSON.stringify(allProgress));
+}
+
+function recordTaskCompletion(missionId, taskIndex) {
+    const progress = loadMissionProgress(missionId);
+    if (!progress.completed.includes(taskIndex)) {
+        progress.completed.push(taskIndex);
+    }
+    // Remove from passed array if it was previously passed but now completed
+    const passedIndex = progress.passed.indexOf(taskIndex);
+    if (passedIndex !== -1) {
+        progress.passed.splice(passedIndex, 1);
+    }
+    saveMissionProgress(missionId, progress);
+    
+    // Update global variables to reflect the new state
+    completedCorrectly = progress.completed.length;
+    completedByPass = progress.passed.length;
+}
+
+function recordTaskPass(missionId, taskIndex) {
+    const progress = loadMissionProgress(missionId);
+    if (!progress.passed.includes(taskIndex)) {
+        progress.passed.push(taskIndex);
+    }
+    saveMissionProgress(missionId, progress);
+}
+
+function getNextIncompleteTask(missionId, totalTasks) {
+    const progress = loadMissionProgress(missionId);
+    for (let i = 0; i < totalTasks; i++) {
+        if (!progress.completed.includes(i) && !progress.passed.includes(i)) {
+            return i;
+        }
+    }
+    return totalTasks; // All tasks done
+}
+
+function updateGearIcons() {
+    for (let i = 1; i <= 5; i++) {
+        const gearIcon = document.getElementById(`gear-${i}`);
+        if (!gearIcon) continue;
+        const code = getGearCode(String(i));
+        if (code && code.trim() !== "") {
+            gearIcon.classList.add("has-code");
+        } else {
+            gearIcon.classList.remove("has-code");
+        }
+    }
+}
+
+function updateTaskCounter() {
+    const counterEl = document.getElementById("task-counter");
+    if (!counterEl) return;
+    
+    const mission = getMission(currentMissionId);
+    
+    // Hide counter in sandbox mode
+    if (mission.sandbox) {
+        counterEl.style.display = "none";
+        return;
+    }
+    
+    counterEl.style.display = "block";
+    const totalTasks = missionKeys.length;
+    
+    // Check if mission is complete (all tasks finished)
+    if (currentTaskIndex >= totalTasks) {
+        const percentage = Math.round((completedCorrectly / totalTasks) * 100);
+        const color = percentage >= 80 ? "#0f0" : "#f00"; // Green if 80+, red otherwise
+        counterEl.innerHTML = `<span style="color: ${color};">${percentage}%</span>`;
+        return;
+    }
+    
+    const currentTask = currentTaskIndex + 1; // Display as 1-indexed
+    
+    // Format: 10 (6 / 3) / 20
+    // Current task (correct / passed) / total
+    counterEl.innerHTML = `${currentTask} (<span style="color: #0f0;">${completedCorrectly}</span> / <span style="color: #f00;">${completedByPass}</span>) / ${totalTasks}`;
+    
+    // Update task selector
+    updateTaskSelector();
+}
+
+function updateTaskSelector() {
+    const selectEl = document.getElementById("task-select");
+    const mission = getMission(currentMissionId);
+    
+    if (!selectEl || mission.sandbox) {
+        selectEl.style.display = "none";
+        return;
+    }
+    
+    selectEl.style.display = "block";
+    const progress = loadMissionProgress(currentMissionId);
+    
+    // Clear existing options except the first one
+    while (selectEl.options.length > 1) {
+        selectEl.remove(1);
+    }
+    
+    // Add task options
+    missionKeys.forEach((key, index) => {
+        const taskNum = index + 1;
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = `Task ${taskNum}`;
+        
+        if (progress.completed.includes(index)) {
+            option.className = "completed";
+            option.textContent += " ✓";
+        } else if (progress.passed.includes(index)) {
+            option.className = "passed";
+            option.textContent += " (passed)";
+        } else {
+            option.className = "not-attempted";
+        }
+        
+        selectEl.appendChild(option);
+    });
+}
+
+function jumpToTask() {
+    const selectEl = document.getElementById("task-select");
+    const taskIndex = parseInt(selectEl.value);
+    
+    if (isNaN(taskIndex)) return;
+    
+    currentTaskIndex = taskIndex;
+    const expectedState = getExpectedStartState(currentTaskIndex);
+    allsys = expectedState;
+    sessionStorage.setItem("allsys", allsys);
+    updateSwitchesFromAllsys(allsys);
+    
+    updateCRT(currentTask().prompt);
+    updateTaskCounter();
+    selectEl.value = ""; // Reset dropdown
+}
+
+function passTask() {
+    const mission = getMission(currentMissionId);
+    
+    // Can't pass in sandbox mode
+    if (mission.sandbox) {
+        displayOutput("PASS not available in sandbox mode.");
+        return;
+    }
+    
+    // Track as passed
+    completedByPass++;
+    recordTaskPass(currentMissionId, currentTaskIndex);
+    currentTaskIndex++;
+    
+    // Check if mission is complete
+    if (currentTaskIndex >= missionKeys.length) {
+        updateCRT("Mission complete. All systems nominal.");
+        updateTaskCounter();
+        // Show completion video
+        setTimeout(() => showMissionCompletionVideo(), 500);
+        displayOutput("Mission complete!");
+        return;
+    }
+    
+    // Set allsys to the expected start state for this task
+    const expectedState = getExpectedStartState();
+    allsys = expectedState;
+    sessionStorage.setItem("allsys", allsys);
+    updateSwitchesFromAllsys(allsys);
+    
+    // Update UI
+    updateCRT(currentTask().prompt);
+    updateTaskCounter();
+    displayOutput(`Passed to next task. State set to: ${expectedState}`);
+}
+
+function showMissionCompletionVideo() {
+    const totalTasks = missionKeys.length;
+    const percentage = Math.round((completedCorrectly / totalTasks) * 100);
+    const videoModal = document.getElementById("videoModal");
+    const videoFrame = document.getElementById("video-frame");
+    const videoMessage = document.getElementById("video-message");
+    
+    videoFrame.style.display = "block"; // Make sure video is visible
+    
+    if (percentage >= 80) {
+        // Success video
+        videoFrame.src = "https://www.youtube.com/embed/GuLrHArxgIM?si=b7Liv5Dl5-uZzt3y&autoplay=1";
+        videoMessage.textContent = `Mission Complete! Score: ${percentage}% - Excellent work, commander!`;
+    } else {
+        // Fail video
+        videoFrame.src = "https://www.youtube.com/embed/NnXPSuvM1A0?si=gnewVw2z2UF9g8Ll&autoplay=1";
+        videoMessage.textContent = `Mission Complete! Score: ${percentage}% - Keep training, commander!`;
+    }
+    
+    videoModal.style.display = "block";
+}
+
+/* =======================
+   DOM READY
+======================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const select = document.getElementById("mission-select");
+    const loadBtn = document.getElementById("load-mission-btn");
+
+    if (!select) {
+        console.error("mission-select element not found");
+        return;
+    }
+
+    if (!storyboard) {
+        console.error("storyboard is not defined");
+        return;
+    }
+
+    console.log("Storyboard missions:", Object.keys(storyboard));
+
+    Object.keys(storyboard).forEach(mid => {
+        const opt = document.createElement("option");
+        opt.value = mid;
+        opt.textContent = mid;
+        select.appendChild(opt);
+        console.log("Added mission option:", mid);
+    });
+
+    select.value = currentMissionId;
+
+    loadBtn.addEventListener("click", () => {
+        loadMission(select.value);
+    });
+
+    // initial load
+    loadMission(currentMissionId);
+    
+    /* CodeMirror */
+    const editor = CodeMirror.fromTextArea(
+        document.getElementById("code-editor"),
+        { lineNumbers: true, mode: "python", theme: "dracula" }
+    );
+
+    /* TERMINAL EXECUTION */
+    document.getElementById("submit-btn").onclick = () => {
+        const code = editor.getValue();
+        runPython(code);
+    };
+    
+    /* RESET STATE BUTTON */
+    document.getElementById("reset-btn").onclick = () => {
+        const expectedState = getExpectedStartState();
+        allsys = expectedState;
+        sessionStorage.setItem("allsys", allsys);
+        updateSwitchesFromAllsys(allsys);
+        displayOutput(`State reset to: ${expectedState}`);
+    };
+
+    /* PASS BUTTON */
+    document.getElementById("pass-btn").onclick = () => {
+        passTask();
+    };
+
+    /* ADMIN JUMP (Ctrl+Shift+G) */
+    document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "g") {
+            e.preventDefault(); // Prevent any default browser behavior
+            const input = prompt("Admin jump: Enter task number");
+            if (!input) return;
+            const num = parseInt(input, 10);
+            if (Number.isNaN(num)) {
+                displayOutput("Admin: invalid task number");
+                return;
+            }
+            jumpToTask(num);
+        }
+    });
+
+    /* FUNCTION BUTTONS */
+    document.querySelectorAll(".function-btn").forEach(button => {
+        button.addEventListener("click", async function () {
+
+            if (!pyodideReady) {
+                displayOutput("Python runtime loading...");
+                return;
+            }
+
+            const sandbox = isSandbox();
+
+            const id = this.id.replace("func-", "");
+            const rawParam = document.getElementById(`arg-${id}`).value.trim();
+            const code = getGearCode(id);
+
+            if (!code) {
+                displayOutput("No code assigned to this function.");
+                return;
+            }
+
+            const task = sandbox ? { param_format: "na", param_op: "", func_op: "" } : currentTask();
+
+            // VALIDATION CHECKS — mission-only
+            let validationOK = true;
+            if (!sandbox) {
+                // Check parameter format (0b, 0o, 0x, or decimal)
+                const paramFormat = task.param_format ?? "na";
+                if (!checkParamFormat(rawParam, paramFormat)) {
+                    validationOK = false;
+                }
+                
+                // Check parameter operator requirement
+                const paramOp = task.param_op ?? "";
+                if (validationOK && !hasOperator(rawParam, paramOp)) {
+                    validationOK = false;
+                }
+                
+                // Check function code operator requirement
+                const funcOp = task.func_op ?? "";
+                if (validationOK && !hasOperator(code, funcOp)) {
+                    validationOK = false;
+                }
+            }
+
+            try {
+                pyodide.globals.set("allsys", allsys);
+
+                engageCalled = false; // Reset flag
+                const wrappedCode = `mask = ${rawParam}
+${code}
+
+f${id}(mask)
+`;
+
+                await pyodide.runPythonAsync(wrappedCode);
+
+                const stdout = pyodide.runPython(`import sys; sys.stdout.getvalue()`);
+                pyodide.runPython(`import sys; sys.stdout.truncate(0); sys.stdout.seek(0)`);
+
+                const stdoutStr = stdout.toString();
+
+                // Commit rules:
+                // - sandbox: always commit if engage() was called
+                // - mission: commit only if validationOK
+                if (engageCalled) {
+                    const newAllsys = pyodide.globals.get("allsys");
+                    if (sandbox || validationOK) {
+                        allsys = newAllsys;
+                        sessionStorage.setItem("allsys", allsys);
+                        updateSwitchesFromAllsys(allsys);
+                    } else {
+                        // Validation failed in mission mode
+                        displayOutput("Command received – INCOMPLETE");
+                        return;
+                    }
+                }
+
+                // SANDBOX: stdout only, no progression, no messaging
+                if (sandbox) {
+                    displayOutput(stdoutStr);
+                    return;
+                }
+
+                // MISSION: progression + feedback
+                const completed = checkTaskCompletion();
+
+                if (!completed && engageCalled) {
+                    displayOutput("Command received – INCOMPLETE");
+                } else {
+                    displayOutput(stdoutStr);
+                }
+
+            } catch (err) {
+                displayOutput("Error:\n" + err);
+            }
+        });
+    });
+
+    /* MODAL CODE EDITOR */
+    const modal = document.getElementById("codeModal");
+    const closeBtn = document.querySelector(".close");
+    let modalEditor, currentGear;
+
+    document.querySelectorAll(".gear-icon").forEach(icon => {
+        icon.onclick = () => {
+            currentGear = icon.id.replace("gear-", "");
+            modal.style.display = "block";
+
+            if (!modalEditor) {
+                modalEditor = CodeMirror.fromTextArea(
+                    document.getElementById("code-editor-modal"),
+                    { lineNumbers: true, mode: "python", theme: "dracula" }
+                );
+            }
+
+            modalEditor.setValue(getGearCode(currentGear));
+        };
+    });
+
+    document.getElementById("save-code").onclick = () => {
+        saveGearCode(currentGear, modalEditor.getValue());
+        updateGearIcons();
+        modal.style.display = "none";
+    };
+
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+    /* VIDEO MODAL */
+    const videoModal = document.getElementById("videoModal");
+    const videoCloseBtn = document.querySelector(".video-close");
+    
+    videoCloseBtn.onclick = () => videoModal.style.display = "none";
+    window.onclick = e => {
+        if (e.target === videoModal) videoModal.style.display = "none";
+        if (e.target === modal) modal.style.display = "none";
+    };
+
+    /* INITIAL UI */
+    updateSwitchesFromAllsys(allsys);
+    updateGearIcons();
+    updateTaskCounter();
+});
+</script>
+
+</body>
+</html>
