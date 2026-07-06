@@ -1643,13 +1643,26 @@ f${id}(mask)
 
     /* VIDEO MODAL */
     const videoModal = document.getElementById("videoModal");
+    const videoFrame = document.getElementById("video-frame");
     const videoCloseBtn = document.querySelector(".video-close");
+
+    function closeVideoModal() {
+        videoModal.style.display = "none";
+        // Clearing iframe src ensures embedded video/audio is fully stopped.
+        videoFrame.src = "";
+    }
     
-    videoCloseBtn.onclick = () => videoModal.style.display = "none";
+    videoCloseBtn.onclick = closeVideoModal;
     window.onclick = e => {
-        if (e.target === videoModal) videoModal.style.display = "none";
+        if (e.target === videoModal) closeVideoModal();
         if (e.target === modal) modal.style.display = "none";
     };
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && videoModal.style.display === "block") {
+            closeVideoModal();
+        }
+    });
 
     /* INITIAL UI */
     updateSwitchesFromAllsys(allsys);
