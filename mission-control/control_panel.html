@@ -17,10 +17,273 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        height: 100vh; /* Full height */
+        justify-content: flex-start;
+        min-height: 100vh; /* Full height */
         margin: 0; /* Remove default margin */
-        padding: 0; /* Ensure there's no extra padding */
+        padding: 12px 0; /* Ensure there's no extra padding */
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .mission-header {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
+        align-items: stretch;
+        width: 90%;
+        max-width: 1400px;
+        margin: 0 auto 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        background: #181818;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        box-shadow: 0 0 16px rgba(255, 153, 0, 0.18);
+    }
+
+    .mission-badge {
+        width: 116px;
+        min-height: 116px;
+        border: 3px solid #FF9900;
+        border-radius: 50%;
+        background:
+            radial-gradient(circle at center, #202020 0 42%, transparent 43%),
+            repeating-conic-gradient(from 0deg, #272727 0 12deg, #151515 12deg 24deg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-shadow: inset 0 0 18px #000, 0 0 10px rgba(255, 153, 0, 0.28);
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .mission-badge::before,
+    .mission-badge::after {
+        content: "";
+        position: absolute;
+        border: 1px solid rgba(255, 153, 0, 0.65);
+        border-radius: 50%;
+        width: 84px;
+        height: 34px;
+        transform: rotate(-24deg);
+    }
+
+    .mission-badge::after {
+        transform: rotate(24deg);
+    }
+
+    .badge-arc {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        width: 94px;
+        height: 48px;
+        transform: translateX(-50%);
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .badge-arc text {
+        fill: #dedede;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.63rem;
+        font-weight: bold;
+        letter-spacing: 0.08rem;
+    }
+
+    .badge-icon {
+        font-size: 1.7rem;
+        line-height: 1;
+        z-index: 1;
+        margin-top: 12px;
+    }
+
+    .badge-title {
+        z-index: 1;
+        font-weight: bold;
+        letter-spacing: 0;
+    }
+
+    .badge-title {
+        font-size: 0.72rem;
+        color: #FF9900;
+    }
+
+    .mission-status-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-width: 0;
+        gap: 8px;
+    }
+
+    .mission-kicker {
+        color: #dedede;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+    }
+
+    .mission-title {
+        color: #FF9900;
+        font-size: 1.9rem;
+        font-weight: bold;
+        line-height: 1.05;
+        overflow-wrap: anywhere;
+    }
+
+    .status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .status-pill {
+        border: 1px solid #FF9900;
+        background: #101010;
+        color: #FF9900;
+        border-radius: 3px;
+        padding: 5px 8px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+    }
+
+    .status-pill.online {
+        border-color: #00ff66;
+        color: #00ff66;
+    }
+
+    .status-pill.training {
+        border-color: #64b5ff;
+        color: #64b5ff;
+    }
+
+    .progress-strip {
+        display: grid;
+        grid-template-columns: repeat(20, minmax(8px, 1fr));
+        gap: 4px;
+        width: 100%;
+    }
+
+    .progress-light {
+        height: 10px;
+        border-radius: 2px;
+        background: #333;
+        border: 1px solid #555;
+        box-shadow: inset 0 0 4px #000;
+    }
+
+    .progress-light.current {
+        border-color: #FF9900;
+        background: #6e4200;
+    }
+
+    .progress-light.complete {
+        border-color: #00ff66;
+        background: #00aa44;
+        box-shadow: 0 0 7px rgba(0, 255, 102, 0.6);
+    }
+
+    .progress-light.passed {
+        border-color: #ff3344;
+        background: #aa1826;
+        box-shadow: 0 0 7px rgba(255, 51, 68, 0.55);
+    }
+
+    .telemetry-panel {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(94px, 1fr));
+        gap: 6px;
+        align-content: start;
+        min-width: 230px;
+    }
+
+    .readout {
+        background: #090909;
+        border: 1px solid #555;
+        border-left: 3px solid #FF9900;
+        padding: 6px 7px;
+        box-sizing: border-box;
+        min-width: 0;
+    }
+
+    .readout label {
+        display: block;
+        color: #dedede;
+        font-size: 0.66rem;
+        margin-bottom: 2px;
+    }
+
+    .readout span {
+        display: block;
+        color: #00ff66;
+        font-size: 0.78rem;
+        overflow-wrap: anywhere;
+    }
+
+    .fullscreen-btn {
+        grid-column: 1 / -1;
+        padding: 8px;
+        font-size: 0.85rem;
+        background: #333;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    .fullscreen-btn:hover {
+        background: #FF9900;
+        color: #111;
+    }
+
+    .bit-reference {
+        width: 90%;
+        max-width: 1400px;
+        margin: 0 auto 10px;
+        box-sizing: border-box;
+        background: #151515;
+        border: 1px solid #555;
+        border-left: 4px solid #64b5ff;
+        color: #dedede;
+    }
+
+    .bit-reference summary {
+        cursor: pointer;
+        padding: 8px 10px;
+        color: #64b5ff;
+        font-weight: bold;
+    }
+
+    .bit-map-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(130px, 1fr));
+        gap: 6px;
+        padding: 0 10px 10px;
+    }
+
+    .bit-map-card {
+        background: #0a0a0a;
+        border: 1px solid #333;
+        padding: 7px;
+        border-radius: 3px;
+    }
+
+    .bit-map-card strong {
+        display: block;
+        color: #FF9900;
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+    }
+
+    .bit-map-card span {
+        display: block;
+        color: #dedede;
+        font-size: 0.72rem;
+        line-height: 1.35;
     }
     
     .top-container {
@@ -28,7 +291,7 @@
         justify-content: flex-start; /* Ensures containers are left-aligned */
         gap: 5px; /* Adds a 5px gap between the containers */
         width: 90%; /* Allows for responsiveness */
-        margin: 20px auto; /* Centers the top container */
+        margin: 10px auto; /* Centers the top container */
     }
     
     .group {
@@ -210,10 +473,13 @@
     }
 
     .main-container {
-        display: flex;
-        justify-content: space-around;
-        width: 90%;
-        margin: 20px auto; /* Centers the containers and applies equal margin on all sides */
+        display: grid;
+        grid-template-columns: minmax(320px, 1fr) minmax(120px, 150px) minmax(320px, 1fr);
+        gap: 10px;
+        width: 96%;
+        max-width: 1500px;
+        margin: 10px auto;
+        align-items: stretch;
     }
     
     .screen {
@@ -227,16 +493,57 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 45%;
+        min-width: 0;
+        min-height: 210px;
+        box-sizing: border-box;
     }
     
     .code-editor-container {
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        width: 45%;
+        min-width: 0;
         gap: 5px;
         padding: 0px;
+    }
+
+    .action-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        justify-content: stretch;
+        align-self: stretch;
+        background: #181818;
+        border: 2px solid #444;
+        border-radius: 5px;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .action-panel button,
+    .action-panel select {
+        width: 100%;
+        min-height: 42px;
+        margin: 0 !important;
+        box-sizing: border-box;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    .action-panel select {
+        padding: 8px;
+        background: #222;
+        color: #FF9900;
+        border: 2px solid #FF9900;
+        border-radius: 5px;
+        font-size: 0.82rem;
+        cursor: pointer;
+    }
+
+    .action-panel-label {
+        color: #dedede;
+        font-size: 0.72rem;
+        text-align: center;
+        text-transform: uppercase;
     }
     
     #code-editor {
@@ -503,10 +810,275 @@
         color: #999;
     }
 
+    @media (max-width: 980px) {
+        body {
+            height: auto;
+        }
+
+        .mission-header {
+            grid-template-columns: 1fr;
+        }
+
+        .mission-badge {
+            width: 96px;
+            min-height: 96px;
+            justify-self: center;
+        }
+
+        .badge-arc {
+            width: 78px;
+            height: 40px;
+            top: 7px;
+        }
+
+        .badge-arc text {
+            font-size: 0.52rem;
+        }
+
+        .mission-title {
+            font-size: 1.35rem;
+            text-align: center;
+        }
+
+        .mission-kicker,
+        .status-row {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .telemetry-panel {
+            min-width: 0;
+        }
+
+        .bit-map-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .top-container,
+        .controls-container,
+        .main-container {
+            flex-wrap: wrap;
+        }
+
+        .main-container {
+            grid-template-columns: 1fr;
+        }
+
+        .group,
+        .function-group,
+        .mission-group,
+        .code-editor-container,
+        .screen {
+            width: 100%;
+        }
+    }
+
+    @media (max-height: 800px) and (min-width: 981px) {
+        body {
+            padding: 6px 0;
+        }
+
+        .mission-header {
+            padding: 7px;
+            margin-bottom: 6px;
+        }
+
+        .mission-badge {
+            width: 88px;
+            min-height: 88px;
+        }
+
+        .badge-arc {
+            width: 72px;
+            height: 36px;
+            top: 6px;
+        }
+
+        .badge-arc text {
+            font-size: 0.49rem;
+        }
+
+        .mission-badge::before,
+        .mission-badge::after {
+            width: 64px;
+            height: 26px;
+        }
+
+        .badge-icon {
+            font-size: 1.35rem;
+        }
+
+        .mission-title {
+            font-size: 1.45rem;
+        }
+
+        .readout {
+            padding: 4px 6px;
+        }
+
+        .bit-reference {
+            margin-bottom: 6px;
+        }
+
+        .bit-reference summary {
+            padding: 5px 8px;
+        }
+
+        .top-container {
+            margin: 6px auto;
+        }
+
+        .group h3 {
+            margin: 4px 0 6px;
+            font-size: 0.95rem;
+        }
+
+        .switch {
+            height: 32px;
+        }
+
+        .switch::before {
+            top: 15px;
+            width: 15px;
+            height: 15px;
+        }
+
+        .switch.active::before {
+            top: 1px;
+        }
+
+        .gear-icon {
+            margin-bottom: 5px;
+            font-size: 1.15em;
+        }
+
+        .parameter-input {
+            margin-bottom: 5px;
+        }
+
+        .function-btn,
+        .mission-btn {
+            padding: 7px;
+        }
+
+        .main-container {
+            margin: 6px auto;
+            grid-template-columns: minmax(340px, 1fr) 128px minmax(340px, 1fr);
+        }
+
+        .screen {
+            min-height: 172px;
+            font-size: 1.18rem;
+        }
+
+        .console-window {
+            height: 72px;
+        }
+
+        .action-panel {
+            gap: 6px;
+            padding: 6px;
+        }
+
+        .action-panel button,
+        .action-panel select {
+            min-height: 35px;
+            padding: 6px;
+            font-size: 0.78rem;
+        }
+    }
+
 
     </style>
 </head>
 <body>
+    <header class="mission-header">
+        <div class="mission-badge" aria-label="Montybuilt Mission Control badge">
+            <svg class="badge-arc" viewBox="0 0 100 50" aria-hidden="true">
+                <defs>
+                    <path id="montybuilt-arc" d="M 14 42 A 36 36 0 0 1 86 42" />
+                </defs>
+                <text>
+                    <textPath href="#montybuilt-arc" startOffset="50%" text-anchor="middle">MONTYBUILT</textPath>
+                </text>
+            </svg>
+            <div class="badge-icon"><i class="fas fa-rocket"></i></div>
+            <div class="badge-title">MISSION<br>CONTROL</div>
+        </div>
+        <section class="mission-status-panel" aria-label="Mission status">
+            <div>
+                <div class="mission-kicker">Cadet Systems Lab</div>
+                <div id="mission-title-display" class="mission-title">Mission Control</div>
+            </div>
+            <div class="status-row">
+                <span id="mode-indicator" class="status-pill">MODE: LOADING</span>
+                <span class="status-pill online">LINK: ONLINE</span>
+                <span id="task-status-pill" class="status-pill training">TASK: --</span>
+            </div>
+            <div id="progress-strip" class="progress-strip" aria-label="Mission progress"></div>
+        </section>
+        <aside class="telemetry-panel" aria-label="Allsys telemetry">
+            <div class="readout">
+                <label>DEC</label>
+                <span id="readout-dec">0</span>
+            </div>
+            <div class="readout">
+                <label>HEX</label>
+                <span id="readout-hex">0x0</span>
+            </div>
+            <div class="readout">
+                <label>OCT</label>
+                <span id="readout-oct">0o0</span>
+            </div>
+            <div class="readout">
+                <label>BIN</label>
+                <span id="readout-bin">0b0</span>
+            </div>
+            <button id="fullscreen-btn" class="fullscreen-btn" type="button" title="Enter fullscreen">
+                <i class="fas fa-expand"></i> Fullscreen
+            </button>
+        </aside>
+    </header>
+    <details class="bit-reference">
+        <summary>Bit Map Reference</summary>
+        <div class="bit-map-grid">
+            <div class="bit-map-card">
+                <strong>Life Support</strong>
+                <span>1 = bit 4</span>
+                <span>2 = bit 3</span>
+                <span>3 = bit 2</span>
+                <span>4 = bit 1</span>
+            </div>
+            <div class="bit-map-card">
+                <strong>Diagnostics</strong>
+                <span>1 = bit 8</span>
+                <span>2 = bit 7</span>
+                <span>3 = bit 6</span>
+                <span>4 = bit 5</span>
+            </div>
+            <div class="bit-map-card">
+                <strong>Stabilizers</strong>
+                <span>1 = bit 12</span>
+                <span>2 = bit 11</span>
+                <span>3 = bit 10</span>
+                <span>4 = bit 9</span>
+            </div>
+            <div class="bit-map-card">
+                <strong>Thrusters</strong>
+                <span>1 = bit 16</span>
+                <span>2 = bit 15</span>
+                <span>3 = bit 14</span>
+                <span>4 = bit 13</span>
+            </div>
+            <div class="bit-map-card">
+                <strong>Engines</strong>
+                <span>1 = bit 20</span>
+                <span>2 = bit 19</span>
+                <span>3 = bit 18</span>
+                <span>4 = bit 17</span>
+            </div>
+        </div>
+    </details>
     <div class="top-container">
         <div class="group">
             <h3>Engines</h3>
@@ -651,21 +1223,20 @@
             <textarea id="code-editor" placeholder="Write your code here..."></textarea>
             <div id="console-window" class="console-window"></div>
         </div>
+        <div class="action-panel" aria-label="Mission actions">
+            <div class="action-panel-label">Command Rail</div>
+            <button id="submit-btn">Execute</button>
+            <button id="reset-btn">Reset State</button>
+            <button id="pass-btn">PASS</button>
+            <select id="task-select" onchange="jumpToTask()">
+                <option value="">Jump to Task</option>
+            </select>
+        </div>
         <div class="screen">
             Mission Control... Awaiting Input
         </div>
     </div>
-    
-    <div style="display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 10px;">
-        <button id="submit-btn">Execute Terminal Commands</button>
-        <button id="reset-btn">Reset State</button>
-        <button id="pass-btn">PASS</button>
-        <select id="task-select" onchange="jumpToTask()" style="padding: 8px 12px; margin-top: 5px; background: #222; color: #FF9900; border: 2px solid #FF9900; border-radius: 5px; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; cursor: pointer;">
-            <option value="">Jump to Task</option>
-        </select>
-        <div id="task-counter" class="task-counter" style="position: static; bottom: auto; right: auto; margin: 0; margin-top: 5px; background: #222; color: #FF9900; border: 2px solid #FF9900; border-radius: 5px; padding: 10px 15px; font-family: 'Courier New', Courier, monospace; font-size: 1em;">0/0</div>
-    </div>
-    
+
     <!-- Modal Structure -->
     <div id="codeModal" class="modal">
         <div class="modal-content">
@@ -951,6 +1522,7 @@ function jumpToTask(taskNum) {
     sessionStorage.setItem("allsys", allsys);
     updateSwitchesFromAllsys(allsys);
     updateCRT(currentTask().prompt);
+    updateTaskCounter();
     displayOutput(`Admin: jumped to task ${taskNum}. State reset to ${expectedState}.`);
 }
 
@@ -985,6 +1557,105 @@ initPyodide();
 function displayOutput(output) {
     const consoleDiv = document.getElementById("console-window");
     consoleDiv.innerHTML = output.replace(/\n/g, "<br>");
+}
+
+function updateAllsysReadout(value) {
+    const numericValue = Number(value) || 0;
+    const readoutDec = document.getElementById("readout-dec");
+    const readoutHex = document.getElementById("readout-hex");
+    const readoutOct = document.getElementById("readout-oct");
+    const readoutBin = document.getElementById("readout-bin");
+
+    if (readoutDec) readoutDec.textContent = numericValue.toString(10);
+    if (readoutHex) readoutHex.textContent = `0x${numericValue.toString(16).toUpperCase()}`;
+    if (readoutOct) readoutOct.textContent = `0o${numericValue.toString(8)}`;
+    if (readoutBin) readoutBin.textContent = `0b${numericValue.toString(2).padStart(20, "0")}`;
+}
+
+function updateMissionHeader() {
+    const mission = getMission(currentMissionId);
+    if (!mission) return;
+
+    const titleEl = document.getElementById("mission-title-display");
+    const modeEl = document.getElementById("mode-indicator");
+    const taskStatusEl = document.getElementById("task-status-pill");
+
+    if (titleEl) titleEl.textContent = mission.title ?? currentMissionId;
+    if (modeEl) {
+        modeEl.textContent = mission.sandbox ? "MODE: SANDBOX" : "MODE: TRAINING";
+        modeEl.classList.toggle("training", !mission.sandbox);
+    }
+
+    if (!taskStatusEl) return;
+
+    if (mission.sandbox) {
+        taskStatusEl.textContent = "TASK: FREE PLAY";
+        return;
+    }
+
+    const totalTasks = missionKeys.length;
+    if (currentTaskIndex >= totalTasks) {
+        taskStatusEl.textContent = "TASK: COMPLETE";
+        return;
+    }
+
+    taskStatusEl.textContent = `TASK: ${currentTaskIndex + 1}/${totalTasks}`;
+}
+
+function updateProgressStrip() {
+    const strip = document.getElementById("progress-strip");
+    const mission = getMission(currentMissionId);
+    if (!strip || !mission) return;
+
+    strip.innerHTML = "";
+
+    if (mission.sandbox) {
+        strip.style.display = "none";
+        return;
+    }
+
+    strip.style.display = "grid";
+    const progress = loadMissionProgress(currentMissionId);
+
+    missionKeys.forEach((key, index) => {
+        const light = document.createElement("span");
+        light.className = "progress-light";
+        light.title = `Task ${index + 1}`;
+
+        if (progress.completed.includes(index)) {
+            light.classList.add("complete");
+            light.title += " complete";
+        } else if (progress.passed.includes(index)) {
+            light.classList.add("passed");
+            light.title += " passed";
+        } else if (index === currentTaskIndex) {
+            light.classList.add("current");
+            light.title += " current";
+        } else {
+            light.title += " pending";
+        }
+
+        strip.appendChild(light);
+    });
+}
+
+async function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+    } else {
+        await document.exitFullscreen();
+    }
+}
+
+function updateFullscreenButton() {
+    const fullscreenBtn = document.getElementById("fullscreen-btn");
+    if (!fullscreenBtn) return;
+
+    const isFullscreen = !!document.fullscreenElement;
+    fullscreenBtn.innerHTML = isFullscreen
+        ? '<i class="fas fa-compress"></i> Exit Fullscreen'
+        : '<i class="fas fa-expand"></i> Fullscreen';
+    fullscreenBtn.title = isFullscreen ? "Exit fullscreen" : "Enter fullscreen";
 }
 
 /* =======================
@@ -1063,6 +1734,8 @@ async function runPython(code) {
 
         if (!completed && engageCalled) {
             displayOutput("Command received – INCOMPLETE");
+        } else if (completed) {
+            displayOutput(stdoutStr || "Telemetry confirmed. Task complete.");
         } else {
             displayOutput(stdoutStr);
         }
@@ -1083,6 +1756,7 @@ function updateSwitchesFromAllsys(value) {
         if (value & (1 << (19 - i))) el.classList.add("active");
         else el.classList.remove("active");
     }
+    updateAllsysReadout(value);
 }
 
 /* =======================
@@ -1187,24 +1861,27 @@ function updateGearIcons() {
 
 function updateTaskCounter() {
     const counterEl = document.getElementById("task-counter");
-    if (!counterEl) return;
-    
     const mission = getMission(currentMissionId);
+    if (!mission) return;
+    updateMissionHeader();
+    updateProgressStrip();
     
     // Hide counter in sandbox mode
     if (mission.sandbox) {
-        counterEl.style.display = "none";
+        if (counterEl) counterEl.style.display = "none";
         return;
     }
     
-    counterEl.style.display = "block";
     const totalTasks = missionKeys.length;
     
     // Check if mission is complete (all tasks finished)
     if (currentTaskIndex >= totalTasks) {
-        const percentage = Math.round((completedCorrectly / totalTasks) * 100);
-        const color = percentage >= 80 ? "#0f0" : "#f00"; // Green if 80+, red otherwise
-        counterEl.innerHTML = `<span style="color: ${color};">${percentage}%</span>`;
+        if (counterEl) {
+            counterEl.style.display = "block";
+            const percentage = Math.round((completedCorrectly / totalTasks) * 100);
+            const color = percentage >= 80 ? "#0f0" : "#f00"; // Green if 80+, red otherwise
+            counterEl.innerHTML = `<span style="color: ${color};">${percentage}%</span>`;
+        }
         return;
     }
     
@@ -1212,7 +1889,10 @@ function updateTaskCounter() {
     
     // Format: 10 (6 / 3) / 20
     // Current task (correct / passed) / total
-    counterEl.innerHTML = `${currentTask} (<span style="color: #0f0;">${completedCorrectly}</span> / <span style="color: #f00;">${completedByPass}</span>) / ${totalTasks}`;
+    if (counterEl) {
+        counterEl.style.display = "block";
+        counterEl.innerHTML = `${currentTask} (<span style="color: #0f0;">${completedCorrectly}</span> / <span style="color: #f00;">${completedByPass}</span>) / ${totalTasks}`;
+    }
     
     // Update task selector
     updateTaskSelector();
@@ -1405,6 +2085,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         passTask();
     };
 
+    /* FULLSCREEN BUTTON */
+    const fullscreenBtn = document.getElementById("fullscreen-btn");
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener("click", async () => {
+            if (!document.documentElement.requestFullscreen) {
+                displayOutput("Fullscreen is not available in this browser.");
+                return;
+            }
+
+            try {
+                await toggleFullscreen();
+                updateFullscreenButton();
+            } catch (error) {
+                displayOutput("Fullscreen request was blocked by the browser or iframe settings.");
+            }
+        });
+    }
+
+    document.addEventListener("fullscreenchange", updateFullscreenButton);
+
     /* ADMIN JUMP (Ctrl+Shift+G) */
     document.addEventListener("keydown", (e) => {
         if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "g") {
@@ -1508,6 +2208,8 @@ f${id}(mask)
 
                 if (!completed && engageCalled) {
                     displayOutput("Command received – INCOMPLETE");
+                } else if (completed) {
+                    displayOutput(stdoutStr || "Telemetry confirmed. Task complete.");
                 } else {
                     displayOutput(stdoutStr);
                 }
