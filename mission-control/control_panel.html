@@ -160,6 +160,17 @@
         color: #64b5ff;
     }
 
+    .bit-map-toggle {
+        appearance: none;
+        font-family: 'Courier New', Courier, monospace;
+        cursor: pointer;
+    }
+
+    .bit-map-toggle:hover {
+        background: #64b5ff;
+        color: #111;
+    }
+
     .progress-strip {
         display: grid;
         grid-template-columns: repeat(20, minmax(8px, 1fr));
@@ -251,11 +262,12 @@
         color: #dedede;
     }
 
+    .bit-reference:not([open]) {
+        display: none;
+    }
+
     .bit-reference summary {
-        cursor: pointer;
-        padding: 8px 10px;
-        color: #64b5ff;
-        font-weight: bold;
+        display: none;
     }
 
     .bit-map-grid {
@@ -1014,6 +1026,9 @@
                 <span id="mode-indicator" class="status-pill">MODE: LOADING</span>
                 <span class="status-pill online">LINK: ONLINE</span>
                 <span id="task-status-pill" class="status-pill training">TASK: --</span>
+                <button id="bit-map-toggle" class="status-pill bit-map-toggle" type="button" aria-expanded="false">
+                    <span id="bit-map-toggle-arrow">▸</span> Bit Map
+                </button>
             </div>
             <div id="progress-strip" class="progress-strip" aria-label="Mission progress"></div>
         </section>
@@ -1039,7 +1054,7 @@
             </button>
         </aside>
     </header>
-    <details class="bit-reference">
+    <details id="bit-reference" class="bit-reference">
         <summary>Bit Map Reference</summary>
         <div class="bit-map-grid">
             <div class="bit-map-card">
@@ -1658,6 +1673,31 @@ function updateFullscreenButton() {
     fullscreenBtn.title = isFullscreen ? "Exit fullscreen" : "Enter fullscreen";
 }
 
+function updateBitMapToggle() {
+    const bitReference = document.getElementById("bit-reference");
+    const bitMapToggle = document.getElementById("bit-map-toggle");
+    const bitMapToggleArrow = document.getElementById("bit-map-toggle-arrow");
+    if (!bitReference || !bitMapToggle || !bitMapToggleArrow) return;
+
+    const isOpen = bitReference.open;
+    bitMapToggle.setAttribute("aria-expanded", String(isOpen));
+    bitMapToggleArrow.textContent = isOpen ? "▾" : "▸";
+}
+
+function initializeBitMapToggle() {
+    const bitReference = document.getElementById("bit-reference");
+    const bitMapToggle = document.getElementById("bit-map-toggle");
+    if (!bitReference || !bitMapToggle || bitMapToggle.dataset.ready === "true") return;
+
+    bitMapToggle.dataset.ready = "true";
+    updateBitMapToggle();
+    bitMapToggle.addEventListener("click", () => {
+        bitReference.open = !bitReference.open;
+        updateBitMapToggle();
+    });
+    bitReference.addEventListener("toggle", updateBitMapToggle);
+}
+
 /* =======================
    PYTHON EXECUTION
 ======================= */
@@ -2019,6 +2059,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const select = document.getElementById("mission-select");
     const loadBtn = document.getElementById("load-mission-btn");
+    initializeBitMapToggle();
 
     if (!select) {
         console.error("mission-select element not found");
