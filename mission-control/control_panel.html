@@ -796,6 +796,9 @@ function populateMissionPicker(select) {
 // Operator validation helper
 function hasOperator(text, operator) {
     if (!operator || operator === "") return true; // empty string = no requirement
+    if (Array.isArray(operator)) {
+        return operator.every(requiredOperator => hasOperator(text, requiredOperator));
+    }
     return text.includes(operator);
 }
 
