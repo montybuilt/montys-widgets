@@ -1,0 +1,279 @@
+{
+  "sandbox": {
+    "title": "Sandbox Mode",
+    "seed_allsys": 0,
+    "sandbox": true,
+    "prompt": "SANDBOX MODE — Use the terminal and function buttons to explore how allsys controls the spacecraft systems.  To change the state of the system, assign a value to allsys and then call engage(allsys).  You can also use the function buttons to manipulate allsys using bitwise operators.  Use the gear icons to edit the code for each function button."
+  },
+  "Jr. Astronaut": {
+    "title": "Jr. Astronaut Training",
+    "seed_allsys": 0,
+    "task_1": {
+      "prompt": "TRAINING DAY 1 — Engage the controller with all systems off by assigning 0 to allsys.  Then use the engage() function to engage the systems.",
+      "allsys": 0,
+      "allsys_format": "dec",
+      "terminal_status": 1
+    },
+    "task_2": {
+      "prompt": "Turn on Life Support 4 only. Enter the value as a BINARY literal (must contain 0b).",
+      "allsys": 1,
+      "allsys_format": "0b",
+      "terminal_status": 1
+    },
+    "task_3": {
+      "prompt": "Turn on Life Support 3 only. Enter as a DECIMAL integer literal.",
+      "allsys": 2,
+      "allsys_format": "dec",
+      "terminal_status": 1
+    },
+    "task_4": {
+      "prompt": "Turn on Life Support 3 and Life Support 4. Enter as an OCTAL literal (must contain 0o).",
+      "allsys": 3,
+      "allsys_format": "0o",
+      "terminal_status": 1
+    },
+    "task_5": {
+      "prompt": "Turn on Life Support 1 only. Enter as a HEX literal (must contain 0x).",
+      "allsys": 8,
+      "allsys_format": "0x",
+      "terminal_status": 1
+    },
+    "task_6": {
+      "prompt": "Turn on Life Support 1 and Life Support 4. Enter as a BINARY literal.",
+      "allsys": 9,
+      "allsys_format": "0b",
+      "terminal_status": 1
+    },
+    "task_7": {
+      "prompt": "Turn on Life Support 1 and Life Support 3. Enter as a DECIMAL integer literal.",
+      "allsys": 10,
+      "allsys_format": "dec",
+      "terminal_status": 1
+    },
+    "task_8": {
+      "prompt": "Turn on Life Support 1, Life Support 3, and Life Support 4. Enter as an OCTAL literal.",
+      "allsys": 11,
+      "allsys_format": "0o",
+      "terminal_status": 1
+    },
+    "task_9": {
+      "prompt": "Turn on Life Support 2 only. Enter as a HEX literal.",
+      "allsys": 4,
+      "allsys_format": "0x",
+      "terminal_status": 1
+    },
+    "task_10": {
+      "prompt": "Turn on Life Support 2 and Life Support 4. Enter as a BINARY literal.",
+      "allsys": 5,
+      "allsys_format": "0b",
+      "terminal_status": 1
+    },
+    "task_11": {
+      "prompt": "Turn on Life Support 2 and Life Support 3. Enter as a DECIMAL integer literal.",
+      "allsys": 6,
+      "allsys_format": "dec",
+      "terminal_status": 1
+    },
+    "task_12": {
+      "prompt": "Turn on Life Support 2, Life Support 3, and Life Support 4. Enter as an OCTAL literal.",
+      "allsys": 7,
+      "allsys_format": "0o",
+      "terminal_status": 1
+    },
+    "task_13": {
+      "prompt": "Turn on Life Support 1 and Life Support 2. Enter as a HEX literal.",
+      "allsys": 12,
+      "allsys_format": "0x",
+      "terminal_status": 1
+    },
+    "task_14": {
+      "prompt": "Turn on Life Support 1, Life Support 2, and Life Support 4. Enter as a BINARY literal.",
+      "allsys": 13,
+      "allsys_format": "0b",
+      "terminal_status": 1
+    },
+    "task_15": {
+      "prompt": "Use bitwise OR to turn on Diagnostics 4 while leaving Life Support 1, Life Support 2, and Life Support 4 unchanged. Enter a BINARY literal for the mask.",
+      "allsys": 29,
+      "allsys_format": "0b",
+      "code_op": "|",
+      "terminal_status": 1
+    },
+    "task_16": {
+      "prompt": "Use bitwise AND with a HEX mask to turn off Life Support 2 only and leave Diagnostics 4 plus Life Support 1 and Life Support 4 unchanged.",
+      "allsys": 25,
+      "allsys_format": "0x",
+      "code_op": "&",
+      "terminal_status": 1
+    },
+    "task_17": {
+      "prompt": "Use bitwise XOR with an OCTAL mask to toggle Life Support 4.",
+      "allsys": 24,
+      "allsys_format": "0o",
+      "code_op": "^",
+      "terminal_status": 1
+    },
+    "task_18": {
+      "prompt": "Use a left shift to create a mask, then OR it into allsys to turn on Diagnostics 3.",
+      "allsys": 56,
+      "allsys_format": "dec",
+      "code_op": "<<",
+      "terminal_status": 1
+    },
+    "task_19": {
+      "prompt": "Use bitwise OR with a HEX mask to turn on Life Support 4.",
+      "allsys": 57,
+      "allsys_format": "0x",
+      "code_op": "|",
+      "terminal_status": 1
+    },
+    "task_20": {
+      "prompt": "Use bitwise AND with a BINARY mask to turn off Life Support 1 only.",
+      "allsys": 49,
+      "allsys_format": "0b",
+      "code_op": "&",
+      "terminal_status": 1
+    }
+  },
+  "Mars Training Day": {
+    "title": "Mars Training Day 1",
+    "seed_allsys": 0,
+    "task_1": {
+      "prompt": "TRAINING DAY 1 — Terminal Systems Check. Confirm your console link is live. Leave all systems OFF. Resulting state: all systems OFF (allsys = 0). Enter as a DECIMAL integer literal.",
+      "allsys": 0,
+      "allsys_format": "dec",
+      "param_format": "dec",
+      "terminal_status": 1
+    },
+    "task_2": {
+      "prompt": "Life Support warmup. From current state, turn ON Life Support Unit 1 ONLY. All other units must remain OFF. Enter using a BINARY literal (must contain 0b).",
+      "allsys": 8,
+      "allsys_format": "0b",
+      "param_format": "dec",
+      "terminal_status": 1
+    },
+    "task_3": {
+      "prompt": "Life Support full power. From current state, turn ON Life Support Units 1–4. All other systems remain OFF. Enter using a BINARY literal.",
+      "allsys": 15,
+      "allsys_format": "0b",
+      "param_format": "dec",
+      "terminal_status": 1
+    },
+    "task_4": {
+      "prompt": "Life Support trim. From current state, turn OFF Life Support Unit 2 AND Unit 4 (leaving Units 1 and 3 ON). All other systems remain OFF. Enter using a BINARY literal.",
+      "allsys": 10,
+      "allsys_format": "0b",
+      "param_format": "dec",
+      "terminal_status": 1
+    },
+    "task_5": {
+      "prompt": "Diagnostics bring-up. From current state, turn ON Diagnostics Unit 1 ONLY. Keep Life Support exactly as-is. Enter as a DECIMAL integer literal.",
+      "allsys": 138,
+      "allsys_format": "dec",
+      "param_format": "dec",
+      "terminal_status": 1
+    },
+    "task_6": {
+      "prompt": "Diagnostics expand. From current state, turn ON Diagnostics Unit 4 ALSO (so Diagnostics 1 and 4 are ON). Keep everything else unchanged. Identify the correct mask and use the bitwise OR operator (|) in your engage() call. Enter using a BINARY literal.",
+      "allsys": 154,
+      "allsys_format": "0b",
+      "code_op": "|"
+    },
+    "task_7": {
+      "prompt": "Stabilizers partial. From current state, turn ON Stabilizers Unit 2 AND Unit 3. Keep Diagnostics and Life Support unchanged. Identify the correct mask using bitwise left shift (<<) to position the bits. Enter as a DECIMAL integer literal.",
+      "allsys": 1690,
+      "allsys_format": "dec",
+      "code_op": "<<"
+    },
+    "task_8": {
+      "prompt": "Thrusters full. From current state, turn ON Thrusters Units 1–4 (all thrusters). Leave Engines OFF. Keep Stabilizers/Diagnostics/Life Support unchanged. Identify the correct mask and use the bitwise OR operator (|) to set the necessary bits. Enter using a BINARY literal.",
+      "allsys": 63130,
+      "allsys_format": "0b",
+      "code_op": "|"
+    },
+    "task_9": {
+      "prompt": "Engines ignition. It's time to fire up the engines.  Use bitwise XOR and an appropriate mask to turn OFF all systems except Engines Units 1 - 4. Enter mask as a DECIMAL integer literal.",
+      "allsys": 983040,
+      "allsys_format": "dec",
+      "code_op": "^"
+    },
+    "task_10": {
+      "prompt": "Engine feathering. Use bitwise AND with an appropriate decimal mask to turn off engines 2 and 3 only.",
+      "allsys": 589824,
+      "allsys_format": "dec",
+      "code_op": "&"
+    },
+    "task_11": {
+      "prompt": "System shutdown.  Program F1 to apply a mask (parameter) to allsys using bitwise AND.  Be sure to use the global keyword to declare allsys.  Then, use that function and an approprite decimal mask to shutdown ALL systems.",
+      "allsys": 0,
+      "allsys_format": "dec",
+      "param_format": "dec",
+      "func_op": "&",
+      "terminal_status": 1
+    },
+    "task_12": {
+      "prompt": "Diagnostics check. Program F2 to apply a mask to allsys that will turn ON any system you pass as a parameter and leave other systems unchanged.  Use that function and an appropriate HEX mask to turn on Diagnostic system 1.",
+      "allsys": 128,
+      "allsys_format": "dec",
+      "param_format": "0x",
+      "func_op": "|",
+      "terminal_status": 0
+    },
+    "task_13": {
+      "prompt": "Stabilizer toggle.  Program F3 to apply a mask to allsys that will TOGGLE any system you pass as a parameter (ON to OFF, or OFF to ON) and leave other systems unchanged.  Use that function and an appropriate OCTAL mask to toggle Stabilizers Unit 1.",
+      "allsys": 2176,
+      "allsys_format": "dec",
+      "param_format": "0o",
+      "func_op": "^",
+      "terminal_status": 0
+    },
+    "task_14": {
+      "prompt": "Program F4 so you can quickly activate 1 of 3 power system states using a decimal parameter.  State 1: Engines, Thrusters, Stabilizers 1 and 3 on (all other systems off). State 2: Engines, Thrusters, Stabilizers 2 and 4 on (all other systems off). State 3: All Engines, Thrusters, Stabilizers on. Use the function to set to state 1.",
+      "allsys": 698880,
+      "allsys_format": "dec",
+      "param_format": "dec",
+      "terminal_status": 0
+    },
+    "task_15": {
+      "prompt": "Use F4 to activate power state 2 from current state.",
+      "allsys": 349440,
+      "allsys_format": "dec",
+      "param_format": "dec",
+      "terminal_status": 0
+    },
+    "task_16": {
+      "prompt": "Use the appropriate function with a hex mask to toggle off ALL Thrusters.",
+      "allsys": 328960,
+      "allsys_format": "0x",
+      "param_format": "0x",
+      "terminal_status": 0
+    },
+    "task_17": {
+      "prompt": "Use the appropriate function with a decimal mask to turn on Diagnostics Units 2 and 4. Use bitwise shift in your mask.",
+      "allsys": 329040,
+      "allsys_format": "dec",
+      "param_format": "dec",
+      "param_op": "<<",
+      "terminal_status": 0
+    },
+    "task_18": {
+      "prompt": "Use any function and a HEX mask to power all systems OFF except Life Support Units 1 and 4.",
+      "allsys": 9,
+      "param_format": "0x",
+      "terminal_status": 0
+    },
+    "task_19": {
+      "prompt": "Thruster relight. From current state, use the terminal to turn ON Thrusters Unit 1 AND Unit 2 ONLY. Keep all other systems unchanged.",
+      "allsys": 49161,
+      "allsys_format": "na",
+      "param_format": "na",
+      "terminal_status": 1
+    },
+    "task_20": {
+      "prompt": "Final mixed configuration. From current state, Use any function and an approporiate DECIMAL mask to turn on Engines Units 1-4, Thrusters 2 and 3, Stabilizers 1 and 4, Diagnostics 3, and turn off all Life Support.",
+      "allsys": 1009952,
+      "param_format": "dec",
+      "terminal_status": 0
+    }
+  }
+}
