@@ -34,7 +34,7 @@
     }
 
     main {
-      width: 728px;
+      width: 788px;
       margin: 0;
       padding: 4px;
     }
@@ -49,6 +49,7 @@
       border-radius: 5px;
       background: var(--bg);
       box-shadow: 0 0 16px var(--amber-soft);
+      position: relative;
     }
 
     .banner {
@@ -348,6 +349,95 @@
       line-height: 1;
     }
 
+    .calc-toggle {
+      position: absolute;
+      right: 0;
+      top: 58px;
+      z-index: 4;
+      width: 36px;
+      height: 72px;
+      border: 2px solid var(--amber);
+      border-right: 0;
+      border-radius: 6px 0 0 6px;
+      color: var(--amber);
+      background: var(--panel-mid);
+      font: 800 0.68rem/1 "Courier New", Courier, monospace;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(255, 153, 0, 0.22);
+    }
+
+    .calc-toggle:hover,
+    .calc-toggle:focus-visible,
+    .calc-toggle.active {
+      color: var(--bg);
+      background: var(--amber);
+    }
+
+    .calculator {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      bottom: 0;
+      z-index: 3;
+      width: 224px;
+      padding: 8px;
+      border-left: 2px solid var(--amber);
+      background: #101010;
+      box-shadow: -10px 0 18px rgba(0, 0, 0, 0.45);
+      transform: translateX(100%);
+      transition: transform 0.16s ease;
+    }
+
+    .calculator.open {
+      transform: translateX(0);
+    }
+
+    .calc-display {
+      width: 100%;
+      height: 30px;
+      margin-bottom: 6px;
+      padding: 0 7px;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--blue);
+      color: var(--green);
+      background: var(--panel-dark);
+      font: 800 0.92rem/1 "Courier New", Courier, monospace;
+      text-align: right;
+    }
+
+    .calc-keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .calc-key {
+      min-height: 27px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      color: var(--amber);
+      background: var(--panel-mid);
+      font: 800 0.82rem/1 "Courier New", Courier, monospace;
+      cursor: pointer;
+    }
+
+    .calc-key:hover,
+    .calc-key:focus-visible {
+      border-color: var(--amber);
+      background: #333;
+    }
+
+    .calc-key.action {
+      color: var(--blue);
+    }
+
+    .calc-key.equals {
+      color: var(--bg);
+      background: var(--amber);
+      border-color: var(--amber);
+    }
+
   </style>
 </head>
 <body>
@@ -408,6 +498,33 @@
         <div class="badge-panel-title">Badges</div>
         <div class="badge-list"></div>
       </div>
+
+      <button class="calc-toggle" type="button" aria-label="Open calculator" title="Calculator">CALC</button>
+      <aside class="calculator" aria-label="Calculator" aria-hidden="true">
+        <input class="calc-display" type="text" value="0" aria-label="Calculator display" readonly>
+        <div class="calc-keys">
+          <button class="calc-key action" type="button" data-calc="clear">C</button>
+          <button class="calc-key action" type="button" data-calc="back">DEL</button>
+          <button class="calc-key" type="button" data-calc="(">(</button>
+          <button class="calc-key" type="button" data-calc=")">)</button>
+          <button class="calc-key" type="button" data-calc="7">7</button>
+          <button class="calc-key" type="button" data-calc="8">8</button>
+          <button class="calc-key" type="button" data-calc="9">9</button>
+          <button class="calc-key" type="button" data-calc="/">/</button>
+          <button class="calc-key" type="button" data-calc="4">4</button>
+          <button class="calc-key" type="button" data-calc="5">5</button>
+          <button class="calc-key" type="button" data-calc="6">6</button>
+          <button class="calc-key" type="button" data-calc="*">*</button>
+          <button class="calc-key" type="button" data-calc="1">1</button>
+          <button class="calc-key" type="button" data-calc="2">2</button>
+          <button class="calc-key" type="button" data-calc="3">3</button>
+          <button class="calc-key" type="button" data-calc="-">-</button>
+          <button class="calc-key" type="button" data-calc="0">0</button>
+          <button class="calc-key" type="button" data-calc=".">.</button>
+          <button class="calc-key equals" type="button" data-calc="equals">=</button>
+          <button class="calc-key" type="button" data-calc="+">+</button>
+        </div>
+      </aside>
     </section>
   </main>
 
@@ -432,6 +549,9 @@
     const streakEl = document.querySelector(".streak");
     const randomTotalEl = document.querySelector(".random-total");
     const badgeList = document.querySelector(".badge-list");
+    const calcToggle = document.querySelector(".calc-toggle");
+    const calculator = document.querySelector(".calculator");
+    const calcDisplay = document.querySelector(".calc-display");
     const params = new URLSearchParams(window.location.search);
 
     let lessons = {};
@@ -466,6 +586,49 @@
       } catch (error) {
         // Progress still works for this session if storage is unavailable.
       }
+    }
+
+    function setCalculatorOpen(isOpen) {
+      calculator.classList.toggle("open", isOpen);
+      calculator.setAttribute("aria-hidden", String(!isOpen));
+      calcToggle.classList.toggle("active", isOpen);
+      calcToggle.setAttribute("aria-label", isOpen ? "Close calculator" : "Open calculator");
+    }
+
+    function calculateExpression(expression) {
+      if (!/^[0-9+\-*/().\s]+$/.test(expression)) {
+        throw new Error("Invalid expression");
+      }
+
+      return Function(`"use strict"; return (${expression})`)();
+    }
+
+    function handleCalculator(key) {
+      const current = calcDisplay.value === "0" || calcDisplay.value === "ERR"
+        ? ""
+        : calcDisplay.value;
+
+      if (key === "clear") {
+        calcDisplay.value = "0";
+        return;
+      }
+
+      if (key === "back") {
+        calcDisplay.value = current.slice(0, -1) || "0";
+        return;
+      }
+
+      if (key === "equals") {
+        try {
+          const result = calculateExpression(calcDisplay.value);
+          calcDisplay.value = Number.isFinite(result) ? String(result) : "ERR";
+        } catch (error) {
+          calcDisplay.value = "ERR";
+        }
+        return;
+      }
+
+      calcDisplay.value = `${current}${key}`;
     }
 
     function normalizeBase(baseName) {
@@ -844,6 +1007,10 @@
     activitySelect.addEventListener("change", () => setActivity(activitySelect.value));
     fromBaseSelect.addEventListener("change", nextItem);
     toBaseSelect.addEventListener("change", nextItem);
+    calcToggle.addEventListener("click", () => setCalculatorOpen(!calculator.classList.contains("open")));
+    document.querySelectorAll("[data-calc]").forEach((button) => {
+      button.addEventListener("click", () => handleCalculator(button.dataset.calc));
+    });
     init();
   </script>
 </body>

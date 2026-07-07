@@ -1,14 +1,37 @@
 {
-  "intro": [
-    { "value": "17", "to": "bin" },
-    { "value": "0b100101", "to": "dec" },
-    { "value": "0o32", "to": "hex" },
-    { "value": "0xf1a", "to": "dec" }
+  "bin2dec": [
+    { "value": "0b1011", "to": "dec" },
+    { "value": "0b1101", "to": "dec" },
+    { "value": "0b101101", "to": "dec" },
+    { "value": "0b11111", "to": "dec" },
+    { "value": "0b100110", "to": "dec" },
+    { "value": "0b111000", "to": "dec" },
+    { "value": "0b10101011", "to": "dec" },
+    { "value": "0b11011010", "to": "dec" }
   ],
-  "binary-hex": [
-    { "value": "0b1010", "to": "hex" },
-    { "value": "0b1111", "to": "hex" },
-    { "value": "0x2a", "to": "bin" },
-    { "value": "0xff", "to": "bin" }
+  "dec2bin": [
+    { "value": "11", "to": "bin" },
+    { "value": "13", "to": "bin" },
+    { "value": "45", "to": "bin" },
+    { "value": "31", "to": "bin" },
+    { "value": "38", "to": "bin" },
+    { "value": "56", "to": "bin" },
+    { "value": "171", "to": "bin" },
+    { "value": "218", "to": "bin" }
+  ],
+  "hex2dec": [
+    { "value": "0x5", "to": "dec" },
+    { "value": "0xA", "to": "dec" },
+    { "value": "0xF", "to": "dec" },
+    { "value": "0x1E", "to": "dec" },
+    { "value": "0x2D", "to": "dec" }
+  ],
+  "oct2dec": [
+    { "value": "0o11", "to": "dec" },
+    { "value": "0o25", "to": "dec" },
+    { "value": "0o77", "to": "dec" },
+    { "value": "0o123", "to": "dec" },
+    { "value": "0o456", "to": "dec" }
   ]
 }
+ 
