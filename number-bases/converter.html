@@ -748,7 +748,7 @@
           kind: `lesson ${scoreClass}`,
           title: lessonLabel(key) || "Lesson",
           detail: percent === null ? "complete" : `${percent}%`,
-          earned: Boolean(lessonProgress)
+          earned: percent !== null
         };
       });
 
