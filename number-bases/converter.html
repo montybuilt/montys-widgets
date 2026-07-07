@@ -211,7 +211,7 @@
       outline-offset: 1px;
     }
 
-    .feedback {
+    .check {
       min-height: 32px;
       display: flex;
       align-items: center;
@@ -225,15 +225,23 @@
       font-weight: 800;
       text-align: center;
       white-space: nowrap;
+      cursor: pointer;
+      text-transform: uppercase;
     }
 
-    .feedback.correct {
+    .check:hover,
+    .check:focus-visible {
+      border-color: var(--amber);
+      box-shadow: 0 0 8px rgba(255, 153, 0, 0.28);
+    }
+
+    .check.correct {
       border-color: var(--green);
       color: var(--green);
       box-shadow: 0 0 8px rgba(0, 255, 102, 0.42);
     }
 
-    .feedback.incorrect {
+    .check.incorrect {
       border-color: var(--red);
       color: var(--red);
       box-shadow: 0 0 8px rgba(255, 51, 68, 0.32);
@@ -392,7 +400,7 @@
         <div class="literal"></div>
         <div class="target"></div>
         <input type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
-        <div class="feedback" role="status" aria-live="polite">TRY</div>
+        <button class="check" type="button" aria-live="polite">Check</button>
         <button class="next" type="button">Next</button>
       </div>
 
@@ -415,7 +423,7 @@
     const literalEl = document.querySelector(".literal");
     const targetEl = document.querySelector(".target");
     const input = document.querySelector("input");
-    const feedback = document.querySelector(".feedback");
+    const checkButton = document.querySelector(".check");
     const nextButton = document.querySelector(".next");
     const activitySelect = document.querySelector(".activity-select");
     const fromBaseSelect = document.querySelector(".from-base");
@@ -434,6 +442,7 @@
     let answer = "";
     let currentSolved = false;
     let currentHadWrong = false;
+    let currentSubmitted = false;
     let total = 0;
     let correct = 0;
     let streak = 0;
@@ -660,9 +669,13 @@
     }
 
     function closeMissedItem() {
-      if (!currentSolved && currentHadWrong) {
+      if (!currentSolved && currentHadWrong && !currentSubmitted) {
         total += 1;
         streak = 0;
+        if (mode === "random") {
+          progress.random.bestStreak = Math.max(progress.random.bestStreak, streak);
+          saveProgress();
+        }
         updateStats();
       }
     }
@@ -670,36 +683,48 @@
     function checkAnswer() {
       const response = normalizeAnswer(input.value);
 
-      feedback.classList.remove("correct", "incorrect");
+      checkButton.classList.remove("correct", "incorrect");
 
       if (!response) {
-        feedback.textContent = "TRY";
+        checkButton.textContent = "Check";
         return;
       }
 
       if (response === answer) {
-        feedback.textContent = "RIGHT";
-        feedback.classList.add("correct");
+        checkButton.textContent = "Right";
+        checkButton.classList.add("correct");
 
         if (!currentSolved) {
           awardCorrect();
         }
+
+        currentSubmitted = true;
       } else {
         currentHadWrong = true;
-        feedback.textContent = "NO";
-        feedback.classList.add("incorrect");
+        if (!currentSubmitted) {
+          total += 1;
+        }
+        currentSubmitted = true;
+        streak = 0;
+        if (mode === "random") {
+          saveProgress();
+        }
+        updateStats();
+        checkButton.textContent = "No";
+        checkButton.classList.add("incorrect");
       }
     }
 
     function resetFeedback() {
       currentSolved = false;
       currentHadWrong = false;
+      currentSubmitted = false;
       input.value = "";
       input.disabled = !answer;
       input.placeholder = answer ? "literal" : "bad prompt";
-      feedback.textContent = answer ? "TRY" : "BAD";
-      feedback.classList.toggle("incorrect", !answer);
-      feedback.classList.remove("correct");
+      checkButton.textContent = answer ? "Check" : "Bad";
+      checkButton.classList.toggle("incorrect", !answer);
+      checkButton.classList.remove("correct");
     }
 
     function renderItem(item) {
@@ -733,7 +758,8 @@
         lessons = await response.json();
       } catch (error) {
         lessons = {};
-        feedback.textContent = "LESSONS OFFLINE";
+        checkButton.textContent = "Offline";
+        checkButton.classList.add("incorrect");
       }
     }
 
@@ -770,7 +796,7 @@
           targetEl.textContent = "";
           answer = "";
           resetFeedback();
-          feedback.textContent = "EMPTY";
+          checkButton.textContent = "Empty";
           return;
         }
       }
@@ -801,7 +827,19 @@
       await setActivity(activitySelect.value);
     }
 
-    input.addEventListener("input", checkAnswer);
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        checkAnswer();
+      }
+    });
+    input.addEventListener("input", () => {
+      if (!currentSolved) {
+        checkButton.textContent = "Check";
+        checkButton.classList.remove("correct", "incorrect");
+      }
+    });
+    checkButton.addEventListener("click", checkAnswer);
     nextButton.addEventListener("click", nextItem);
     activitySelect.addEventListener("change", () => setActivity(activitySelect.value));
     fromBaseSelect.addEventListener("change", nextItem);
