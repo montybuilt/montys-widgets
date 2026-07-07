@@ -34,16 +34,16 @@
     }
 
     main {
-      width: 788px;
+      width: 828px;
       margin: 0;
       padding: 4px;
     }
 
     .widget {
-      width: 780px;
-      height: 182px;
+      width: 820px;
+      height: 252px;
       display: grid;
-      grid-template-rows: 50px 56px 76px;
+      grid-template-rows: 58px 72px 122px;
       overflow: hidden;
       border: 2px solid var(--amber);
       border-radius: 5px;
@@ -54,10 +54,10 @@
 
     .banner {
       display: grid;
-      grid-template-columns: minmax(150px, 1fr) 132px 210px 180px;
-      gap: 8px;
+      grid-template-columns: minmax(180px, 1fr) 150px 224px 198px;
+      gap: 10px;
       align-items: center;
-      padding: 8px;
+      padding: 10px;
       border-bottom: 1px solid var(--line);
       background: var(--panel);
     }
@@ -65,7 +65,7 @@
     .title {
       min-width: 0;
       color: var(--amber);
-      font-size: 0.95rem;
+      font-size: 1.08rem;
       font-weight: 800;
       line-height: 1.1;
       white-space: nowrap;
@@ -76,13 +76,13 @@
 
     .activity-select,
     .base-select {
-      min-height: 32px;
+      min-height: 34px;
       padding: 0 24px 0 8px;
       border: 2px solid var(--amber);
       border-radius: 5px;
       color: var(--amber);
       background: var(--panel-mid);
-      font: 700 0.82rem/1 "Courier New", Courier, monospace;
+      font: 700 0.86rem/1 "Courier New", Courier, monospace;
       cursor: pointer;
     }
 
@@ -109,10 +109,10 @@
     }
 
     .base-select {
-      width: 70px;
-      min-height: 30px;
+      width: 74px;
+      min-height: 32px;
       padding-right: 18px;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
     }
 
     .base-select:disabled {
@@ -129,7 +129,7 @@
     }
 
     .readout {
-      min-height: 32px;
+      min-height: 36px;
       padding: 4px 6px;
       border: 1px solid var(--line);
       border-left: 3px solid var(--amber);
@@ -140,7 +140,7 @@
     .readout label {
       display: block;
       color: var(--text);
-      font-size: 0.55rem;
+      font-size: 0.6rem;
       line-height: 1;
       text-transform: uppercase;
     }
@@ -149,27 +149,27 @@
       display: block;
       margin-top: 2px;
       color: var(--green);
-      font-size: 0.78rem;
+      font-size: 0.86rem;
       font-weight: 800;
       line-height: 1;
     }
 
     .practice {
       display: grid;
-      grid-template-columns: minmax(88px, 8rem) auto minmax(88px, 8.5rem) minmax(58px, auto) auto;
+      grid-template-columns: minmax(104px, 9.5rem) auto minmax(104px, 9.75rem) minmax(70px, auto) auto;
       align-items: center;
       justify-content: start;
-      gap: 8px;
-      padding: 8px;
+      gap: 10px;
+      padding: 14px 10px;
       background: var(--bg);
     }
 
     .literal,
     input {
       min-width: 0;
-      min-height: 38px;
+      min-height: 42px;
       border-radius: 3px;
-      font: 800 0.96rem/1.2 "Courier New", Courier, monospace;
+      font: 800 1.04rem/1.2 "Courier New", Courier, monospace;
     }
 
     .literal {
@@ -194,7 +194,7 @@
 
     input {
       width: 100%;
-      max-width: 8.5rem;
+      max-width: 9.75rem;
       padding: 0 9px;
       border: 2px solid var(--amber);
       color: var(--green);
@@ -213,7 +213,7 @@
     }
 
     .check {
-      min-height: 32px;
+      min-height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -222,7 +222,7 @@
       border-radius: 3px;
       color: var(--amber);
       background: var(--panel-dark);
-      font-size: 0.82rem;
+      font-size: 0.88rem;
       font-weight: 800;
       text-align: center;
       white-space: nowrap;
@@ -249,13 +249,13 @@
     }
 
     .next {
-      min-height: 38px;
-      padding: 0 11px;
+      min-height: 42px;
+      padding: 0 13px;
       border: 2px solid var(--amber);
       border-radius: 5px;
       color: var(--amber);
       background: var(--panel-mid);
-      font: 800 0.86rem/1 "Courier New", Courier, monospace;
+      font: 800 0.9rem/1 "Courier New", Courier, monospace;
       cursor: pointer;
       text-transform: uppercase;
     }
@@ -270,7 +270,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px;
+      padding: 10px;
       border-top: 1px solid var(--line);
       background: var(--panel);
       overflow-x: auto;
@@ -293,9 +293,9 @@
     }
 
     .shield {
-      width: 72px;
-      min-width: 72px;
-      height: 58px;
+      width: 82px;
+      min-width: 82px;
+      height: 68px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -330,21 +330,21 @@
     .shield strong,
     .shield span {
       display: block;
-      max-width: 58px;
+      max-width: 66px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .shield strong {
-      font-size: 0.74rem;
+      font-size: 0.78rem;
       line-height: 1;
       text-transform: uppercase;
     }
 
     .shield span {
       margin-top: 3px;
-      font-size: 0.58rem;
+      font-size: 0.62rem;
       font-weight: 800;
       line-height: 1;
     }
@@ -352,10 +352,10 @@
     .calc-toggle {
       position: absolute;
       right: 0;
-      top: 58px;
+      top: 96px;
       z-index: 4;
-      width: 36px;
-      height: 72px;
+      width: 38px;
+      height: 80px;
       border: 2px solid var(--amber);
       border-right: 0;
       border-radius: 6px 0 0 6px;
@@ -376,11 +376,11 @@
 
     .calculator {
       position: absolute;
-      top: 50px;
+      top: 58px;
       right: 0;
       bottom: 0;
       z-index: 3;
-      width: 224px;
+      width: 248px;
       padding: 8px;
       border-left: 2px solid var(--amber);
       background: #101010;
@@ -413,7 +413,7 @@
     }
 
     .calc-key {
-      min-height: 27px;
+      min-height: 24px;
       border: 1px solid var(--line);
       border-radius: 3px;
       color: var(--amber);
