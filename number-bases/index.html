@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Number Bases Downloads</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5d6773;
+      --line: #c9d3df;
+      --paper: #f7f9fb;
+      --accent: #0f6b5f;
+      --accent-dark: #09483f;
+      --warn: #8a4b00;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    main {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 1.25rem;
+      line-height: 1.25;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .downloads {
+      display: grid;
+      gap: 10px;
+    }
+
+    .download-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .file-name {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      font-weight: 700;
+    }
+
+    button {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 6px;
+      color: white;
+      background: var(--accent);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover,
+    button:focus-visible {
+      background: var(--accent-dark);
+    }
+
+    .status {
+      min-height: 1.4em;
+      margin-top: 12px;
+      color: var(--warn);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 440px) {
+      .download-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Notebook Download</h1>
+    <p>Download the original file for this lesson.</p>
+
+    <div class="downloads">
+      <div class="download-row" hidden>
+        <span class="file-name"></span>
+        <button type="button">Download</button>
+      </div>
+    </div>
+
+    <p class="status" role="status" aria-live="polite"></p>
+  </main>
+
+  <script>
+    const statusEl = document.querySelector(".status");
+    const row = document.querySelector(".download-row");
+    const fileNameEl = document.querySelector(".file-name");
+    const button = document.querySelector("button");
+
+    function getRequestedFile() {
+      const params = new URLSearchParams(window.location.search);
+      const fileName = params.get("file");
+
+      if (!fileName || fileName.includes("/") || fileName.includes("\\")) {
+        return "";
+      }
+
+      return fileName;
+    }
+
+    async function downloadNotebook(fileName) {
+      statusEl.textContent = "";
+
+      try {
+        const response = await fetch(fileName, { cache: "no-store" });
+
+        if (!response.ok) {
+          throw new Error(`Could not find ${fileName}.`);
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        statusEl.textContent = error.message || "The download could not be started.";
+      }
+    }
+
+    const requestedFile = getRequestedFile();
+
+    if (requestedFile) {
+      fileNameEl.textContent = requestedFile;
+      button.addEventListener("click", () => downloadNotebook(requestedFile));
+      row.hidden = false;
+    } else {
+      statusEl.textContent = "No file was selected for download.";
+    }
+  </script>
+</body>
+</html>
