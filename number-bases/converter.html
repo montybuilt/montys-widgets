@@ -326,6 +326,18 @@
       background: var(--amber);
     }
 
+    .shield.lesson.score-high.earned {
+      background: var(--green);
+    }
+
+    .shield.lesson.score-mid.earned {
+      background: var(--amber);
+    }
+
+    .shield.lesson.score-low.earned {
+      background: var(--red);
+    }
+
     .shield.random-streak.earned {
       background: var(--blue);
     }
@@ -539,6 +551,8 @@
     let correct = 0;
     let streak = 0;
     let lessonSolved = new Set();
+    let lessonSubmitted = new Set();
+    let lessonFirstTryCorrect = new Set();
     let progress = loadProgress();
 
     function loadProgress() {
@@ -719,12 +733,24 @@
       ensureProgressShape();
       badgeList.innerHTML = "";
 
-      const lessonBadges = Object.keys(lessons).map((key) => ({
-        kind: "lesson",
-        title: lessonLabel(key) || "Lesson",
-        detail: "complete",
-        earned: Boolean(progress.lessons[key])
-      }));
+      const lessonBadges = Object.keys(lessons).map((key) => {
+        const lessonProgress = progress.lessons[key];
+        const percent = typeof lessonProgress?.percent === "number"
+          ? lessonProgress.percent
+          : null;
+        let scoreClass = "";
+
+        if (percent !== null) {
+          scoreClass = percent >= 80 ? "score-high" : percent >= 60 ? "score-mid" : "score-low";
+        }
+
+        return {
+          kind: `lesson ${scoreClass}`,
+          title: lessonLabel(key) || "Lesson",
+          detail: percent === null ? "complete" : `${percent}%`,
+          earned: Boolean(lessonProgress)
+        };
+      });
 
       const badges = [
         ...lessonBadges,
@@ -760,14 +786,19 @@
     }
 
     function completeLessonIfReady() {
-      if (mode !== "lesson" || !items.length || lessonSolved.size < items.length) {
+      if (mode !== "lesson" || !items.length || lessonSubmitted.size < items.length) {
         return;
       }
 
-      if (!progress.lessons[lessonName]) {
+      const percent = Math.round((lessonFirstTryCorrect.size / items.length) * 100);
+      const previous = progress.lessons[lessonName];
+
+      if (!previous || percent > (previous.percent || 0)) {
         progress.lessons[lessonName] = {
           completedAt: new Date().toISOString(),
-          count: items.length
+          count: items.length,
+          correct: lessonFirstTryCorrect.size,
+          percent
         };
         saveProgress();
       }
@@ -775,8 +806,11 @@
 
     function awardCorrect() {
       currentSolved = true;
-      total += 1;
-      correct += 1;
+
+      if (!currentSubmitted) {
+        total += 1;
+        correct += 1;
+      }
 
       if (currentHadWrong) {
         streak = 0;
@@ -790,10 +824,23 @@
         saveProgress();
       } else if (currentIndex >= 0) {
         lessonSolved.add(currentIndex);
-        completeLessonIfReady();
       }
 
       updateStats();
+    }
+
+    function recordLessonSubmission(wasCorrect) {
+      if (mode !== "lesson" || currentIndex < 0 || currentSubmitted) {
+        return;
+      }
+
+      lessonSubmitted.add(currentIndex);
+
+      if (wasCorrect) {
+        lessonFirstTryCorrect.add(currentIndex);
+      }
+
+      completeLessonIfReady();
     }
 
     function closeMissedItem() {
@@ -821,6 +868,7 @@
       if (response === answer) {
         checkButton.textContent = "Right";
         checkButton.classList.add("correct");
+        recordLessonSubmission(true);
 
         if (!currentSolved) {
           awardCorrect();
@@ -832,6 +880,7 @@
         if (!currentSubmitted) {
           total += 1;
         }
+        recordLessonSubmission(false);
         currentSubmitted = true;
         streak = 0;
         if (mode === "random") {
@@ -897,6 +946,8 @@
       currentSolved = false;
       currentHadWrong = false;
       lessonSolved = new Set();
+      lessonSubmitted = new Set();
+      lessonFirstTryCorrect = new Set();
       total = 0;
       correct = 0;
       streak = 0;
