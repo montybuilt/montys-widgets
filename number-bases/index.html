@@ -9,8 +9,8 @@
       color-scheme: light;
       --ink: #17202a;
       --muted: #5d6773;
-      --line: #c9d3df;
-      --paper: #f7f9fb;
+      --line: #bac7d5;
+      --paper: #ffffff;
       --accent: #0f6b5f;
       --accent-dark: #09483f;
       --warn: #8a4b00;
@@ -24,106 +24,99 @@
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--ink);
-      background: var(--paper);
+      background: transparent;
     }
 
     main {
-      width: min(760px, 100%);
-      margin: 0 auto;
-      padding: 16px;
+      width: 100%;
+      margin: 0;
+      padding: 4px;
     }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: 1.25rem;
-      line-height: 1.25;
-    }
-
-    p {
-      margin: 0 0 14px;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .downloads {
-      display: grid;
-      gap: 10px;
-    }
-
-    .download-row {
-      display: flex;
+    .download-link {
+      width: 100%;
+      min-height: 48px;
+      display: none;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px;
+      gap: 10px;
+      padding: 8px 10px;
       border: 1px solid var(--line);
-      border-radius: 8px;
-      background: white;
+      border-radius: 6px;
+      color: var(--ink);
+      background: var(--paper);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    .download-link:hover,
+    .download-link:focus-visible {
+      border-color: var(--accent);
+      outline: 2px solid transparent;
+      box-shadow: 0 0 0 2px rgba(15, 107, 95, 0.18);
+    }
+
+    .file-icon {
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 5px;
+      color: white;
+      background: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .file-text {
+      min-width: 0;
+    }
+
+    .file-name,
+    .file-type {
+      display: block;
+      overflow-wrap: anywhere;
     }
 
     .file-name {
-      min-width: 0;
-      overflow-wrap: anywhere;
       font-weight: 700;
+      line-height: 1.2;
     }
 
-    button {
-      flex: 0 0 auto;
-      min-height: 40px;
-      padding: 0 14px;
-      border: 0;
-      border-radius: 6px;
-      color: white;
-      background: var(--accent);
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    button:hover,
-    button:focus-visible {
-      background: var(--accent-dark);
+    .file-type {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.2;
     }
 
     .status {
-      min-height: 1.4em;
-      margin-top: 12px;
+      margin: 4px 0 0;
       color: var(--warn);
-      font-size: 0.95rem;
-    }
-
-    @media (max-width: 440px) {
-      .download-row {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      button {
-        width: 100%;
-      }
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <main>
-    <h1>Notebook Download</h1>
-    <p>Download the original file for this lesson.</p>
-
-    <div class="downloads">
-      <div class="download-row" hidden>
+    <button class="download-link" type="button" aria-label="Download file">
+      <span class="file-icon" aria-hidden="true">IPY</span>
+      <span class="file-text">
         <span class="file-name"></span>
-        <button type="button">Download</button>
-      </div>
-    </div>
+        <span class="file-type">Jupyter notebook</span>
+      </span>
+    </button>
 
     <p class="status" role="status" aria-live="polite"></p>
   </main>
 
   <script>
     const statusEl = document.querySelector(".status");
-    const row = document.querySelector(".download-row");
+    const downloadLink = document.querySelector(".download-link");
     const fileNameEl = document.querySelector(".file-name");
-    const button = document.querySelector("button");
 
     function getRequestedFile() {
       const params = new URLSearchParams(window.location.search);
@@ -165,8 +158,9 @@
 
     if (requestedFile) {
       fileNameEl.textContent = requestedFile;
-      button.addEventListener("click", () => downloadNotebook(requestedFile));
-      row.hidden = false;
+      downloadLink.setAttribute("aria-label", `Download ${requestedFile}`);
+      downloadLink.addEventListener("click", () => downloadNotebook(requestedFile));
+      downloadLink.style.display = "flex";
     } else {
       statusEl.textContent = "No file was selected for download.";
     }
