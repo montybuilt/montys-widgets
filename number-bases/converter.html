@@ -34,16 +34,17 @@
     }
 
     main {
-      width: 828px;
+      width: 996px;
       margin: 0;
       padding: 4px;
     }
 
     .widget {
-      width: 820px;
-      height: 252px;
+      width: 988px;
+      height: 272px;
       display: grid;
-      grid-template-rows: 58px 72px 122px;
+      grid-template-columns: 720px 268px;
+      grid-template-rows: 66px 82px 120px;
       overflow: hidden;
       border: 2px solid var(--amber);
       border-radius: 5px;
@@ -54,7 +55,9 @@
 
     .banner {
       display: grid;
-      grid-template-columns: minmax(180px, 1fr) 150px 224px 198px;
+      grid-column: 1;
+      grid-row: 1;
+      grid-template-columns: minmax(150px, 1fr) 128px 196px 172px;
       gap: 10px;
       align-items: center;
       padding: 10px;
@@ -65,7 +68,7 @@
     .title {
       min-width: 0;
       color: var(--amber);
-      font-size: 1.08rem;
+      font-size: 1rem;
       font-weight: 800;
       line-height: 1.1;
       white-space: nowrap;
@@ -82,7 +85,7 @@
       border-radius: 5px;
       color: var(--amber);
       background: var(--panel-mid);
-      font: 700 0.86rem/1 "Courier New", Courier, monospace;
+      font: 700 0.8rem/1 "Courier New", Courier, monospace;
       cursor: pointer;
     }
 
@@ -93,7 +96,7 @@
     .random-controls {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       min-width: 0;
     }
 
@@ -109,10 +112,10 @@
     }
 
     .base-select {
-      width: 74px;
+      width: 66px;
       min-height: 32px;
       padding-right: 18px;
-      font-size: 0.78rem;
+      font-size: 0.74rem;
     }
 
     .base-select:disabled {
@@ -140,7 +143,7 @@
     .readout label {
       display: block;
       color: var(--text);
-      font-size: 0.6rem;
+      font-size: 0.56rem;
       line-height: 1;
       text-transform: uppercase;
     }
@@ -149,13 +152,15 @@
       display: block;
       margin-top: 2px;
       color: var(--green);
-      font-size: 0.86rem;
+      font-size: 0.8rem;
       font-weight: 800;
       line-height: 1;
     }
 
     .practice {
       display: grid;
+      grid-column: 1;
+      grid-row: 2;
       grid-template-columns: minmax(104px, 9.5rem) auto minmax(104px, 9.75rem) minmax(70px, auto) auto;
       align-items: center;
       justify-content: start;
@@ -267,6 +272,8 @@
     }
 
     .badge-panel {
+      grid-column: 1;
+      grid-row: 3;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -349,76 +356,43 @@
       line-height: 1;
     }
 
-    .calc-toggle {
-      position: absolute;
-      right: 0;
-      top: 96px;
-      z-index: 4;
-      width: 38px;
-      height: 80px;
-      border: 2px solid var(--amber);
-      border-right: 0;
-      border-radius: 6px 0 0 6px;
-      color: var(--amber);
-      background: var(--panel-mid);
-      font: 800 0.68rem/1 "Courier New", Courier, monospace;
-      cursor: pointer;
-      text-transform: uppercase;
-      box-shadow: 0 0 10px rgba(255, 153, 0, 0.22);
-    }
-
-    .calc-toggle:hover,
-    .calc-toggle:focus-visible,
-    .calc-toggle.active {
-      color: var(--bg);
-      background: var(--amber);
-    }
-
     .calculator {
-      position: absolute;
-      top: 58px;
-      right: 0;
-      bottom: 0;
-      z-index: 3;
-      width: 248px;
-      padding: 8px;
+      grid-column: 2;
+      grid-row: 1 / 4;
+      width: 268px;
+      min-width: 0;
+      padding: 10px;
       border-left: 2px solid var(--amber);
       background: #101010;
-      box-shadow: -10px 0 18px rgba(0, 0, 0, 0.45);
-      transform: translateX(100%);
-      transition: transform 0.16s ease;
-    }
-
-    .calculator.open {
-      transform: translateX(0);
+      box-shadow: inset 8px 0 16px rgba(0, 0, 0, 0.35);
     }
 
     .calc-display {
       width: 100%;
-      height: 30px;
-      margin-bottom: 6px;
+      height: 36px;
+      margin-bottom: 8px;
       padding: 0 7px;
       border: 1px solid var(--line);
       border-left: 3px solid var(--blue);
       color: var(--green);
       background: var(--panel-dark);
-      font: 800 0.92rem/1 "Courier New", Courier, monospace;
+      font: 800 1rem/1 "Courier New", Courier, monospace;
       text-align: right;
     }
 
     .calc-keys {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
+      gap: 6px;
     }
 
     .calc-key {
-      min-height: 24px;
+      min-height: 36px;
       border: 1px solid var(--line);
       border-radius: 3px;
       color: var(--amber);
       background: var(--panel-mid);
-      font: 800 0.82rem/1 "Courier New", Courier, monospace;
+      font: 800 0.9rem/1 "Courier New", Courier, monospace;
       cursor: pointer;
     }
 
@@ -499,8 +473,7 @@
         <div class="badge-list"></div>
       </div>
 
-      <button class="calc-toggle" type="button" aria-label="Open calculator" title="Calculator">CALC</button>
-      <aside class="calculator" aria-label="Calculator" aria-hidden="true">
+      <aside class="calculator" aria-label="Calculator">
         <input class="calc-display" type="text" value="0" aria-label="Calculator display" readonly>
         <div class="calc-keys">
           <button class="calc-key action" type="button" data-calc="clear">C</button>
@@ -549,7 +522,6 @@
     const streakEl = document.querySelector(".streak");
     const randomTotalEl = document.querySelector(".random-total");
     const badgeList = document.querySelector(".badge-list");
-    const calcToggle = document.querySelector(".calc-toggle");
     const calculator = document.querySelector(".calculator");
     const calcDisplay = document.querySelector(".calc-display");
     const params = new URLSearchParams(window.location.search);
@@ -586,13 +558,6 @@
       } catch (error) {
         // Progress still works for this session if storage is unavailable.
       }
-    }
-
-    function setCalculatorOpen(isOpen) {
-      calculator.classList.toggle("open", isOpen);
-      calculator.setAttribute("aria-hidden", String(!isOpen));
-      calcToggle.classList.toggle("active", isOpen);
-      calcToggle.setAttribute("aria-label", isOpen ? "Close calculator" : "Open calculator");
     }
 
     function calculateExpression(expression) {
@@ -1007,7 +972,6 @@
     activitySelect.addEventListener("change", () => setActivity(activitySelect.value));
     fromBaseSelect.addEventListener("change", nextItem);
     toBaseSelect.addEventListener("change", nextItem);
-    calcToggle.addEventListener("click", () => setCalculatorOpen(!calculator.classList.contains("open")));
     document.querySelectorAll("[data-calc]").forEach((button) => {
       button.addEventListener("click", () => handleCalculator(button.dataset.calc));
     });
