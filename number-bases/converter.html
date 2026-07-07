@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Number Base Sprint</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111;
+      --panel: #181818;
+      --panel-dark: #090909;
+      --panel-mid: #222;
+      --line: #555;
+      --amber: #ff9900;
+      --amber-soft: rgba(255, 153, 0, 0.18);
+      --green: #00ff66;
+      --blue: #64b5ff;
+      --red: #ff3344;
+      --text: #dedede;
+      --muted: #8f8f8f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Courier New", Courier, monospace;
+      color: var(--amber);
+      background: transparent;
+    }
+
+    main {
+      width: 100%;
+      margin: 0;
+      padding: 4px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .widget {
+      width: min(100%, 680px);
+      overflow: hidden;
+      border: 2px solid var(--amber);
+      border-radius: 5px;
+      background: var(--bg);
+      box-shadow: 0 0 16px var(--amber-soft);
+    }
+
+    .banner {
+      display: grid;
+      grid-template-columns: minmax(110px, 1fr) 132px 210px 180px;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .title {
+      min-width: 0;
+      color: var(--amber);
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+    }
+
+    .activity-select,
+    .base-select {
+      min-height: 32px;
+      padding: 0 24px 0 8px;
+      border: 2px solid var(--amber);
+      border-radius: 5px;
+      color: var(--amber);
+      background: var(--panel-mid);
+      font: 700 0.82rem/1 "Courier New", Courier, monospace;
+      cursor: pointer;
+    }
+
+    .activity-select {
+      width: 100%;
+    }
+
+    .random-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .base-control {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text);
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .base-select {
+      width: 70px;
+      min-height: 30px;
+      padding-right: 18px;
+      font-size: 0.75rem;
+    }
+
+    .base-select:disabled {
+      border-color: var(--line);
+      color: var(--muted);
+      cursor: not-allowed;
+      opacity: 0.68;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .readout {
+      min-height: 32px;
+      padding: 4px 6px;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--amber);
+      background: var(--panel-dark);
+      white-space: nowrap;
+    }
+
+    .readout label {
+      display: block;
+      color: var(--text);
+      font-size: 0.55rem;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .readout span {
+      display: block;
+      margin-top: 2px;
+      color: var(--green);
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .practice {
+      display: grid;
+      grid-template-columns: minmax(88px, 8rem) auto minmax(88px, 8.5rem) minmax(58px, auto) auto;
+      align-items: center;
+      justify-content: start;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg);
+    }
+
+    .literal,
+    input {
+      min-width: 0;
+      min-height: 38px;
+      border-radius: 3px;
+      font: 800 0.96rem/1.2 "Courier New", Courier, monospace;
+    }
+
+    .literal {
+      display: flex;
+      align-items: center;
+      padding: 0 9px;
+      overflow-wrap: anywhere;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--blue);
+      color: var(--green);
+      background: #050505;
+      box-shadow: inset 0 0 6px #000;
+    }
+
+    .target {
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 800;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      max-width: 8.5rem;
+      padding: 0 9px;
+      border: 2px solid var(--amber);
+      color: var(--green);
+      background: var(--panel-mid);
+    }
+
+    input::placeholder {
+      color: var(--muted);
+    }
+
+    input:focus,
+    .activity-select:focus,
+    .base-select:focus {
+      outline: 2px solid rgba(100, 181, 255, 0.38);
+      outline-offset: 1px;
+    }
+
+    .feedback {
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      color: var(--amber);
+      background: var(--panel-dark);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .feedback.correct {
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.42);
+    }
+
+    .feedback.incorrect {
+      border-color: var(--red);
+      color: var(--red);
+      box-shadow: 0 0 8px rgba(255, 51, 68, 0.32);
+    }
+
+    .next {
+      min-height: 38px;
+      padding: 0 11px;
+      border: 2px solid var(--amber);
+      border-radius: 5px;
+      color: var(--amber);
+      background: var(--panel-mid);
+      font: 800 0.86rem/1 "Courier New", Courier, monospace;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .next:hover,
+    .next:focus-visible {
+      color: var(--bg);
+      background: var(--amber);
+    }
+
+    .badge-panel {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      overflow-x: auto;
+    }
+
+    .badge-panel-title {
+      flex: 0 0 auto;
+      color: var(--text);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge-list {
+      display: flex;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .shield {
+      width: 72px;
+      min-width: 72px;
+      height: 58px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 7px 10px;
+      clip-path: polygon(50% 0, 93% 15%, 83% 75%, 50% 100%, 17% 75%, 7% 15%);
+      color: #050505;
+      background: var(--line);
+      text-align: center;
+      filter: saturate(0.7);
+      opacity: 0.52;
+    }
+
+    .shield.earned {
+      opacity: 1;
+      filter: none;
+      box-shadow: 0 0 10px rgba(255, 153, 0, 0.36);
+    }
+
+    .shield.lesson.earned {
+      background: var(--amber);
+    }
+
+    .shield.random-streak.earned {
+      background: var(--blue);
+    }
+
+    .shield.random-total.earned {
+      background: var(--green);
+    }
+
+    .shield strong,
+    .shield span {
+      display: block;
+      max-width: 58px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .shield strong {
+      font-size: 0.74rem;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .shield span {
+      margin-top: 3px;
+      font-size: 0.58rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    @media (max-width: 700px) {
+      .widget {
+        width: 100%;
+      }
+
+      .banner {
+        grid-template-columns: minmax(132px, 1fr) 150px;
+      }
+
+      .random-controls,
+      .stats {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .practice {
+        grid-template-columns: 1fr auto;
+      }
+
+      .target {
+        text-align: right;
+      }
+
+      input,
+      .feedback,
+      .next {
+        grid-column: span 2;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="widget" aria-label="Number base practice">
+      <div class="banner">
+        <div class="title">Number Base Sprint</div>
+        <select class="activity-select" aria-label="Practice set">
+          <option value="random">Random</option>
+        </select>
+        <div class="random-controls" aria-label="Random practice filters">
+          <label class="base-control">
+            From
+            <select class="base-select from-base" aria-label="Random from base">
+              <option value="any">Any</option>
+              <option value="dec">DEC</option>
+              <option value="bin">BIN</option>
+              <option value="oct">OCT</option>
+              <option value="hex">HEX</option>
+            </select>
+          </label>
+          <label class="base-control">
+            To
+            <select class="base-select to-base" aria-label="Random to base">
+              <option value="any">Any</option>
+              <option value="dec">DEC</option>
+              <option value="bin">BIN</option>
+              <option value="oct">OCT</option>
+              <option value="hex">HEX</option>
+            </select>
+          </label>
+        </div>
+        <div class="stats" aria-label="Performance">
+          <div class="readout">
+            <label>Score</label>
+            <span class="score">0/0</span>
+          </div>
+          <div class="readout">
+            <label>Streak</label>
+            <span class="streak">0</span>
+          </div>
+          <div class="readout">
+            <label>Random</label>
+            <span class="random-total">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="practice">
+        <div class="literal"></div>
+        <div class="target"></div>
+        <input type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <div class="feedback" role="status" aria-live="polite">TRY</div>
+        <button class="next" type="button">Next</button>
+      </div>
+
+      <div class="badge-panel" aria-label="Earned badges">
+        <div class="badge-panel-title">Badges</div>
+        <div class="badge-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const bases = {
+      dec: { base: 10, label: "DEC", prefix: "" },
+      bin: { base: 2, label: "BIN", prefix: "0b" },
+      oct: { base: 8, label: "OCT", prefix: "0o" },
+      hex: { base: 16, label: "HEX", prefix: "0x" }
+    };
+
+    const storageKey = "numberBaseSprintProgress:v1";
+    const literalEl = document.querySelector(".literal");
+    const targetEl = document.querySelector(".target");
+    const input = document.querySelector("input");
+    const feedback = document.querySelector(".feedback");
+    const nextButton = document.querySelector(".next");
+    const activitySelect = document.querySelector(".activity-select");
+    const fromBaseSelect = document.querySelector(".from-base");
+    const toBaseSelect = document.querySelector(".to-base");
+    const scoreEl = document.querySelector(".score");
+    const streakEl = document.querySelector(".streak");
+    const randomTotalEl = document.querySelector(".random-total");
+    const badgeList = document.querySelector(".badge-list");
+    const params = new URLSearchParams(window.location.search);
+
+    let lessons = {};
+    let mode = "random";
+    let lessonName = "";
+    let items = [];
+    let currentIndex = -1;
+    let answer = "";
+    let currentSolved = false;
+    let currentHadWrong = false;
+    let total = 0;
+    let correct = 0;
+    let streak = 0;
+    let lessonSolved = new Set();
+    let progress = loadProgress();
+
+    function loadProgress() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || {
+          lessons: {},
+          random: { completed: 0, bestStreak: 0 }
+        };
+      } catch (error) {
+        return { lessons: {}, random: { completed: 0, bestStreak: 0 } };
+      }
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(progress));
+      } catch (error) {
+        // Progress still works for this session if storage is unavailable.
+      }
+    }
+
+    function normalizeBase(baseName) {
+      const key = (baseName || "").toLowerCase();
+      const aliases = {
+        "2": "bin",
+        binary: "bin",
+        bin: "bin",
+        "8": "oct",
+        octal: "oct",
+        oct: "oct",
+        "10": "dec",
+        decimal: "dec",
+        dec: "dec",
+        "16": "hex",
+        hexadecimal: "hex",
+        hex: "hex"
+      };
+
+      return aliases[key] || "";
+    }
+
+    function parseLiteral(value) {
+      const text = value.trim().toLowerCase();
+
+      if (/^0b[01]+$/.test(text)) {
+        return parseInt(text.slice(2), 2);
+      }
+
+      if (/^0o[0-7]+$/.test(text)) {
+        return parseInt(text.slice(2), 8);
+      }
+
+      if (/^0x[0-9a-f]+$/.test(text)) {
+        return parseInt(text.slice(2), 16);
+      }
+
+      if (/^[0-9]+$/.test(text)) {
+        return parseInt(text, 10);
+      }
+
+      return NaN;
+    }
+
+    function formatValue(value, baseKey) {
+      const baseInfo = bases[baseKey];
+      return `${baseInfo.prefix}${value.toString(baseInfo.base)}`;
+    }
+
+    function randomBase(excludedBase = "") {
+      const selected = Object.keys(bases).filter((baseKey) => baseKey !== excludedBase);
+      return selected[Math.floor(Math.random() * selected.length)];
+    }
+
+    function selectedRandomBase(selectEl) {
+      return bases[selectEl.value] ? selectEl.value : "";
+    }
+
+    function randomItem() {
+      const value = Math.floor(Math.random() * 240) + 1;
+      const lockedFrom = selectedRandomBase(fromBaseSelect);
+      const lockedTo = selectedRandomBase(toBaseSelect);
+      const from = lockedFrom || randomBase(lockedTo);
+      let to = lockedTo || randomBase(from);
+
+      while (to === from) {
+        to = randomBase(from);
+      }
+
+      return {
+        literal: formatValue(value, from),
+        target: to,
+        value
+      };
+    }
+
+    function normalizeItem(rawItem) {
+      const literal = String(rawItem.value || rawItem.literal || "").trim();
+      const target = normalizeBase(rawItem.to || rawItem.target);
+      const value = parseLiteral(literal);
+
+      if (!literal || !target || !Number.isFinite(value)) {
+        return null;
+      }
+
+      return { literal, target, value };
+    }
+
+    function normalizeAnswer(text) {
+      return text.trim().toLowerCase();
+    }
+
+    function lessonLabel(name) {
+      return name
+        .split(/[-_ ]+/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+    }
+
+    function ensureProgressShape() {
+      progress.lessons = progress.lessons || {};
+      progress.random = progress.random || { completed: 0, bestStreak: 0 };
+      progress.random.completed = progress.random.completed || 0;
+      progress.random.bestStreak = progress.random.bestStreak || 0;
+    }
+
+    function populateActivitySelect() {
+      const preferred = params.get("lesson") || params.get("activity") || "random";
+      activitySelect.innerHTML = '<option value="random">Random</option>';
+
+      Object.keys(lessons).forEach((key) => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = lessonLabel(key);
+        activitySelect.appendChild(option);
+      });
+
+      activitySelect.value = lessons[preferred] ? preferred : "random";
+    }
+
+    function renderBadges() {
+      ensureProgressShape();
+      badgeList.innerHTML = "";
+
+      const lessonBadges = Object.keys(lessons).map((key) => ({
+        kind: "lesson",
+        title: lessonLabel(key) || "Lesson",
+        detail: "complete",
+        earned: Boolean(progress.lessons[key])
+      }));
+
+      const badges = [
+        ...lessonBadges,
+        {
+          kind: "random-streak",
+          title: "10 Row",
+          detail: "random",
+          earned: progress.random.bestStreak >= 10
+        },
+        {
+          kind: "random-total",
+          title: "50 Done",
+          detail: "random",
+          earned: progress.random.completed >= 50
+        }
+      ];
+
+      badges.forEach((badge) => {
+        const shield = document.createElement("div");
+        shield.className = `shield ${badge.kind}${badge.earned ? " earned" : ""}`;
+        shield.title = `${badge.title} ${badge.detail}`;
+        shield.innerHTML = `<strong>${badge.title}</strong><span>${badge.detail}</span>`;
+        badgeList.appendChild(shield);
+      });
+    }
+
+    function updateStats() {
+      ensureProgressShape();
+      scoreEl.textContent = `${correct}/${total}`;
+      streakEl.textContent = String(streak);
+      randomTotalEl.textContent = String(progress.random.completed);
+      renderBadges();
+    }
+
+    function completeLessonIfReady() {
+      if (mode !== "lesson" || !items.length || lessonSolved.size < items.length) {
+        return;
+      }
+
+      if (!progress.lessons[lessonName]) {
+        progress.lessons[lessonName] = {
+          completedAt: new Date().toISOString(),
+          count: items.length
+        };
+        saveProgress();
+      }
+    }
+
+    function awardCorrect() {
+      currentSolved = true;
+      total += 1;
+      correct += 1;
+
+      if (currentHadWrong) {
+        streak = 0;
+      } else {
+        streak += 1;
+      }
+
+      if (mode === "random") {
+        progress.random.completed += 1;
+        progress.random.bestStreak = Math.max(progress.random.bestStreak, streak);
+        saveProgress();
+      } else if (currentIndex >= 0) {
+        lessonSolved.add(currentIndex);
+        completeLessonIfReady();
+      }
+
+      updateStats();
+    }
+
+    function closeMissedItem() {
+      if (!currentSolved && currentHadWrong) {
+        total += 1;
+        streak = 0;
+        updateStats();
+      }
+    }
+
+    function checkAnswer() {
+      const response = normalizeAnswer(input.value);
+
+      feedback.classList.remove("correct", "incorrect");
+
+      if (!response) {
+        feedback.textContent = "TRY";
+        return;
+      }
+
+      if (response === answer) {
+        feedback.textContent = "RIGHT";
+        feedback.classList.add("correct");
+
+        if (!currentSolved) {
+          awardCorrect();
+        }
+      } else {
+        currentHadWrong = true;
+        feedback.textContent = "NO";
+        feedback.classList.add("incorrect");
+      }
+    }
+
+    function resetFeedback() {
+      currentSolved = false;
+      currentHadWrong = false;
+      input.value = "";
+      input.disabled = !answer;
+      input.placeholder = answer ? "literal" : "bad prompt";
+      feedback.textContent = answer ? "TRY" : "BAD";
+      feedback.classList.toggle("incorrect", !answer);
+      feedback.classList.remove("correct");
+    }
+
+    function renderItem(item) {
+      answer = Number.isFinite(item.value) ? formatValue(item.value, item.target) : "";
+      literalEl.textContent = item.literal;
+      targetEl.textContent = `TO ${bases[item.target].label}`;
+      resetFeedback();
+      input.focus();
+    }
+
+    function nextItem() {
+      closeMissedItem();
+
+      if (mode === "lesson" && items.length) {
+        currentIndex = (currentIndex + 1) % items.length;
+        renderItem(items[currentIndex]);
+        return;
+      }
+
+      renderItem(randomItem());
+    }
+
+    async function loadLessons() {
+      try {
+        const response = await fetch("number-base-lessons.json", { cache: "no-store" });
+
+        if (!response.ok) {
+          throw new Error("Could not load lesson items.");
+        }
+
+        lessons = await response.json();
+      } catch (error) {
+        lessons = {};
+        feedback.textContent = "LESSONS OFFLINE";
+      }
+    }
+
+    function resetSession() {
+      currentIndex = -1;
+      answer = "";
+      currentSolved = false;
+      currentHadWrong = false;
+      lessonSolved = new Set();
+      total = 0;
+      correct = 0;
+      streak = 0;
+      updateStats();
+    }
+
+    function updateRandomControls() {
+      const disabled = mode !== "random";
+      fromBaseSelect.disabled = disabled;
+      toBaseSelect.disabled = disabled;
+    }
+
+    async function setActivity(activity) {
+      mode = activity === "random" ? "random" : "lesson";
+      lessonName = mode === "lesson" ? activity : "";
+      items = [];
+      updateRandomControls();
+      resetSession();
+
+      if (mode === "lesson") {
+        items = (lessons[lessonName] || []).map(normalizeItem).filter(Boolean);
+
+        if (!items.length) {
+          literalEl.textContent = "ERROR";
+          targetEl.textContent = "";
+          answer = "";
+          resetFeedback();
+          feedback.textContent = "EMPTY";
+          return;
+        }
+      }
+
+      nextItem();
+    }
+
+    async function init() {
+      const fixedLiteral = params.get("value");
+      const requestedTarget = normalizeBase(params.get("to"));
+
+      ensureProgressShape();
+      fromBaseSelect.value = normalizeBase(params.get("fromBase") || params.get("from")) || "any";
+      toBaseSelect.value = normalizeBase(params.get("toBase")) || "any";
+      await loadLessons();
+      populateActivitySelect();
+      updateStats();
+
+      if (fixedLiteral && requestedTarget) {
+        lessons = {
+          ...lessons,
+          prompt: [{ value: fixedLiteral, to: requestedTarget }]
+        };
+        populateActivitySelect();
+        activitySelect.value = "prompt";
+      }
+
+      await setActivity(activitySelect.value);
+    }
+
+    input.addEventListener("input", checkAnswer);
+    nextButton.addEventListener("click", nextItem);
+    activitySelect.addEventListener("change", () => setActivity(activitySelect.value));
+    fromBaseSelect.addEventListener("change", nextItem);
+    toBaseSelect.addEventListener("change", nextItem);
+    init();
+  </script>
+</body>
+</html>

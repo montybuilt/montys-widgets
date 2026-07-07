@@ -1,0 +1,14 @@
+{
+  "intro": [
+    { "value": "17", "to": "bin" },
+    { "value": "0b100101", "to": "dec" },
+    { "value": "0o32", "to": "hex" },
+    { "value": "0xf1a", "to": "dec" }
+  ],
+  "binary-hex": [
+    { "value": "0b1010", "to": "hex" },
+    { "value": "0b1111", "to": "hex" },
+    { "value": "0x2a", "to": "bin" },
+    { "value": "0xff", "to": "bin" }
+  ]
+}
