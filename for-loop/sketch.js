@@ -518,6 +518,8 @@ function instrumentSource(source) {
 		const line = lines[i];
 		const trimmed = line.trim();
 		const indent = line.match(/^\s*/)[0];
+		const indentUnit = indent.includes("\t") ? "\t" : "    ";
+		const nestedIndent = indent + indentUnit;
 		if (trimmed !== "" && !trimmed.startsWith("#")) {
 			while (defStack.length > 0 && indent.length <= defStack[defStack.length - 1].indent) {
 				defStack.pop();
@@ -530,11 +532,11 @@ function instrumentSource(source) {
 			trimmed.startsWith("@") ||
 			/^(elif|else|except|finally)\b/.test(trimmed);
 
+		const activeFunc = defStack.length > 0 ? defStack[defStack.length - 1] : null;
 		if (!isSkippable) {
-			instrumented.push(`${indent}__trace__(${i + 1}, globals(), __trace_stack)`);
+			instrumented.push(buildTraceCall(i + 1, indent, activeFunc));
 		}
 
-		const activeFunc = defStack.length > 0 ? defStack[defStack.length - 1] : null;
 		const returnMatch = trimmed.match(/^return(?:\s+(.*))?$/);
 		if (activeFunc && returnMatch) {
 			if (returnMatch[1]) {
@@ -550,16 +552,58 @@ function instrumentSource(source) {
 
 		instrumented.push(line);
 
+		if (/^(for|while)\s+/.test(trimmed)) {
+			instrumented.push(buildTraceCall(i + 1, nestedIndent, activeFunc));
+		}
+
 		if (/^def\s+/.test(trimmed)) {
-			const nameMatch = trimmed.match(/^def\s+([A-Za-z_]\w*)/);
+			const nameMatch = trimmed.match(/^def\s+([A-Za-z_]\w*)\s*\(([^)]*)\)/);
 			if (nameMatch) {
-				defStack.push({ name: nameMatch[1], indent: indent.length });
+				const params = extractParamNames(nameMatch[2]);
+				defStack.push({
+					name: nameMatch[1],
+					indent: indent.length,
+					localNames: new Set(params),
+				});
 				instrumented.push(`${indent}    __trace_call__('${nameMatch[1]}')`);
 			}
+		}
+
+		if (activeFunc) {
+			extractAssignedNames(line).forEach((name) => activeFunc.localNames.add(name));
 		}
 	}
 
 	return instrumented.join("\n");
+}
+
+function buildTraceCall(lineNo, indent, activeFunc) {
+	if (!activeFunc || activeFunc.localNames.size === 0) {
+		return `${indent}__trace__(${lineNo}, globals(), __trace_stack)`;
+	}
+	const localPairs = [...activeFunc.localNames]
+		.sort((a, b) => a.localeCompare(b))
+		.map((name) => `'${name}': ${name}`)
+		.join(", ");
+	return `${indent}__trace__(${lineNo}, globals(), __trace_stack, {${localPairs}})`;
+}
+
+function extractParamNames(paramText) {
+	return paramText
+		.split(",")
+		.map((param) => param.trim())
+		.filter((param) => param && !param.startsWith("*"))
+		.map((param) => param.split("=")[0].trim())
+		.filter((param) => /^[A-Za-z_]\w*$/.test(param));
+}
+
+function extractAssignedNames(line) {
+	const names = [];
+	const assignMatch = line.match(/^\s*([A-Za-z_]\w*)\s*=/);
+	if (assignMatch) names.push(assignMatch[1]);
+	const forMatch = line.match(/^\s*for\s+([A-Za-z_]\w*)\s+in\b/);
+	if (forMatch) names.push(forMatch[1]);
+	return names;
 }
 
 function extractKnownNames(lines) {
@@ -620,11 +664,12 @@ function runSkulptTrace(source) {
 			return Sk.builtinFiles["files"][path];
 		}
 
-		Sk.builtins.__trace__ = new Sk.builtin.func((lineNo, globalsObj, stackObj) => {
+		Sk.builtins.__trace__ = new Sk.builtin.func((lineNo, globalsObj, stackObj, localsObj) => {
 			flushOutputIntoLastStep();
 
 			const globals = sanitizeScope(Sk.ffi.remapToJs(globalsObj));
-			const locals = globals;
+			const localValues = localsObj === undefined ? null : Sk.ffi.remapToJs(localsObj);
+			const locals = localValues ? sanitizeScope(localValues) : globals;
 			const stack = Array.isArray(Sk.ffi.remapToJs(stackObj)) ? Sk.ffi.remapToJs(stackObj) : [];
 
 			traceSteps.push({
