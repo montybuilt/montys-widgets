@@ -231,7 +231,7 @@ function drawLayout() {
 	const minRows = 5;
 
 	const objectRowCount = isTraceReady && steps.length > 0
-		? Math.max(minRows, Object.keys(getDisplayMapForStep(currentStepIndex)).length)
+		? Math.max(minRows, Object.keys(getDisplayMapForStep(currentStepIndex)).length + (hasStarted ? 1 : 0))
 		: minRows;
 	const emittedOutputsCount = isTraceReady && steps.length > 0
 		? steps
@@ -347,9 +347,13 @@ function drawObjectExplorer(x, y, w, h) {
 	if (!isTraceReady || steps.length === 0 || !hasStarted) return;
 
 	const displayMap = getDisplayMapForStep(currentStepIndex);
-	const rows = Object.keys(displayMap)
+	const variableRows = Object.keys(displayMap)
 		.sort((a, b) => a.localeCompare(b))
 		.map((key) => ({ type: "item", scope: "locals", key, value: displayMap[key] }));
+	const rows = [
+		{ type: "frame", key: "Frame", value: getFrameLabel(currentStepIndex) },
+		...variableRows,
+	];
 	updateValueHighlights();
 
 	const visibleRows = rows.slice(0, maxRows);
@@ -357,6 +361,16 @@ function drawObjectExplorer(x, y, w, h) {
 		const row = visibleRows[i];
 		const rowY = startY + i * rowHeight;
 		const highlightUntil = highlightUntilByKey[row.key] || 0;
+		if (row.type === "frame") {
+			fill(50);
+			textStyle(BOLD);
+			textSize(scaleFont(14));
+			text(row.key, labelX, rowY + scaleValue(14));
+			fill(70);
+			text(row.value, valueX, rowY + scaleValue(14));
+			textStyle(NORMAL);
+			continue;
+		}
 		if (highlightUntil > millis()) {
 			const remaining = highlightUntil - millis();
 			const alpha = Math.max(0, Math.min(180, (remaining / 1000) * 180));
@@ -504,36 +518,37 @@ function instrumentSource(source) {
 		const line = lines[i];
 		const trimmed = line.trim();
 		const indent = line.match(/^\s*/)[0];
-		const indentUnit = indent.includes("\t") ? "\t" : "    ";
-		const nestedIndent = indent + indentUnit;
 		if (trimmed !== "" && !trimmed.startsWith("#")) {
 			while (defStack.length > 0 && indent.length <= defStack[defStack.length - 1].indent) {
 				defStack.pop();
 			}
 		}
 
-		const isLoopHeader = /^for\s+/.test(trimmed) || /^while\s+/.test(trimmed);
 		const isSkippable =
 			trimmed === "" ||
 			trimmed.startsWith("#") ||
 			trimmed.startsWith("@") ||
-			/^(elif|else|except|finally)\b/.test(trimmed) ||
-			isLoopHeader;
+			/^(elif|else|except|finally)\b/.test(trimmed);
 
 		if (!isSkippable) {
-			instrumented.push(`${indent}__trace__(${i + 1}, globals(), __trace_stack)`);
+			instrumented.push(`${indent}__trace__(${i + 1}, globals(), locals(), __trace_stack)`);
 		}
 
 		const activeFunc = defStack.length > 0 ? defStack[defStack.length - 1] : null;
-		if (activeFunc && /^return\b/.test(trimmed)) {
-			instrumented.push(`${indent}__trace_return__('${activeFunc.name}')`);
+		const returnMatch = trimmed.match(/^return(?:\s+(.*))?$/);
+		if (activeFunc && returnMatch) {
+			if (returnMatch[1]) {
+				instrumented.push(`${indent}__trace_return_value = ${returnMatch[1]}`);
+				instrumented.push(`${indent}__trace_return__('${activeFunc.name}')`);
+				instrumented.push(`${indent}return __trace_return_value`);
+			} else {
+				instrumented.push(`${indent}__trace_return__('${activeFunc.name}')`);
+				instrumented.push(line);
+			}
+			continue;
 		}
 
 		instrumented.push(line);
-
-		if (isLoopHeader) {
-			instrumented.push(`${nestedIndent}__trace__(${i + 1}, globals(), __trace_stack)`);
-		}
 
 		if (/^def\s+/.test(trimmed)) {
 			const nameMatch = trimmed.match(/^def\s+([A-Za-z_]\w*)/);
@@ -605,11 +620,11 @@ function runSkulptTrace(source) {
 			return Sk.builtinFiles["files"][path];
 		}
 
-		Sk.builtins.__trace__ = new Sk.builtin.func((lineNo, globalsObj, stackObj) => {
+		Sk.builtins.__trace__ = new Sk.builtin.func((lineNo, globalsObj, localsObj, stackObj) => {
 			flushOutputIntoLastStep();
 
 			const globals = sanitizeScope(Sk.ffi.remapToJs(globalsObj));
-			const locals = globals;
+			const locals = sanitizeScope(Sk.ffi.remapToJs(localsObj));
 			const stack = Array.isArray(Sk.ffi.remapToJs(stackObj)) ? Sk.ffi.remapToJs(stackObj) : [];
 
 			traceSteps.push({
@@ -737,9 +752,9 @@ function getChangedKeys(prevStep, step) {
 	return changed;
 }
 
-function buildScopeList(localsObj, globalsObj, scope, overrides) {
+function buildScopeList(localsObj, globalsObj, scope) {
 	const entries = [];
-	const map = buildScopeMap(localsObj, globalsObj, scope, overrides);
+	const map = buildScopeMap(localsObj, globalsObj, scope);
 	Object.keys(map)
 		.sort((a, b) => a.localeCompare(b))
 		.forEach((key) => {
@@ -752,35 +767,32 @@ function clamp(value, minValue, maxValue) {
 	return Math.max(minValue, Math.min(maxValue, value));
 }
 
-function getLoopHeaderOverrides(stepIndex) {
-	if (stepIndex <= 0) return null;
+function getFrameLabel(stepIndex) {
 	const step = steps[stepIndex];
-	if (!step) return null;
-	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
-	const lineText = codeLines[lineIndex] || "";
-	const match = lineText.match(/^\s*for\s+([A-Za-z_]\w*)\s+in\b/);
-	if (!match) return null;
-	const loopVar = match[1];
-	const prevStep = steps[stepIndex - 1];
-	const prevValue = prevStep && prevStep.locals && prevStep.locals[loopVar] !== undefined
-		? prevStep.locals[loopVar]
-		: "unassigned";
-	return { [loopVar]: prevValue };
+	if (!step || !Array.isArray(step.stack) || step.stack.length === 0) return "<module>";
+	return step.stack[step.stack.length - 1];
 }
 
-function buildScopeMap(localsObj, globalsObj, scope, overrides) {
+function isModuleScope(localsObj, globalsObj) {
+	const localKeys = Object.keys(localsObj || {});
+	const globalKeys = Object.keys(globalsObj || {});
+	if (localKeys.length !== globalKeys.length) return false;
+	return localKeys.every((key) => globalsObj && globalsObj[key] === localsObj[key]);
+}
+
+function buildScopeMap(localsObj, globalsObj, scope) {
 	const map = {};
-	const localKeys = new Set([...Object.keys(localsObj || {}), ...knownNames]);
+	const includeKnownNames = isModuleScope(localsObj, globalsObj);
+	const localKeys = new Set([
+		...Object.keys(localsObj || {}),
+		...(includeKnownNames ? knownNames : []),
+	]);
 	const globalKeys = new Set([...Object.keys(globalsObj || {}), ...knownNames]);
 
 	if (scope === "locals") {
 		localKeys.forEach((key) => {
 			if (key.startsWith("__")) return;
-			let value = localsObj && localsObj[key] !== undefined ? localsObj[key] : "unassigned";
-			if (overrides && Object.prototype.hasOwnProperty.call(overrides, key)) {
-				value = overrides[key];
-			}
-			map[key] = value;
+			map[key] = localsObj && localsObj[key] !== undefined ? localsObj[key] : "unassigned";
 		});
 	} else {
 		globalKeys.forEach((key) => {
@@ -796,19 +808,10 @@ function buildScopeMap(localsObj, globalsObj, scope, overrides) {
 function getDisplayMapForStep(stepIndex) {
 	if (stepIndex < 0 || stepIndex >= steps.length) return {};
 	if (stepIndex === 0) {
-		return buildScopeMap({}, {}, "locals", null);
+		return buildScopeMap({}, {}, "locals");
 	}
 	const step = steps[stepIndex];
-	const lineIndex = clamp(step.lineNo - 1, 0, codeLines.length - 1);
-	const lineText = codeLines[lineIndex] || "";
-	if (/^\s*(for|while)\b/.test(lineText)) {
-		const prevStep = steps[stepIndex - 1];
-		if (!prevStep) return buildScopeMap({}, {}, "locals", null);
-		const prevOverrides = getLoopHeaderOverrides(stepIndex - 1);
-		return buildScopeMap(prevStep.locals, prevStep.globals, "locals", prevOverrides);
-	}
-	const overrides = getLoopHeaderOverrides(stepIndex);
-	return buildScopeMap(step.locals, step.globals, "locals", overrides);
+	return buildScopeMap(step.locals, step.globals, "locals");
 }
 
 function updateValueHighlights() {
