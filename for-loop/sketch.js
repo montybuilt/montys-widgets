@@ -514,6 +514,7 @@ function instrumentSource(source) {
 	];
 
 	const defStack = [];
+	const loopStack = [];
 	for (let i = 0; i < lines.length; i += 1) {
 		const line = lines[i];
 		const trimmed = line.trim();
@@ -521,6 +522,10 @@ function instrumentSource(source) {
 		const indentUnit = indent.includes("\t") ? "\t" : "    ";
 		const nestedIndent = indent + indentUnit;
 		if (trimmed !== "" && !trimmed.startsWith("#")) {
+			while (loopStack.length > 0 && indent.length <= loopStack[loopStack.length - 1].indent) {
+				const loop = loopStack.pop();
+				instrumented.push(buildTraceCall(loop.lineNo, loop.bodyIndent, loop.activeFunc));
+			}
 			while (defStack.length > 0 && indent.length <= defStack[defStack.length - 1].indent) {
 				defStack.pop();
 			}
@@ -553,7 +558,12 @@ function instrumentSource(source) {
 		instrumented.push(line);
 
 		if (/^(for|while)\s+/.test(trimmed)) {
-			instrumented.push(buildTraceCall(i + 1, nestedIndent, activeFunc));
+			loopStack.push({
+				lineNo: i + 1,
+				indent: indent.length,
+				bodyIndent: nestedIndent,
+				activeFunc,
+			});
 		}
 
 		if (/^def\s+/.test(trimmed)) {
@@ -572,6 +582,11 @@ function instrumentSource(source) {
 		if (activeFunc) {
 			extractAssignedNames(line).forEach((name) => activeFunc.localNames.add(name));
 		}
+	}
+
+	while (loopStack.length > 0) {
+		const loop = loopStack.pop();
+		instrumented.push(buildTraceCall(loop.lineNo, loop.bodyIndent, loop.activeFunc));
 	}
 
 	return instrumented.join("\n");
