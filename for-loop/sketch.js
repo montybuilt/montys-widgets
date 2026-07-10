@@ -531,7 +531,7 @@ function instrumentSource(source) {
 			/^(elif|else|except|finally)\b/.test(trimmed);
 
 		if (!isSkippable) {
-			instrumented.push(`${indent}__trace__(${i + 1}, globals(), locals(), __trace_stack)`);
+			instrumented.push(`${indent}__trace__(${i + 1}, globals(), __trace_stack)`);
 		}
 
 		const activeFunc = defStack.length > 0 ? defStack[defStack.length - 1] : null;
@@ -620,11 +620,11 @@ function runSkulptTrace(source) {
 			return Sk.builtinFiles["files"][path];
 		}
 
-		Sk.builtins.__trace__ = new Sk.builtin.func((lineNo, globalsObj, localsObj, stackObj) => {
+		Sk.builtins.__trace__ = new Sk.builtin.func((lineNo, globalsObj, stackObj) => {
 			flushOutputIntoLastStep();
 
 			const globals = sanitizeScope(Sk.ffi.remapToJs(globalsObj));
-			const locals = sanitizeScope(Sk.ffi.remapToJs(localsObj));
+			const locals = globals;
 			const stack = Array.isArray(Sk.ffi.remapToJs(stackObj)) ? Sk.ffi.remapToJs(stackObj) : [];
 
 			traceSteps.push({
