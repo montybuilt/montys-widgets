@@ -555,6 +555,15 @@ function instrumentSource(source) {
 			continue;
 		}
 
+		if (trimmed === "continue") {
+			const loop = loopStack[loopStack.length - 1];
+			if (loop) {
+				instrumented.push(buildTraceCall(loop.lineNo, indent, activeFunc));
+			}
+			instrumented.push(line);
+			continue;
+		}
+
 		instrumented.push(line);
 
 		if (/^(for|while)\s+/.test(trimmed)) {
