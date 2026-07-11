@@ -21,6 +21,7 @@ let pythonSource = "";
 let uiScale = 1;
 
 const STEP_DURATION_MS = 1500;
+const ASSET_VERSION = "20260710-5";
 const DEFAULT_PYTHON_SOURCE = `
 total = 0
 for i in range(1, 5):
@@ -40,7 +41,7 @@ function preload() {
 	pythonSource = DEFAULT_PYTHON_SOURCE;
 	const programPath = getProgramPath();
 	loadStrings(
-		programPath,
+		addCacheBuster(programPath),
 		(lines) => {
 			if (lines && lines.length > 0) {
 				pythonSource = lines.join("\n");
@@ -63,6 +64,11 @@ function getProgramPath() {
 		return "program.py";
 	}
 	return "program.py";
+}
+
+function addCacheBuster(path) {
+	const separator = path.includes("?") ? "&" : "?";
+	return `${path}${separator}v=${ASSET_VERSION}`;
 }
 
 function setup() {
