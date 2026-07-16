@@ -1,0 +1,1353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Collection Sprint</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111;
+      --panel: #181818;
+      --panel-dark: #090909;
+      --panel-mid: #222;
+      --line: #555;
+      --amber: #ff9900;
+      --amber-soft: rgba(255, 153, 0, 0.18);
+      --green: #00ff66;
+      --blue: #64b5ff;
+      --red: #ff3344;
+      --text: #dedede;
+      --muted: #8f8f8f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Courier New", Courier, monospace;
+      color: var(--amber);
+      background: transparent;
+      overflow: hidden;
+    }
+
+    main {
+      width: 996px;
+      margin: 0;
+      padding: 4px;
+    }
+
+    .widget {
+      width: 988px;
+      height: 304px;
+      display: grid;
+      grid-template-columns: 720px 268px;
+      grid-template-rows: 66px 104px 130px;
+      overflow: hidden;
+      border: 2px solid var(--amber);
+      border-radius: 5px;
+      background: var(--bg);
+      box-shadow: 0 0 16px var(--amber-soft);
+      position: relative;
+    }
+
+    .banner {
+      display: grid;
+      grid-column: 1;
+      grid-row: 1;
+      grid-template-columns: minmax(150px, 1fr) 158px 162px 172px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .title {
+      min-width: 0;
+      color: var(--amber);
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+    }
+
+    select {
+      min-height: 34px;
+      padding: 0 24px 0 8px;
+      border: 2px solid var(--amber);
+      border-radius: 5px;
+      color: var(--amber);
+      background: var(--panel-mid);
+      font: 700 0.76rem/1 "Courier New", Courier, monospace;
+      cursor: pointer;
+    }
+
+    .activity-select,
+    .type-select {
+      width: 100%;
+    }
+
+    .random-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .random-control {
+      display: grid;
+      gap: 2px;
+      color: var(--text);
+      font-size: 0.54rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .random-control select {
+      min-width: 0;
+      min-height: 30px;
+      padding: 0 15px 0 5px;
+      font-size: 0.65rem;
+    }
+
+    select:disabled {
+      border-color: var(--line);
+      color: var(--muted);
+      cursor: not-allowed;
+      opacity: 0.68;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .readout {
+      min-height: 36px;
+      padding: 4px 6px;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--amber);
+      background: var(--panel-dark);
+      white-space: nowrap;
+    }
+
+    .readout label {
+      display: block;
+      color: var(--text);
+      font-size: 0.56rem;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .readout span {
+      display: block;
+      margin-top: 2px;
+      color: var(--green);
+      font-size: 0.8rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .practice {
+      grid-column: 1;
+      grid-row: 2;
+      display: grid;
+      grid-template-columns: minmax(274px, 1fr) minmax(178px, 0.65fr) auto auto;
+      grid-template-rows: 28px 44px;
+      align-items: center;
+      gap: 7px 10px;
+      padding: 10px;
+      background: var(--bg);
+    }
+
+    .prompt-label {
+      grid-column: 1 / -1;
+      color: var(--text);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .prompt-label span {
+      color: var(--blue);
+      text-transform: none;
+    }
+
+    .expression,
+    .answer-input {
+      min-width: 0;
+      min-height: 44px;
+      border-radius: 3px;
+      font: 800 0.9rem/1.25 "Courier New", Courier, monospace;
+    }
+
+    .expression {
+      display: flex;
+      align-items: center;
+      padding: 5px 9px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--blue);
+      color: var(--green);
+      background: #050505;
+      box-shadow: inset 0 0 6px #000;
+      white-space: pre-wrap;
+    }
+
+    .answer-input {
+      width: 100%;
+      padding: 0 9px;
+      border: 2px solid var(--amber);
+      color: var(--green);
+      background: var(--panel-mid);
+    }
+
+    .answer-input::placeholder {
+      color: var(--muted);
+    }
+
+    .answer-input:focus,
+    select:focus {
+      outline: 2px solid rgba(100, 181, 255, 0.38);
+      outline-offset: 1px;
+    }
+
+    .check,
+    .next {
+      min-height: 40px;
+      padding: 0 10px;
+      border-radius: 4px;
+      font: 800 0.82rem/1 "Courier New", Courier, monospace;
+      cursor: pointer;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .check {
+      border: 1px solid var(--line);
+      color: var(--amber);
+      background: var(--panel-dark);
+    }
+
+    .check:hover,
+    .check:focus-visible {
+      border-color: var(--amber);
+      box-shadow: 0 0 8px rgba(255, 153, 0, 0.28);
+    }
+
+    .check.correct {
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.42);
+    }
+
+    .check.incorrect {
+      border-color: var(--red);
+      color: var(--red);
+      box-shadow: 0 0 8px rgba(255, 51, 68, 0.32);
+    }
+
+    .next {
+      border: 2px solid var(--amber);
+      color: var(--amber);
+      background: var(--panel-mid);
+    }
+
+    .next:hover,
+    .next:focus-visible {
+      color: var(--bg);
+      background: var(--amber);
+    }
+
+    .badge-panel {
+      grid-column: 1;
+      grid-row: 3;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .badge-panel-title {
+      flex: 0 0 auto;
+      color: var(--text);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge-list {
+      display: flex;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .shield {
+      width: 82px;
+      min-width: 82px;
+      height: 68px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 7px 10px;
+      clip-path: polygon(50% 0, 93% 15%, 83% 75%, 50% 100%, 17% 75%, 7% 15%);
+      color: #050505;
+      background: var(--line);
+      text-align: center;
+      filter: saturate(0.7);
+      opacity: 0.52;
+    }
+
+    .shield.earned {
+      opacity: 1;
+      filter: none;
+      box-shadow: 0 0 10px rgba(255, 153, 0, 0.36);
+    }
+
+    .shield.lesson.score-high.earned,
+    .shield.random-total.earned {
+      background: var(--green);
+    }
+
+    .shield.lesson.score-mid.earned {
+      background: var(--amber);
+    }
+
+    .shield.lesson.score-low.earned {
+      background: var(--red);
+    }
+
+    .shield.random-streak.earned {
+      background: var(--blue);
+    }
+
+    .shield strong,
+    .shield span {
+      display: block;
+      max-width: 66px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .shield strong {
+      font-size: 0.72rem;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .shield span {
+      margin-top: 3px;
+      font-size: 0.6rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .visualizer {
+      grid-column: 2;
+      grid-row: 1 / 4;
+      width: 268px;
+      min-width: 0;
+      padding: 10px;
+      border-left: 2px solid var(--amber);
+      background: #101010;
+      box-shadow: inset 8px 0 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .visualizer h2 {
+      margin: 0;
+      color: var(--amber);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .type-chip {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 6px;
+      border: 1px solid var(--blue);
+      border-radius: 3px;
+      color: var(--blue);
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .visual-stage {
+      height: 174px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 7px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--panel-dark);
+    }
+
+    .visual-locked {
+      width: 190px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.45;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .visual-locked::before {
+      content: "?";
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 10px;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      color: var(--amber);
+      font-size: 1.15rem;
+    }
+
+    .sequence {
+      width: 230px;
+      max-width: 230px;
+      display: grid;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .cell {
+      min-width: 0;
+      text-align: center;
+    }
+
+    .cell-index {
+      height: 24px;
+      color: var(--amber);
+      font-size: 0.65rem;
+      font-weight: 800;
+      line-height: 24px;
+    }
+
+    .cell-value {
+      width: 100%;
+      min-width: 0;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: var(--panel-mid);
+      font-size: 0.64rem;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cell.selected .cell-value {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(0, 255, 102, 0.1);
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.25);
+    }
+
+    .cell-negative {
+      height: 24px;
+      color: var(--blue);
+      font-size: 0.65rem;
+      font-weight: 800;
+      line-height: 24px;
+    }
+
+    .mapping,
+    .unsupported {
+      width: 215px;
+    }
+
+    .mapping-row {
+      display: grid;
+      grid-template-columns: 1fr 20px 1fr;
+      align-items: center;
+      min-height: 34px;
+      border-bottom: 1px solid #333;
+      font-size: 0.68rem;
+    }
+
+    .mapping-key {
+      color: var(--blue);
+      text-align: right;
+    }
+
+    .mapping-arrow {
+      color: var(--amber);
+      text-align: center;
+    }
+
+    .mapping-value {
+      color: var(--green);
+    }
+
+    .unsupported {
+      color: var(--text);
+      font-size: 0.74rem;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .unsupported strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--red);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .set-values {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .set-value {
+      padding: 5px 7px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--text);
+      background: var(--panel-mid);
+    }
+
+    .set-value.selected {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(0, 255, 102, 0.1);
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.25);
+    }
+
+    .visual-note {
+      min-height: 38px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.63rem;
+      line-height: 1.25;
+    }
+
+    @media (max-width: 995px) {
+      body {
+        overflow: auto;
+      }
+
+      main {
+        width: 100%;
+      }
+
+      .widget {
+        width: 100%;
+        height: auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+
+      .banner,
+      .practice,
+      .badge-panel,
+      .visualizer {
+        grid-column: 1;
+        grid-row: auto;
+      }
+
+      .banner {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .visualizer {
+        width: 100%;
+        border-top: 2px solid var(--amber);
+        border-left: 0;
+      }
+
+      .visual-stage {
+        height: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="widget" aria-label="Python collection practice">
+      <div class="banner">
+        <div class="title">Collection Sprint</div>
+        <select class="activity-select" aria-label="Practice set">
+          <option value="random">Random</option>
+        </select>
+        <div class="random-controls" aria-label="Random practice filters">
+          <label class="random-control">
+            Type
+            <select class="type-select" aria-label="Collection type">
+              <option value="any">Any</option>
+              <option value="list">List</option>
+              <option value="string">String</option>
+              <option value="tuple">Tuple</option>
+              <option value="dictionary">Dict</option>
+              <option value="set">Set</option>
+            </select>
+          </label>
+          <label class="random-control">
+            Skill
+            <select class="skill-select" aria-label="Operation type">
+              <option value="any">Any</option>
+              <option value="index">Index</option>
+              <option value="slice">Slice</option>
+              <option value="membership">Membership</option>
+            </select>
+          </label>
+        </div>
+        <div class="stats" aria-label="Performance">
+          <div class="readout">
+            <label>Score</label>
+            <span class="score">0/0</span>
+          </div>
+          <div class="readout">
+            <label>Streak</label>
+            <span class="streak">0</span>
+          </div>
+          <div class="readout">
+            <label>Random</label>
+            <span class="random-total">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="practice">
+        <div class="prompt-label">Predict the result <span>(include quotes and brackets)</span></div>
+        <code class="expression"></code>
+        <input class="answer-input" type="text" autocomplete="off" autocapitalize="off"
+          spellcheck="false" aria-label="Your predicted result" placeholder="Python result">
+        <button class="check" type="button" aria-live="polite">Check</button>
+        <button class="next" type="button">Next</button>
+      </div>
+
+      <div class="badge-panel" aria-label="Earned badges">
+        <div class="badge-panel-title">Badges</div>
+        <div class="badge-list"></div>
+      </div>
+
+      <aside class="visualizer" aria-label="Collection visualizer">
+        <h2>Collection Map</h2>
+        <span class="type-chip"></span>
+        <div class="visual-stage" role="status" aria-live="polite"></div>
+        <p class="visual-note"></p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const storageKey = "collectionSprintProgress:v1";
+    const expressionEl = document.querySelector(".expression");
+    const input = document.querySelector(".answer-input");
+    const checkButton = document.querySelector(".check");
+    const nextButton = document.querySelector(".next");
+    const activitySelect = document.querySelector(".activity-select");
+    const typeSelect = document.querySelector(".type-select");
+    const skillSelect = document.querySelector(".skill-select");
+    const scoreEl = document.querySelector(".score");
+    const streakEl = document.querySelector(".streak");
+    const randomTotalEl = document.querySelector(".random-total");
+    const badgeList = document.querySelector(".badge-list");
+    const typeChip = document.querySelector(".type-chip");
+    const visualStage = document.querySelector(".visual-stage");
+    const visualNote = document.querySelector(".visual-note");
+    const params = new URLSearchParams(window.location.search);
+    const lockRequested = ["1", "true", "yes"].includes((params.get("locked") || "").toLowerCase());
+    const lessonTypes = ["list", "string", "tuple", "dictionary", "set"];
+    const lessonSkills = [
+      { slug: "indexing", itemSkill: "index" },
+      { slug: "slicing", itemSkill: "slice" },
+      { slug: "membership", itemSkill: "membership" }
+    ];
+
+    const randomPools = {
+      list: [
+        { name: "colors", values: ["'red'", "'green'", "'blue'", "'gold'"] },
+        { name: "scores", values: ["8", "13", "21", "34", "55"] },
+        { name: "pets", values: ["'cat'", "'dog'", "'fish'", "'bird'"] }
+      ],
+      string: [
+        { name: "word", value: "PYTHON" },
+        { name: "message", value: "collection" },
+        { name: "code", value: "indexing" }
+      ],
+      tuple: [
+        { name: "point", values: ["4", "7", "2", "9"] },
+        { name: "rgb", values: ["255", "128", "64"] },
+        { name: "days", values: ["'Mon'", "'Tue'", "'Wed'", "'Thu'"] }
+      ],
+      dictionary: [
+        { name: "student", entries: [["'name'", "'Maya'"], ["'grade'", "10"], ["'active'", "True"]] },
+        { name: "scores", entries: [["'Ada'", "92"], ["'Linus'", "88"], ["'Grace'", "97"]] }
+      ],
+      set: [
+        { name: "colors", values: ["'red'", "'green'", "'blue'"] },
+        { name: "primes", values: ["2", "3", "5", "7"] }
+      ]
+    };
+
+    let lessons = {};
+    let mode = "random";
+    let lessonName = "";
+    let items = [];
+    let currentIndex = -1;
+    let currentItem = null;
+    let currentSolved = false;
+    let currentSubmitted = false;
+    let visualizerRevealed = false;
+    let total = 0;
+    let correct = 0;
+    let streak = 0;
+    let lessonSubmitted = new Set();
+    let lessonFirstTryCorrect = new Set();
+    let progress = loadProgress();
+
+    function defaultProgress() {
+      return { lessons: {}, random: { completed: 0, bestStreak: 0 } };
+    }
+
+    function loadProgress() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || defaultProgress();
+      } catch (error) {
+        return defaultProgress();
+      }
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(progress));
+      } catch (error) {
+        // Session scoring still works if storage is unavailable.
+      }
+    }
+
+    function ensureProgressShape() {
+      progress.lessons = progress.lessons || {};
+      progress.random = progress.random || { completed: 0, bestStreak: 0 };
+      progress.random.completed = progress.random.completed || 0;
+      progress.random.bestStreak = progress.random.bestStreak || 0;
+    }
+
+    function lessonLabel(name) {
+      return name
+        .split(/[-_ ]+/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+    }
+
+    function populateActivitySelect() {
+      const preferred = params.get("lesson") || params.get("activity") || "random";
+      activitySelect.innerHTML = '<option value="random">Random</option>';
+
+      Object.keys(lessons).forEach((key) => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = lessonLabel(key);
+        activitySelect.appendChild(option);
+      });
+
+      activitySelect.value = lessons[preferred] ? preferred : "random";
+      activitySelect.disabled = lockRequested && Boolean(lessons[preferred]);
+      activitySelect.title = activitySelect.disabled
+        ? "This embedded activity is locked to its assigned lesson."
+        : "";
+    }
+
+    function buildLessonMatrix(rawLessons) {
+      const allItems = Object.values(rawLessons)
+        .filter(Array.isArray)
+        .flat();
+      const matrix = {};
+
+      lessonTypes.forEach((type) => {
+        lessonSkills.forEach(({ slug, itemSkill }) => {
+          const key = `${type}-${slug}`;
+          matrix[key] = allItems.filter((item) => item.type === type && item.skill === itemSkill);
+        });
+      });
+
+      return matrix;
+    }
+
+    function compactPython(text) {
+      return String(text)
+        .trim()
+        .replace(/[“”]/g, '"')
+        .replace(/[‘’]/g, "'")
+        .replace(/"/g, "'")
+        .replace(/\s+/g, "")
+        .toLowerCase();
+    }
+
+    function acceptedAnswers(item) {
+      return [item.answer, ...(item.accept || [])].map(compactPython);
+    }
+
+    function randomChoice(values) {
+      return values[Math.floor(Math.random() * values.length)];
+    }
+
+    function sliceValues(values, start, stop, step = 1) {
+      const result = [];
+      const length = values.length;
+      let actualStart = start;
+      let actualStop = stop;
+
+      if (step > 0) {
+        actualStart = actualStart === null ? 0 : (actualStart < 0 ? Math.max(length + actualStart, 0) : Math.min(actualStart, length));
+        actualStop = actualStop === null ? length : (actualStop < 0 ? Math.max(length + actualStop, 0) : Math.min(actualStop, length));
+        for (let index = actualStart; index < actualStop; index += step) result.push(index);
+      } else {
+        actualStart = actualStart === null ? length - 1 : (actualStart < 0 ? length + actualStart : actualStart);
+        actualStop = actualStop === null ? -1 : (actualStop < 0 ? length + actualStop : actualStop);
+        actualStart = Math.min(actualStart, length - 1);
+        for (let index = actualStart; index > actualStop; index += step) {
+          if (index >= 0 && index < length) result.push(index);
+        }
+      }
+
+      return result;
+    }
+
+    function sequenceAnswer(type, values, indexes) {
+      const selected = indexes.map((index) => values[index]);
+      if (type === "string") return `'${selected.join("")}'`;
+      if (type === "tuple") {
+        return `(${selected.join(", ")}${selected.length === 1 ? "," : ""})`;
+      }
+      return `[${selected.join(", ")}]`;
+    }
+
+    function sequenceLiteral(type, values) {
+      if (type === "string") return `'${values.join("")}'`;
+      if (type === "tuple") return `(${values.join(", ")})`;
+      return `[${values.join(", ")}]`;
+    }
+
+    function randomSequenceItem(type, skill) {
+      const source = randomChoice(randomPools[type]);
+      const values = type === "string" ? [...source.value] : source.values;
+      const literalValues = type === "string" ? values.map((value) => `'${value}'`) : values;
+      const literal = sequenceLiteral(type, type === "string" ? values : literalValues);
+      const useMembership = skill === "membership" || (skill === "any" && Math.random() < 0.3);
+
+      if (useMembership) {
+        const shouldFind = Math.random() < 0.7;
+        let target;
+        let highlight = [];
+
+        if (type === "string") {
+          if (shouldFind) {
+            const start = Math.floor(Math.random() * values.length);
+            const length = Math.random() < 0.45 && start < values.length - 1 ? 2 : 1;
+            target = `'${values.slice(start, start + length).join("")}'`;
+            highlight = Array.from({ length }, (_, offset) => start + offset);
+          } else {
+            target = "'z'";
+          }
+        } else if (shouldFind) {
+          const index = Math.floor(Math.random() * literalValues.length);
+          target = literalValues[index];
+          highlight = [index];
+        } else {
+          target = type === "tuple" && literalValues.every((value) => /^\d+$/.test(value)) ? "99" : "'missing'";
+        }
+
+        const useNot = Math.random() < 0.5;
+        return {
+          type,
+          skill: "membership",
+          expression: `${source.name} = ${literal}\n${target} ${useNot ? "not in" : "in"} ${source.name}`,
+          answer: String(useNot ? !shouldFind : shouldFind),
+          values: literalValues,
+          highlight,
+          note: type === "string"
+            ? "String membership can find a character or a substring."
+            : "Membership checks whether an item occurs in the collection."
+        };
+      }
+
+      const useSlice = skill === "slice" || (skill === "any" && Math.random() < 0.55);
+
+      if (!useSlice) {
+        const positiveIndex = Math.floor(Math.random() * values.length);
+        const index = Math.random() < 0.45 ? positiveIndex - values.length : positiveIndex;
+        const value = literalValues[positiveIndex];
+        return {
+          type,
+          skill: "index",
+          expression: `${source.name} = ${literal}\n${source.name}[${index}]`,
+          answer: value,
+          values: literalValues,
+          highlight: [positiveIndex],
+          note: index < 0 ? "Negative indexes count backward from the end." : "Python indexes begin at 0."
+        };
+      }
+
+      const patterns = [
+        { start: 1, stop: 3, step: 1, text: "1:3" },
+        { start: null, stop: 3, step: 1, text: ":3" },
+        { start: 1, stop: null, step: 1, text: "1:" },
+        { start: null, stop: null, step: 2, text: "::2" },
+        { start: null, stop: null, step: -1, text: "::-1" },
+        { start: 0, stop: -1, step: 1, text: "0:-1" }
+      ];
+      const pattern = randomChoice(patterns);
+      const indexes = sliceValues(values, pattern.start, pattern.stop, pattern.step);
+      return {
+        type,
+        skill: "slice",
+        expression: `${source.name} = ${literal}\n${source.name}[${pattern.text}]`,
+        answer: sequenceAnswer(type, literalValues, indexes),
+        values: literalValues,
+        highlight: indexes,
+        note: "A slice includes the start but stops before the end index."
+      };
+    }
+
+    function randomDictionaryItem(skill) {
+      const source = randomChoice(randomPools.dictionary);
+      const literal = `{${source.entries.map(([key, value]) => `${key}: ${value}`).join(", ")}}`;
+
+      if (skill === "membership" || (skill === "any" && Math.random() < 0.45)) {
+        const shouldFind = Math.random() < 0.7;
+        const entry = shouldFind ? randomChoice(source.entries) : ["'missing'", "None"];
+        const useNot = Math.random() < 0.5;
+        return {
+          type: "dictionary",
+          skill: "membership",
+          expression: `${source.name} = ${literal}\n${entry[0]} ${useNot ? "not in" : "in"} ${source.name}`,
+          answer: String(useNot ? !shouldFind : shouldFind),
+          entries: source.entries,
+          highlightKey: shouldFind ? entry[0] : "",
+          note: "Dictionary membership checks keys, not values."
+        };
+      }
+
+      if (skill === "slice" || (skill === "any" && Math.random() < 0.25)) {
+        return {
+          type: "dictionary",
+          skill: "slice",
+          expression: `${source.name} = ${literal}\n${source.name}[0:2]`,
+          answer: "TypeError",
+          entries: source.entries,
+          note: "Dictionaries use keys. They do not support sequence slicing."
+        };
+      }
+
+      const entry = randomChoice(source.entries);
+      return {
+        type: "dictionary",
+        skill: "index",
+        expression: `${source.name} = ${literal}\n${source.name}[${entry[0]}]`,
+        answer: entry[1],
+        entries: source.entries,
+        highlightKey: entry[0],
+        note: "Dictionary values are retrieved by key, not by position."
+      };
+    }
+
+    function randomSetItem(skill) {
+      const source = randomChoice(randomPools.set);
+      const literal = `{${source.values.join(", ")}}`;
+
+      if (skill === "membership" || (skill === "any" && Math.random() < 0.8)) {
+        const shouldFind = Math.random() < 0.7;
+        const target = shouldFind
+          ? randomChoice(source.values)
+          : (source.values.every((value) => /^\d+$/.test(value)) ? "11" : "'orange'");
+        const useNot = Math.random() < 0.5;
+        return {
+          type: "set",
+          skill: "membership",
+          expression: `${source.name} = ${literal}\n${target} ${useNot ? "not in" : "in"} ${source.name}`,
+          answer: String(useNot ? !shouldFind : shouldFind),
+          values: source.values,
+          highlight: shouldFind ? [source.values.indexOf(target)] : [],
+          note: "Membership is the natural way to check whether a set contains a value."
+        };
+      }
+
+      const useSlice = skill === "slice" || (skill === "any" && Math.random() < 0.4);
+      return {
+        type: "set",
+        skill: useSlice ? "slice" : "index",
+        expression: `${source.name} = ${literal}\n${source.name}[${useSlice ? "0:2" : "0"}]`,
+        answer: "TypeError",
+        values: source.values,
+        note: "Sets are unordered and support neither indexing nor slicing."
+      };
+    }
+
+    function randomItem() {
+      let type = typeSelect.value;
+      const skill = skillSelect.value;
+      if (type === "any") type = randomChoice(["list", "string", "tuple", "dictionary", "set"]);
+      if (type === "dictionary") return randomDictionaryItem(skill);
+      if (type === "set") return randomSetItem(skill);
+      return randomSequenceItem(type, skill);
+    }
+
+    function normalizeItem(raw) {
+      if (!raw || !raw.expression || !raw.answer || !raw.type) return null;
+      return {
+        skill: "index",
+        note: "",
+        ...raw,
+        expression: String(raw.expression).replace(/\\n/g, "\n")
+      };
+    }
+
+    function renderSequence(item) {
+      const sequence = document.createElement("div");
+      sequence.className = "sequence";
+      sequence.style.gridTemplateColumns = `repeat(${Math.max(item.values?.length || 0, 1)}, minmax(0, 1fr))`;
+      const selected = new Set(item.highlight || []);
+
+      (item.values || []).forEach((value, index) => {
+        const cell = document.createElement("div");
+        cell.className = `cell${selected.has(index) ? " selected" : ""}`;
+
+        const positive = document.createElement("div");
+        positive.className = "cell-index";
+        positive.textContent = index;
+
+        const content = document.createElement("div");
+        content.className = "cell-value";
+        content.textContent = value;
+        content.title = value;
+
+        const negative = document.createElement("div");
+        negative.className = "cell-negative";
+        negative.textContent = index - item.values.length;
+
+        cell.append(positive, content, negative);
+        sequence.appendChild(cell);
+      });
+
+      visualStage.appendChild(sequence);
+    }
+
+    function renderDictionary(item) {
+      const mapping = document.createElement("div");
+      mapping.className = "mapping";
+
+      (item.entries || []).forEach(([key, value]) => {
+        const row = document.createElement("div");
+        row.className = "mapping-row";
+        if (key === item.highlightKey) row.style.background = "rgba(0, 255, 102, 0.08)";
+
+        const keyEl = document.createElement("span");
+        keyEl.className = "mapping-key";
+        keyEl.textContent = key;
+        const arrow = document.createElement("span");
+        arrow.className = "mapping-arrow";
+        arrow.textContent = "→";
+        const valueEl = document.createElement("span");
+        valueEl.className = "mapping-value";
+        valueEl.textContent = value;
+
+        row.append(keyEl, arrow, valueEl);
+        mapping.appendChild(row);
+      });
+
+      visualStage.appendChild(mapping);
+    }
+
+    function renderSet(item) {
+      const unsupported = document.createElement("div");
+      unsupported.className = "unsupported";
+      const title = document.createElement("strong");
+      title.textContent = item.skill === "membership" ? "Membership check" : "No positions";
+      const values = document.createElement("div");
+      values.className = "set-values";
+      const selected = new Set(item.highlight || []);
+      (item.values || []).forEach((value, index) => {
+        const valueEl = document.createElement("span");
+        valueEl.className = `set-value${selected.has(index) ? " selected" : ""}`;
+        valueEl.textContent = value;
+        values.appendChild(valueEl);
+      });
+      if (item.skill === "membership" && (item.highlight || []).length) {
+        title.style.color = "var(--green)";
+      }
+      unsupported.append(title, values);
+      visualStage.appendChild(unsupported);
+    }
+
+    function renderVisualizer(item) {
+      typeChip.textContent = `${item.type} · ${item.skill}`;
+      visualNote.textContent = item.note || "";
+      visualStage.innerHTML = "";
+
+      if (item.type === "dictionary") {
+        renderDictionary(item);
+      } else if (item.type === "set") {
+        renderSet(item);
+      } else {
+        renderSequence(item);
+      }
+    }
+
+    function hideVisualizer(item) {
+      visualizerRevealed = false;
+      typeChip.textContent = `${item.type} · ${item.skill}`;
+      visualStage.innerHTML = "";
+      visualNote.textContent = "The map and explanation appear after your first submission.";
+
+      const locked = document.createElement("div");
+      locked.className = "visual-locked";
+      locked.textContent = "Submit an answer to reveal the map";
+      visualStage.appendChild(locked);
+    }
+
+    function revealVisualizer() {
+      if (!visualizerRevealed && currentItem) {
+        visualizerRevealed = true;
+        renderVisualizer(currentItem);
+      }
+    }
+
+    function renderBadges() {
+      ensureProgressShape();
+      badgeList.innerHTML = "";
+
+      const lessonBadges = Object.keys(lessons).map((key) => {
+        const percent = typeof progress.lessons[key]?.percent === "number"
+          ? progress.lessons[key].percent
+          : null;
+        const scoreClass = percent === null ? "" : (percent >= 80 ? "score-high" : percent >= 60 ? "score-mid" : "score-low");
+        return {
+          kind: `lesson ${scoreClass}`,
+          title: lessonLabel(key),
+          detail: percent === null ? "complete" : `${percent}%`,
+          earned: percent !== null
+        };
+      });
+
+      const badges = [
+        ...lessonBadges,
+        { kind: "random-streak", title: "10 Row", detail: "random", earned: progress.random.bestStreak >= 10 },
+        { kind: "random-total", title: "50 Done", detail: "random", earned: progress.random.completed >= 50 }
+      ];
+
+      badges.forEach((badge) => {
+        const shield = document.createElement("div");
+        shield.className = `shield ${badge.kind}${badge.earned ? " earned" : ""}`;
+        shield.title = `${badge.title}: ${badge.detail}`;
+        const title = document.createElement("strong");
+        title.textContent = badge.title;
+        const detail = document.createElement("span");
+        detail.textContent = badge.detail;
+        shield.append(title, detail);
+        badgeList.appendChild(shield);
+      });
+    }
+
+    function updateStats() {
+      ensureProgressShape();
+      scoreEl.textContent = `${correct}/${total}`;
+      streakEl.textContent = String(streak);
+      randomTotalEl.textContent = String(progress.random.completed);
+      renderBadges();
+    }
+
+    function completeLessonIfReady() {
+      if (mode !== "lesson" || !items.length || lessonSubmitted.size < items.length) return;
+      const percent = Math.round((lessonFirstTryCorrect.size / items.length) * 100);
+      const previous = progress.lessons[lessonName];
+      if (!previous || percent > previous.percent) {
+        progress.lessons[lessonName] = {
+          completedAt: new Date().toISOString(),
+          count: items.length,
+          correct: lessonFirstTryCorrect.size,
+          percent
+        };
+        saveProgress();
+      }
+    }
+
+    function checkAnswer() {
+      const response = compactPython(input.value);
+      checkButton.classList.remove("correct", "incorrect");
+
+      if (!response) {
+        checkButton.textContent = "Check";
+        return;
+      }
+
+      revealVisualizer();
+      const wasCorrect = acceptedAnswers(currentItem).includes(response);
+      if (!currentSubmitted) {
+        total += 1;
+        if (mode === "lesson") {
+          lessonSubmitted.add(currentIndex);
+          if (wasCorrect) lessonFirstTryCorrect.add(currentIndex);
+          completeLessonIfReady();
+        }
+      }
+
+      if (wasCorrect) {
+        checkButton.textContent = "Right";
+        checkButton.classList.add("correct");
+        if (!currentSolved) {
+          correct += currentSubmitted ? 0 : 1;
+          streak += 1;
+          currentSolved = true;
+          if (mode === "random") {
+            progress.random.completed += 1;
+            progress.random.bestStreak = Math.max(progress.random.bestStreak, streak);
+            saveProgress();
+          }
+        }
+      } else {
+        checkButton.textContent = "No";
+        checkButton.classList.add("incorrect");
+        streak = 0;
+      }
+
+      currentSubmitted = true;
+      updateStats();
+    }
+
+    function resetFeedback() {
+      currentSolved = false;
+      currentSubmitted = false;
+      input.value = "";
+      input.disabled = !currentItem;
+      checkButton.textContent = currentItem ? "Check" : "Bad";
+      checkButton.classList.remove("correct", "incorrect");
+    }
+
+    function renderItem(item) {
+      currentItem = item;
+      expressionEl.textContent = item.expression;
+      hideVisualizer(item);
+      resetFeedback();
+      input.focus();
+    }
+
+    function nextItem() {
+      if (mode === "lesson" && items.length) {
+        currentIndex = (currentIndex + 1) % items.length;
+        renderItem(items[currentIndex]);
+      } else {
+        renderItem(randomItem());
+      }
+    }
+
+    async function loadLessons() {
+      try {
+        const response = await fetch("collection-lessons.json", { cache: "no-store" });
+        if (!response.ok) throw new Error("Could not load lesson items.");
+        lessons = buildLessonMatrix(await response.json());
+      } catch (error) {
+        lessons = {};
+        checkButton.textContent = "Offline";
+        checkButton.classList.add("incorrect");
+      }
+    }
+
+    function resetSession() {
+      currentIndex = -1;
+      currentItem = null;
+      lessonSubmitted = new Set();
+      lessonFirstTryCorrect = new Set();
+      total = 0;
+      correct = 0;
+      streak = 0;
+      updateStats();
+    }
+
+    function updateRandomControls() {
+      const disabled = mode !== "random";
+      typeSelect.disabled = disabled;
+      skillSelect.disabled = disabled;
+    }
+
+    function setActivity(activity) {
+      mode = activity === "random" ? "random" : "lesson";
+      lessonName = mode === "lesson" ? activity : "";
+      items = [];
+      updateRandomControls();
+      resetSession();
+
+      if (mode === "lesson") {
+        items = (lessons[lessonName] || []).map(normalizeItem).filter(Boolean);
+        if (!items.length) {
+          expressionEl.textContent = "No valid questions in this lesson.";
+          currentItem = null;
+          resetFeedback();
+          return;
+        }
+      }
+
+      nextItem();
+    }
+
+    async function init() {
+      ensureProgressShape();
+      typeSelect.value = params.get("type") || "any";
+      skillSelect.value = params.get("skill") || "any";
+      await loadLessons();
+      populateActivitySelect();
+      updateStats();
+      setActivity(activitySelect.value);
+    }
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        checkAnswer();
+      }
+    });
+    input.addEventListener("input", () => {
+      if (!currentSolved) {
+        checkButton.textContent = "Check";
+        checkButton.classList.remove("correct", "incorrect");
+      }
+    });
+    checkButton.addEventListener("click", checkAnswer);
+    nextButton.addEventListener("click", nextItem);
+    activitySelect.addEventListener("change", () => setActivity(activitySelect.value));
+    typeSelect.addEventListener("change", nextItem);
+    skillSelect.addEventListener("change", nextItem);
+    window.addEventListener("storage", (event) => {
+      if (event.key !== storageKey || !event.newValue) return;
+
+      try {
+        progress = JSON.parse(event.newValue);
+        ensureProgressShape();
+        updateStats();
+      } catch (error) {
+        // Ignore incomplete or invalid storage updates.
+      }
+    });
+    init();
+  </script>
+</body>
+</html>

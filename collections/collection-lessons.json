@@ -1,0 +1,618 @@
+{
+  "list-indexing": [
+    {
+      "type": "list",
+      "skill": "index",
+      "expression": "colors = ['red', 'green', 'blue', 'gold']\\ncolors[0]",
+      "answer": "'red'",
+      "values": ["'red'", "'green'", "'blue'", "'gold'"],
+      "highlight": [0],
+      "note": "Python indexes begin at 0."
+    },
+    {
+      "type": "list",
+      "skill": "index",
+      "expression": "scores = [8, 13, 21, 34, 55]\\nscores[3]",
+      "answer": "34",
+      "values": ["8", "13", "21", "34", "55"],
+      "highlight": [3],
+      "note": "Index 3 selects the fourth item."
+    },
+    {
+      "type": "list",
+      "skill": "index",
+      "expression": "pets = ['cat', 'dog', 'fish', 'bird']\\npets[-1]",
+      "answer": "'bird'",
+      "values": ["'cat'", "'dog'", "'fish'", "'bird'"],
+      "highlight": [3],
+      "note": "Index -1 selects the last item."
+    },
+    {
+      "type": "list",
+      "skill": "index",
+      "expression": "nums = [10, 20, 30, 40]\\nnums[-3]",
+      "answer": "20",
+      "values": ["10", "20", "30", "40"],
+      "highlight": [1],
+      "note": "Negative indexes count backward from the end."
+    },
+    {
+      "type": "list",
+      "skill": "index",
+      "expression": "flags = [True, False, True]\\nflags[1]",
+      "answer": "False",
+      "values": ["True", "False", "True"],
+      "highlight": [1],
+      "note": "Index 1 selects the second item."
+    }
+  ],
+  "string-indexing": [
+    {
+      "type": "string",
+      "skill": "index",
+      "expression": "word = 'PYTHON'\\nword[2]",
+      "answer": "'T'",
+      "values": ["'P'", "'Y'", "'T'", "'H'", "'O'", "'N'"],
+      "highlight": [2],
+      "note": "Strings are sequences of individual characters."
+    },
+    {
+      "type": "string",
+      "skill": "index",
+      "expression": "word = 'PYTHON'\\nword[-1]",
+      "answer": "'N'",
+      "values": ["'P'", "'Y'", "'T'", "'H'", "'O'", "'N'"],
+      "highlight": [5],
+      "note": "Index -1 selects the final character."
+    },
+    {
+      "type": "string",
+      "skill": "index",
+      "expression": "code = 'index'\\ncode[0]",
+      "answer": "'i'",
+      "values": ["'i'", "'n'", "'d'", "'e'", "'x'"],
+      "highlight": [0],
+      "note": "Python indexes begin at 0."
+    },
+    {
+      "type": "string",
+      "skill": "index",
+      "expression": "code = 'index'\\ncode[-2]",
+      "answer": "'e'",
+      "values": ["'i'", "'n'", "'d'", "'e'", "'x'"],
+      "highlight": [3],
+      "note": "Index -2 selects the next-to-last character."
+    }
+  ],
+  "tuple-indexing": [
+    {
+      "type": "tuple",
+      "skill": "index",
+      "expression": "point = (4, 7, 2, 9)\\npoint[1]",
+      "answer": "7",
+      "values": ["4", "7", "2", "9"],
+      "highlight": [1],
+      "note": "Tuples use the same positional indexes as lists."
+    },
+    {
+      "type": "tuple",
+      "skill": "index",
+      "expression": "rgb = (255, 128, 64)\\nrgb[-1]",
+      "answer": "64",
+      "values": ["255", "128", "64"],
+      "highlight": [2],
+      "note": "Negative indexes work with tuples."
+    },
+    {
+      "type": "tuple",
+      "skill": "index",
+      "expression": "days = ('Mon', 'Tue', 'Wed', 'Thu')\\ndays[2]",
+      "answer": "'Wed'",
+      "values": ["'Mon'", "'Tue'", "'Wed'", "'Thu'"],
+      "highlight": [2],
+      "note": "Index 2 selects the third item."
+    },
+    {
+      "type": "tuple",
+      "skill": "index",
+      "expression": "pair = ('left', 'right')\\npair[-2]",
+      "answer": "'left'",
+      "values": ["'left'", "'right'"],
+      "highlight": [0],
+      "note": "For a two-item tuple, index -2 selects the first item."
+    }
+  ],
+  "basic-slicing": [
+    {
+      "type": "list",
+      "skill": "slice",
+      "expression": "nums = [10, 20, 30, 40, 50]\\nnums[1:4]",
+      "answer": "[20, 30, 40]",
+      "values": ["10", "20", "30", "40", "50"],
+      "highlight": [1, 2, 3],
+      "note": "A slice includes index 1 but stops before index 4."
+    },
+    {
+      "type": "string",
+      "skill": "slice",
+      "expression": "word = 'PYTHON'\\nword[0:3]",
+      "answer": "'PYT'",
+      "values": ["'P'", "'Y'", "'T'", "'H'", "'O'", "'N'"],
+      "highlight": [0, 1, 2],
+      "note": "The stop index is not included."
+    },
+    {
+      "type": "tuple",
+      "skill": "slice",
+      "expression": "point = (4, 7, 2, 9)\\npoint[1:3]",
+      "answer": "(7, 2)",
+      "values": ["4", "7", "2", "9"],
+      "highlight": [1, 2],
+      "note": "Slicing a tuple produces a new tuple."
+    },
+    {
+      "type": "list",
+      "skill": "slice",
+      "expression": "pets = ['cat', 'dog', 'fish', 'bird']\\npets[:2]",
+      "answer": "['cat', 'dog']",
+      "values": ["'cat'", "'dog'", "'fish'", "'bird'"],
+      "highlight": [0, 1],
+      "note": "An omitted start means begin at the first item."
+    },
+    {
+      "type": "string",
+      "skill": "slice",
+      "expression": "code = 'indexing'\\ncode[5:]",
+      "answer": "'ing'",
+      "values": ["'i'", "'n'", "'d'", "'e'", "'x'", "'i'", "'n'", "'g'"],
+      "highlight": [5, 6, 7],
+      "note": "An omitted stop means continue through the end."
+    }
+  ],
+  "slice-steps": [
+    {
+      "type": "list",
+      "skill": "slice",
+      "expression": "nums = [0, 1, 2, 3, 4, 5]\\nnums[::2]",
+      "answer": "[0, 2, 4]",
+      "values": ["0", "1", "2", "3", "4", "5"],
+      "highlight": [0, 2, 4],
+      "note": "The third slice value is the step."
+    },
+    {
+      "type": "string",
+      "skill": "slice",
+      "expression": "word = 'PYTHON'\\nword[::-1]",
+      "answer": "'NOHTYP'",
+      "values": ["'P'", "'Y'", "'T'", "'H'", "'O'", "'N'"],
+      "highlight": [5, 4, 3, 2, 1, 0],
+      "note": "A step of -1 visits every item in reverse."
+    },
+    {
+      "type": "tuple",
+      "skill": "slice",
+      "expression": "nums = (1, 2, 3, 4, 5, 6)\\nnums[1::2]",
+      "answer": "(2, 4, 6)",
+      "values": ["1", "2", "3", "4", "5", "6"],
+      "highlight": [1, 3, 5],
+      "note": "Start at index 1, then take every second item."
+    },
+    {
+      "type": "list",
+      "skill": "slice",
+      "expression": "letters = ['a', 'b', 'c', 'd', 'e']\\nletters[-3:]",
+      "answer": "['c', 'd', 'e']",
+      "values": ["'a'", "'b'", "'c'", "'d'", "'e'"],
+      "highlight": [2, 3, 4],
+      "note": "Index -3 starts three items from the end."
+    },
+    {
+      "type": "string",
+      "skill": "slice",
+      "expression": "code = 'slicing'\\ncode[1:6:2]",
+      "answer": "'lcn'",
+      "values": ["'s'", "'l'", "'i'", "'c'", "'i'", "'n'", "'g'"],
+      "highlight": [1, 3, 5],
+      "note": "Start at 1, stop before 6, and move by 2."
+    }
+  ],
+  "dictionary-keys": [
+    {
+      "type": "dictionary",
+      "skill": "index",
+      "expression": "student = {'name': 'Maya', 'grade': 10, 'active': True}\\nstudent['name']",
+      "answer": "'Maya'",
+      "entries": [["'name'", "'Maya'"], ["'grade'", "10"], ["'active'", "True"]],
+      "highlightKey": "'name'",
+      "note": "Dictionaries retrieve values using keys."
+    },
+    {
+      "type": "dictionary",
+      "skill": "index",
+      "expression": "student = {'name': 'Maya', 'grade': 10, 'active': True}\\nstudent['grade']",
+      "answer": "10",
+      "entries": [["'name'", "'Maya'"], ["'grade'", "10"], ["'active'", "True"]],
+      "highlightKey": "'grade'",
+      "note": "The string 'grade' is a key, not a position."
+    },
+    {
+      "type": "dictionary",
+      "skill": "index",
+      "expression": "scores = {'Ada': 92, 'Linus': 88, 'Grace': 97}\\nscores['Grace']",
+      "answer": "97",
+      "entries": [["'Ada'", "92"], ["'Linus'", "88"], ["'Grace'", "97"]],
+      "highlightKey": "'Grace'",
+      "note": "Dictionary keys map directly to values."
+    },
+    {
+      "type": "dictionary",
+      "skill": "index",
+      "expression": "codes = {1: 'red', 2: 'blue'}\\ncodes[1]",
+      "answer": "'red'",
+      "entries": [["1", "'red'"], ["2", "'blue'"]],
+      "highlightKey": "1",
+      "note": "A dictionary key can be an integer."
+    },
+    {
+      "type": "dictionary",
+      "skill": "slice",
+      "expression": "scores = {'Ada': 92, 'Linus': 88}\\nscores[0:1]",
+      "answer": "TypeError",
+      "entries": [["'Ada'", "92"], ["'Linus'", "88"]],
+      "note": "Dictionaries do not support sequence slicing."
+    }
+  ],
+  "sets-and-errors": [
+    {
+      "type": "set",
+      "skill": "index",
+      "expression": "colors = {'red', 'green', 'blue'}\\ncolors[0]",
+      "answer": "TypeError",
+      "values": ["'red'", "'green'", "'blue'"],
+      "note": "Sets are unordered and cannot be indexed."
+    },
+    {
+      "type": "set",
+      "skill": "slice",
+      "expression": "primes = {2, 3, 5, 7}\\nprimes[1:3]",
+      "answer": "TypeError",
+      "values": ["2", "3", "5", "7"],
+      "note": "Sets do not support slicing."
+    },
+    {
+      "type": "list",
+      "skill": "index",
+      "expression": "nums = [10, 20, 30]\\nnums[3]",
+      "answer": "IndexError",
+      "values": ["10", "20", "30"],
+      "highlight": [],
+      "note": "The valid positive indexes are 0, 1, and 2."
+    },
+    {
+      "type": "dictionary",
+      "skill": "index",
+      "expression": "student = {'name': 'Maya', 'grade': 10}\\nstudent['age']",
+      "answer": "KeyError",
+      "entries": [["'name'", "'Maya'"], ["'grade'", "10"]],
+      "note": "Looking up a missing dictionary key raises KeyError."
+    },
+    {
+      "type": "string",
+      "skill": "slice",
+      "expression": "word = 'cat'\\nword[1:10]",
+      "answer": "'at'",
+      "values": ["'c'", "'a'", "'t'"],
+      "highlight": [1, 2],
+      "note": "A slice may safely extend beyond the sequence."
+    }
+  ],
+  "membership-tests": [
+    {
+      "type": "set",
+      "skill": "membership",
+      "expression": "primes = {2, 3, 5, 7}\\n5 in primes",
+      "answer": "True",
+      "values": ["2", "3", "5", "7"],
+      "highlight": [2],
+      "note": "Membership is the natural way to check whether a set contains a value."
+    },
+    {
+      "type": "set",
+      "skill": "membership",
+      "expression": "colors = {'red', 'green', 'blue'}\\n'gold' not in colors",
+      "answer": "True",
+      "values": ["'red'", "'green'", "'blue'"],
+      "highlight": [],
+      "note": "The expression is true because 'gold' is absent from the set."
+    },
+    {
+      "type": "list",
+      "skill": "membership",
+      "expression": "pets = ['cat', 'dog', 'fish']\\n'dog' in pets",
+      "answer": "True",
+      "values": ["'cat'", "'dog'", "'fish'"],
+      "highlight": [1],
+      "note": "List membership compares the test value with each item."
+    },
+    {
+      "type": "tuple",
+      "skill": "membership",
+      "expression": "scores = (8, 13, 21, 34)\\n20 not in scores",
+      "answer": "True",
+      "values": ["8", "13", "21", "34"],
+      "highlight": [],
+      "note": "The value 20 does not occur in the tuple."
+    },
+    {
+      "type": "string",
+      "skill": "membership",
+      "expression": "language = 'Python'\\n'yth' in language",
+      "answer": "True",
+      "values": ["'P'", "'y'", "'t'", "'h'", "'o'", "'n'"],
+      "highlight": [1, 2, 3],
+      "note": "String membership can search for a complete substring."
+    },
+    {
+      "type": "string",
+      "skill": "membership",
+      "expression": "language = 'Python'\\n'p' in language",
+      "answer": "False",
+      "values": ["'P'", "'y'", "'t'", "'h'", "'o'", "'n'"],
+      "highlight": [],
+      "note": "String membership is case-sensitive: 'p' and 'P' differ."
+    },
+    {
+      "type": "dictionary",
+      "skill": "membership",
+      "expression": "student = {'name': 'Maya', 'grade': 10}\\n'name' in student",
+      "answer": "True",
+      "entries": [["'name'", "'Maya'"], ["'grade'", "10"]],
+      "highlightKey": "'name'",
+      "note": "Dictionary membership checks keys."
+    },
+    {
+      "type": "dictionary",
+      "skill": "membership",
+      "expression": "student = {'name': 'Maya', 'grade': 10}\\n'Maya' in student",
+      "answer": "False",
+      "entries": [["'name'", "'Maya'"], ["'grade'", "10"]],
+      "note": "Dictionary membership does not search its values."
+    }
+  ],
+  "mixed-review": [
+    {
+      "type": "list",
+      "skill": "slice",
+      "expression": "data = [3, 6, 9, 12, 15]\\ndata[2:]",
+      "answer": "[9, 12, 15]",
+      "values": ["3", "6", "9", "12", "15"],
+      "highlight": [2, 3, 4],
+      "note": "Start at index 2 and continue through the end."
+    },
+    {
+      "type": "string",
+      "skill": "index",
+      "expression": "language = 'Python'\\nlanguage[-3]",
+      "answer": "'h'",
+      "values": ["'P'", "'y'", "'t'", "'h'", "'o'", "'n'"],
+      "highlight": [3],
+      "note": "Count backward three positions from the end."
+    },
+    {
+      "type": "tuple",
+      "skill": "slice",
+      "expression": "values = (10, 20, 30, 40)\\nvalues[:1]",
+      "answer": "(10,)",
+      "values": ["10", "20", "30", "40"],
+      "highlight": [0],
+      "note": "A one-item tuple keeps its trailing comma."
+    },
+    {
+      "type": "dictionary",
+      "skill": "index",
+      "expression": "sizes = {'small': 1, 'medium': 2, 'large': 3}\\nsizes['medium']",
+      "answer": "2",
+      "entries": [["'small'", "1"], ["'medium'", "2"], ["'large'", "3"]],
+      "highlightKey": "'medium'",
+      "note": "Use the key 'medium' to retrieve its value."
+    },
+    {
+      "type": "set",
+      "skill": "index",
+      "expression": "letters = {'a', 'b', 'c'}\\nletters[-1]",
+      "answer": "TypeError",
+      "values": ["'a'", "'b'", "'c'"],
+      "note": "Sets have no first or last position."
+    },
+    {
+      "type": "string",
+      "skill": "slice",
+      "expression": "text = 'abcdef'\\ntext[1:5:2]",
+      "answer": "'bd'",
+      "values": ["'a'", "'b'", "'c'", "'d'", "'e'", "'f'"],
+      "highlight": [1, 3],
+      "note": "Select indexes 1 and 3, stopping before 5."
+    }
+  ],
+  "lesson-supplements": [
+    {
+      "type": "list",
+      "skill": "membership",
+      "expression": "scores = [8, 13, 21, 34]\\n20 in scores",
+      "answer": "False",
+      "values": ["8", "13", "21", "34"],
+      "highlight": [],
+      "note": "The value 20 does not occur as an item in the list."
+    },
+    {
+      "type": "list",
+      "skill": "membership",
+      "expression": "colors = ['red', 'green', 'blue']\\n'blue' not in colors",
+      "answer": "False",
+      "values": ["'red'", "'green'", "'blue'"],
+      "highlight": [2],
+      "note": "The expression is false because 'blue' is present."
+    },
+    {
+      "type": "list",
+      "skill": "membership",
+      "expression": "values = [1, '1', True]\\n'1' in values",
+      "answer": "True",
+      "values": ["1", "'1'", "True"],
+      "highlight": [1],
+      "note": "The string '1' occurs as the second list item."
+    },
+    {
+      "type": "string",
+      "skill": "membership",
+      "expression": "message = 'collection'\\n'lect' in message",
+      "answer": "True",
+      "values": ["'c'", "'o'", "'l'", "'l'", "'e'", "'c'", "'t'", "'i'", "'o'", "'n'"],
+      "highlight": [3, 4, 5, 6],
+      "note": "String membership can match several consecutive characters."
+    },
+    {
+      "type": "string",
+      "skill": "membership",
+      "expression": "message = 'collection'\\n'coll' not in message",
+      "answer": "False",
+      "values": ["'c'", "'o'", "'l'", "'l'", "'e'", "'c'", "'t'", "'i'", "'o'", "'n'"],
+      "highlight": [0, 1, 2, 3],
+      "note": "The substring 'coll' appears at the beginning."
+    },
+    {
+      "type": "tuple",
+      "skill": "slice",
+      "expression": "colors = ('red', 'green', 'blue', 'gold')\\ncolors[::-2]",
+      "answer": "('gold', 'green')",
+      "values": ["'red'", "'green'", "'blue'", "'gold'"],
+      "highlight": [3, 1],
+      "note": "A negative step moves backward through the tuple."
+    },
+    {
+      "type": "tuple",
+      "skill": "membership",
+      "expression": "point = (4, 7, 2, 9)\\n7 in point",
+      "answer": "True",
+      "values": ["4", "7", "2", "9"],
+      "highlight": [1],
+      "note": "The integer 7 occurs in the tuple."
+    },
+    {
+      "type": "tuple",
+      "skill": "membership",
+      "expression": "days = ('Mon', 'Tue', 'Wed')\\n'Fri' not in days",
+      "answer": "True",
+      "values": ["'Mon'", "'Tue'", "'Wed'"],
+      "highlight": [],
+      "note": "The string 'Fri' does not occur in the tuple."
+    },
+    {
+      "type": "tuple",
+      "skill": "membership",
+      "expression": "rgb = (255, 128, 64)\\n'128' in rgb",
+      "answer": "False",
+      "values": ["255", "128", "64"],
+      "highlight": [],
+      "note": "The string '128' and the integer 128 are different values."
+    },
+    {
+      "type": "dictionary",
+      "skill": "slice",
+      "expression": "profile = {'name': 'Ari', 'age': 16}\\nprofile[:1]",
+      "answer": "TypeError",
+      "entries": [["'name'", "'Ari'"], ["'age'", "16"]],
+      "note": "A dictionary is not a sequence and cannot be sliced."
+    },
+    {
+      "type": "dictionary",
+      "skill": "slice",
+      "expression": "prices = {'pen': 2, 'book': 8, 'bag': 25}\\nprices[1:]",
+      "answer": "TypeError",
+      "entries": [["'pen'", "2"], ["'book'", "8"], ["'bag'", "25"]],
+      "note": "Dictionary entries are retrieved by key, not by a slice."
+    },
+    {
+      "type": "dictionary",
+      "skill": "slice",
+      "expression": "codes = {1: 'red', 2: 'blue'}\\ncodes[::-1]",
+      "answer": "TypeError",
+      "entries": [["1", "'red'"], ["2", "'blue'"]],
+      "note": "Dictionaries cannot be reversed with slice notation."
+    },
+    {
+      "type": "dictionary",
+      "skill": "membership",
+      "expression": "scores = {'Ada': 92, 'Grace': 97}\\n'Linus' not in scores",
+      "answer": "True",
+      "entries": [["'Ada'", "92"], ["'Grace'", "97"]],
+      "note": "The key 'Linus' is absent from the dictionary."
+    },
+    {
+      "type": "dictionary",
+      "skill": "membership",
+      "expression": "scores = {'Ada': 92, 'Grace': 97}\\n97 in scores",
+      "answer": "False",
+      "entries": [["'Ada'", "92"], ["'Grace'", "97"]],
+      "note": "Dictionary membership checks keys rather than values."
+    },
+    {
+      "type": "set",
+      "skill": "index",
+      "expression": "primes = {2, 3, 5, 7}\\nprimes[2]",
+      "answer": "TypeError",
+      "values": ["2", "3", "5", "7"],
+      "note": "Sets are unordered, so they have no positional indexes."
+    },
+    {
+      "type": "set",
+      "skill": "index",
+      "expression": "colors = {'red', 'green'}\\ncolors[-1]",
+      "answer": "TypeError",
+      "values": ["'red'", "'green'"],
+      "note": "Sets have neither positive nor negative indexes."
+    },
+    {
+      "type": "set",
+      "skill": "slice",
+      "expression": "colors = {'red', 'green', 'blue'}\\ncolors[:2]",
+      "answer": "TypeError",
+      "values": ["'red'", "'green'", "'blue'"],
+      "note": "An unordered set cannot be sliced."
+    },
+    {
+      "type": "set",
+      "skill": "slice",
+      "expression": "values = {10, 20, 30, 40}\\nvalues[1:]",
+      "answer": "TypeError",
+      "values": ["10", "20", "30", "40"],
+      "note": "Set items do not occupy stable sequence positions."
+    },
+    {
+      "type": "set",
+      "skill": "slice",
+      "expression": "letters = {'a', 'b', 'c'}\\nletters[::-1]",
+      "answer": "TypeError",
+      "values": ["'a'", "'b'", "'c'"],
+      "note": "Sets cannot be reversed with slice notation."
+    },
+    {
+      "type": "set",
+      "skill": "membership",
+      "expression": "colors = {'red', 'green', 'blue'}\\n'red' not in colors",
+      "answer": "False",
+      "values": ["'red'", "'green'", "'blue'"],
+      "highlight": [0],
+      "note": "The expression is false because 'red' belongs to the set."
+    },
+    {
+      "type": "set",
+      "skill": "membership",
+      "expression": "values = {10, 20, 30}\\n25 in values",
+      "answer": "False",
+      "values": ["10", "20", "30"],
+      "highlight": [],
+      "note": "The integer 25 does not belong to the set."
+    }
+  ]
+}
