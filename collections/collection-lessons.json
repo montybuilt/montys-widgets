@@ -257,9 +257,10 @@
       "type": "dictionary",
       "skill": "slice",
       "expression": "scores = {'Ada': 92, 'Linus': 88}\\nscores[0:1]",
-      "answer": "TypeError",
+      "answer": "KeyError",
+      "accept": ["TypeError"],
       "entries": [["'Ada'", "92"], ["'Linus'", "88"]],
-      "note": "Dictionaries do not support sequence slicing."
+      "note": "Dictionaries do not slice here; modern Python treats 0:1 as a missing slice key and raises KeyError. Older versions may raise TypeError."
     }
   ],
   "sets-and-errors": [
@@ -520,25 +521,28 @@
       "type": "dictionary",
       "skill": "slice",
       "expression": "profile = {'name': 'Ari', 'age': 16}\\nprofile[:1]",
-      "answer": "TypeError",
+      "answer": "KeyError",
+      "accept": ["TypeError"],
       "entries": [["'name'", "'Ari'"], ["'age'", "16"]],
-      "note": "A dictionary is not a sequence and cannot be sliced."
+      "note": "A dictionary is not sliced here; modern Python treats :1 as a missing slice key and raises KeyError. Older versions may raise TypeError."
     },
     {
       "type": "dictionary",
       "skill": "slice",
       "expression": "prices = {'pen': 2, 'book': 8, 'bag': 25}\\nprices[1:]",
-      "answer": "TypeError",
+      "answer": "KeyError",
+      "accept": ["TypeError"],
       "entries": [["'pen'", "2"], ["'book'", "8"], ["'bag'", "25"]],
-      "note": "Dictionary entries are retrieved by key, not by a slice."
+      "note": "Dictionary entries are retrieved by key. Modern Python treats 1: as a missing slice key and raises KeyError; older versions may raise TypeError."
     },
     {
       "type": "dictionary",
       "skill": "slice",
       "expression": "codes = {1: 'red', 2: 'blue'}\\ncodes[::-1]",
-      "answer": "TypeError",
+      "answer": "KeyError",
+      "accept": ["TypeError"],
       "entries": [["1", "'red'"], ["2", "'blue'"]],
-      "note": "Dictionaries cannot be reversed with slice notation."
+      "note": "Dictionaries cannot be reversed with slice notation. Modern Python treats ::-1 as a missing slice key and raises KeyError; older versions may raise TypeError."
     },
     {
       "type": "dictionary",
@@ -613,6 +617,168 @@
       "values": ["10", "20", "30"],
       "highlight": [],
       "note": "The integer 25 does not belong to the set."
+    },
+    {
+      "type": "list",
+      "skill": "index",
+      "expression": "grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]\\ngrid[3][0]",
+      "answer": "10",
+      "values": ["[1, 2, 3]", "[4, 5, 6]", "[7, 8, 9]", "[10, 11, 12]"],
+      "highlight": [3],
+      "note": "The first index selects the fourth inner list; the second selects its first item."
+    },
+    {
+      "type": "list",
+      "skill": "index",
+      "expression": "mixed = [12, 'cat', (4, 5), [6, 7]]\\nmixed[2][1]",
+      "answer": "5",
+      "values": ["12", "'cat'", "(4, 5)", "[6, 7]"],
+      "highlight": [2],
+      "note": "Index 2 selects the tuple, and index 1 selects the tuple's second item."
+    },
+    {
+      "type": "list",
+      "skill": "index",
+      "expression": "words = ['zero', 'one', 'two', 'three']\\nwords[3][0]",
+      "answer": "'t'",
+      "values": ["'zero'", "'one'", "'two'", "'three'"],
+      "highlight": [3],
+      "note": "The first index selects 'three'; the second selects its first character."
+    },
+    {
+      "type": "list",
+      "skill": "slice",
+      "expression": "grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [13, 14, 15]]\\ngrid[:4][-3:-1]",
+      "answer": "[[4, 5, 6], [7, 8, 9]]",
+      "values": ["[1, 2, 3]", "[4, 5, 6]", "[7, 8, 9]", "[10, 11, 12]", "[13, 14, 15]"],
+      "highlight": [1, 2],
+      "note": "grid[:4] creates the first four rows; [-3:-1] then selects its middle two rows."
+    },
+    {
+      "type": "list",
+      "skill": "slice",
+      "expression": "grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]\\ngrid[3][2:]",
+      "answer": "[12]",
+      "values": ["[1, 2, 3]", "[4, 5, 6]", "[7, 8, 9]", "[10, 11, 12]"],
+      "highlight": [3],
+      "note": "Index 3 selects the last inner list; [2:] slices it from index 2 onward."
+    },
+    {
+      "type": "list",
+      "skill": "slice",
+      "expression": "items = [1, 'two', (3, 4), [5, 6]]\\nitems[::-1]",
+      "answer": "[[5, 6], (3, 4), 'two', 1]",
+      "values": ["1", "'two'", "(3, 4)", "[5, 6]"],
+      "highlight": [3, 2, 1, 0],
+      "note": "A step of -1 reverses the outer list without changing its nested items."
+    },
+    {
+      "type": "list",
+      "skill": "membership",
+      "expression": "groups = [[1, 2], [3, 4], [5, 6]]\\n[3, 4] in groups",
+      "answer": "True",
+      "values": ["[1, 2]", "[3, 4]", "[5, 6]"],
+      "highlight": [1],
+      "note": "Membership can test whether an entire nested list is an item of the outer list."
+    },
+    {
+      "type": "string",
+      "skill": "slice",
+      "expression": "text = 'collections'\\ntext[-2:2:-2]",
+      "answer": "'nicl'",
+      "values": ["'c'", "'o'", "'l'", "'l'", "'e'", "'c'", "'t'", "'i'", "'o'", "'n'", "'s'"],
+      "highlight": [9, 7, 5, 3],
+      "note": "With a negative step, the slice moves left and stops before index 2."
+    },
+    {
+      "type": "tuple",
+      "skill": "index",
+      "expression": "data = (('A', 'B'), [10, 20, 30], 'cat', 7)\\ndata[1][0]",
+      "answer": "10",
+      "values": ["('A', 'B')", "[10, 20, 30]", "'cat'", "7"],
+      "highlight": [1],
+      "note": "The tuple contains a list; the second index accesses an item inside that list."
+    },
+    {
+      "type": "tuple",
+      "skill": "index",
+      "expression": "data = (('A', 'B'), [10, 20], 'cat', 7)\\ndata[2][-1]",
+      "answer": "'t'",
+      "values": ["('A', 'B')", "[10, 20]", "'cat'", "7"],
+      "highlight": [2],
+      "note": "Index 2 selects the string 'cat'; index -1 selects its final character."
+    },
+    {
+      "type": "tuple",
+      "skill": "slice",
+      "expression": "data = (('A', 'B'), [10, 20, 30], 'cat', 7)\\ndata[1][1:]",
+      "answer": "[20, 30]",
+      "values": ["('A', 'B')", "[10, 20, 30]", "'cat'", "7"],
+      "highlight": [1],
+      "note": "Index 1 selects the nested list; [1:] returns a list slice."
+    },
+    {
+      "type": "tuple",
+      "skill": "slice",
+      "expression": "data = (1, 'two', [3, 4], ('five', 6))\\ndata[::-1]",
+      "answer": "(('five', 6), [3, 4], 'two', 1)",
+      "values": ["1", "'two'", "[3, 4]", "('five', 6)"],
+      "highlight": [3, 2, 1, 0],
+      "note": "Reversing a tuple returns a new tuple with the outer items reversed."
+    },
+    {
+      "type": "tuple",
+      "skill": "membership",
+      "expression": "data = (1, 'two', [3, 4], ('five', 6))\\n[3, 4] in data",
+      "answer": "True",
+      "values": ["1", "'two'", "[3, 4]", "('five', 6)"],
+      "highlight": [2],
+      "note": "A mutable list can be stored inside a tuple and tested for membership."
+    },
+    {
+      "type": "dictionary",
+      "skill": "index",
+      "expression": "student = {'name': 'Maya', 'scores': [88, 92, 95]}\\nstudent['scores'][1]",
+      "answer": "92",
+      "entries": [["'name'", "'Maya'"], ["'scores'", "[88, 92, 95]"]],
+      "highlightKey": "'scores'",
+      "note": "The key retrieves the list, and index 1 retrieves the list's second score."
+    },
+    {
+      "type": "dictionary",
+      "skill": "index",
+      "expression": "student = {'name': 'Maya', 'scores': [88, 92, 95]}\\nstudent['scores'][1:]",
+      "answer": "[92, 95]",
+      "entries": [["'name'", "'Maya'"], ["'scores'", "[88, 92, 95]"]],
+      "highlightKey": "'scores'",
+      "note": "The key retrieves the list, and [1:] slices that nested list."
+    },
+    {
+      "type": "dictionary",
+      "skill": "index",
+      "expression": "course = {'title': 'Python', 'units': ('types', 'loops', 'functions')}\\ncourse['units'][-1]",
+      "answer": "'functions'",
+      "entries": [["'title'", "'Python'"], ["'units'", "('types', 'loops', 'functions')"]],
+      "highlightKey": "'units'",
+      "note": "The dictionary value is a tuple; index -1 retrieves its final item."
+    },
+    {
+      "type": "dictionary",
+      "skill": "membership",
+      "expression": "student = {'name': 'Maya', 'scores': [88, 92, 95]}\\n92 in student['scores']",
+      "answer": "True",
+      "entries": [["'name'", "'Maya'"], ["'scores'", "[88, 92, 95]"]],
+      "highlightKey": "'scores'",
+      "note": "The key retrieves the list before membership is tested within that list."
+    },
+    {
+      "type": "set",
+      "skill": "membership",
+      "expression": "values = {1, 'two', (3, 4)}\\n(3, 4) in values",
+      "answer": "True",
+      "values": ["1", "'two'", "(3, 4)"],
+      "highlight": [2],
+      "note": "Sets may contain mixed hashable types, including tuples."
     }
   ]
 }
