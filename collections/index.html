@@ -1136,25 +1136,28 @@
     }
 
     function currentBadgeType() {
-      if (mode === "lesson") {
-        const lessonType = lessonName.split("-")[0];
+      const selectedActivity = activitySelect.value;
+
+      if (selectedActivity && selectedActivity !== "random") {
+        const lessonType = selectedActivity.split("-")[0];
         return lessonTypes.includes(lessonType) ? lessonType : "";
       }
 
-      return lessonTypes.includes(typeSelect.value) ? typeSelect.value : "";
+      return "";
     }
 
     function renderBadges() {
       ensureProgressShape();
       badgeList.innerHTML = "";
+      const isRandomMode = activitySelect.value === "random";
       const badgeType = currentBadgeType();
-      badgePanelTitle.textContent = badgeType
-        ? `${lessonLabel(badgeType)} Badges`
-        : "Badges";
+      badgePanelTitle.textContent = isRandomMode
+        ? "Random Badges"
+        : `${lessonLabel(badgeType)} Badges`;
 
-      const relevantLessonKeys = Object.keys(lessons).filter((key) => {
-        return !badgeType || key.startsWith(`${badgeType}-`);
-      });
+      const relevantLessonKeys = isRandomMode
+        ? []
+        : Object.keys(lessons).filter((key) => key.startsWith(`${badgeType}-`));
 
       const lessonBadges = relevantLessonKeys.map((key) => {
         const percent = typeof progress.lessons[key]?.percent === "number"
@@ -1169,13 +1172,12 @@
         };
       });
 
-      const badges = badgeType
-        ? lessonBadges
-        : [
-            ...lessonBadges,
+      const badges = isRandomMode
+        ? [
             { kind: "random-streak", title: "10 Row", detail: "random", earned: progress.random.bestStreak >= 10 },
             { kind: "random-total", title: "50 Done", detail: "random", earned: progress.random.completed >= 50 }
-          ];
+          ]
+        : lessonBadges;
 
       badges.forEach((badge) => {
         const shield = document.createElement("div");
@@ -1337,7 +1339,6 @@
       skillSelect.value = params.get("skill") || "any";
       await loadLessons();
       populateActivitySelect();
-      updateStats();
       setActivity(activitySelect.value);
     }
 
