@@ -746,6 +746,7 @@
     const visualNote = document.querySelector(".visual-note");
     const params = new URLSearchParams(window.location.search);
     const lockRequested = ["1", "true", "yes"].includes((params.get("locked") || "").toLowerCase());
+    const autofocusEnabled = !["0", "false", "no"].includes((params.get("autofocus") || "").toLowerCase());
     const lessonTypes = ["list", "string", "tuple", "dictionary", "set"];
     const lessonSkills = [
       { slug: "indexing", itemSkill: "index" },
@@ -1356,22 +1357,22 @@
       checkButton.classList.remove("correct", "incorrect");
     }
 
-    function renderItem(item) {
+    function renderItem(item, focusInput = false) {
       currentItem = item;
       expressionEl.textContent = item.expression;
       hideVisualizer(item);
       resetFeedback();
-      input.focus();
+      if (focusInput) input.focus();
     }
 
-    function nextItem() {
+    function nextItem(focusInput = false) {
       if (mode === "lesson" && lessonComplete) return;
 
       if (mode === "lesson" && items.length) {
         currentIndex = (currentIndex + 1) % items.length;
-        renderItem(items[currentIndex]);
+        renderItem(items[currentIndex], focusInput);
       } else {
-        renderItem(randomItem());
+        renderItem(randomItem(), focusInput);
       }
     }
 
@@ -1405,7 +1406,7 @@
       skillSelect.disabled = disabled;
     }
 
-    function setActivity(activity) {
+    function setActivity(activity, focusInput = false) {
       mode = activity === "random" ? "random" : "lesson";
       lessonName = mode === "lesson" ? activity : "";
       items = [];
@@ -1422,7 +1423,7 @@
         }
       }
 
-      nextItem();
+      nextItem(focusInput);
     }
 
     async function init() {
@@ -1431,7 +1432,7 @@
       skillSelect.value = params.get("skill") || "any";
       await loadLessons();
       populateActivitySelect();
-      setActivity(activitySelect.value);
+      setActivity(activitySelect.value, autofocusEnabled);
     }
 
     input.addEventListener("keydown", (event) => {
@@ -1447,13 +1448,13 @@
       }
     });
     checkButton.addEventListener("click", checkAnswer);
-    nextButton.addEventListener("click", nextItem);
-    activitySelect.addEventListener("change", () => setActivity(activitySelect.value));
+    nextButton.addEventListener("click", () => nextItem(true));
+    activitySelect.addEventListener("change", () => setActivity(activitySelect.value, true));
     typeSelect.addEventListener("change", () => {
-      nextItem();
+      nextItem(true);
       renderBadges();
     });
-    skillSelect.addEventListener("change", nextItem);
+    skillSelect.addEventListener("change", () => nextItem(true));
     window.addEventListener("storage", (event) => {
       if (event.key !== storageKey || !event.newValue) return;
 
