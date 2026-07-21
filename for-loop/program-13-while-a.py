@@ -1,5 +1,7 @@
-x = 4
+energy = 3
 
-while x > 0:
-    print(x)
-    x -= 1
+while energy > 0:
+    print("Moving")
+    energy -= 1
+
+print("Stopped")
