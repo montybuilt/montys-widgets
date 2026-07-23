@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Divide &amp; Deliver — Decomposition Lab</title>
+  <style>
+    :root {
+      --ink: #18231f;
+      --muted: #66716d;
+      --paper: #f4f1e8;
+      --panel: #fffdf7;
+      --line: #d9d5c9;
+      --green: #166b4f;
+      --green-2: #d7eee2;
+      --orange: #e56c3a;
+      --orange-2: #fde2d5;
+      --blue: #3275c5;
+      --blue-2: #dcecff;
+      --purple: #7656b5;
+      --purple-2: #e9e1fa;
+      --shadow: 0 10px 30px rgba(34, 47, 40, .09);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(229,108,58,.08), transparent 28rem),
+        linear-gradient(180deg, #f8f6ef, var(--paper));
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid rgba(50,117,197,.35);
+      outline-offset: 2px;
+    }
+
+    .widget {
+      width: min(1420px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .topbar {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--orange);
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; font-size: clamp(1.75rem, 4vw, 3.25rem); letter-spacing: -.055em; line-height: .98; }
+    .subtitle { margin: 10px 0 0; max-width: 670px; color: var(--muted); font-size: .98rem; }
+    .top-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 14px;
+      color: var(--ink);
+      background: rgba(255,253,247,.8);
+      font-weight: 750;
+      transition: transform .15s, border-color .15s, background .15s;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: #aaa69a; }
+    .btn.primary { color: white; background: var(--green); border-color: var(--green); }
+    .btn.danger { color: #a23d22; }
+    .btn:disabled { opacity: .48; cursor: not-allowed; transform: none; }
+    .scenario-select {
+      min-width: 210px;
+      padding: 9px 34px 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255,253,247,.9);
+      font-weight: 750;
+      cursor: pointer;
+    }
+    .teacher-key {
+      position: fixed;
+      right: 9px;
+      bottom: 8px;
+      z-index: 8;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: 0;
+      color: #89918d;
+      background: transparent;
+      font-size: .8rem;
+      opacity: .42;
+    }
+    .teacher-key:hover, .teacher-key:focus-visible { opacity: 1; color: var(--green); }
+    .teacher-dialog {
+      width: min(390px, calc(100% - 32px));
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      color: var(--ink);
+      background: var(--panel);
+      box-shadow: 0 24px 80px rgba(13,22,18,.3);
+    }
+    .teacher-dialog::backdrop { background: rgba(24,35,31,.55); backdrop-filter: blur(3px); }
+    .teacher-dialog form { padding: 22px; }
+    .teacher-dialog h2 { margin: 0 0 6px; font-size: 1.15rem; }
+    .teacher-dialog p { margin: 0 0 15px; color: var(--muted); font-size: .82rem; }
+    .teacher-dialog input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: white; }
+    .dialog-error { min-height: 20px; margin-top: 5px; color: #a23d22; font-size: .75rem; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .metric {
+      min-height: 86px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(255,253,247,.78);
+    }
+    .metric-label { color: var(--muted); font-size: .73rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .metric-value { margin-top: 4px; font-size: 1.65rem; font-weight: 850; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+    .metric-note { color: var(--muted); font-size: .75rem; }
+    .lesson-result {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: -4px 0 14px;
+      padding: 12px 16px;
+      border: 1px solid #abd3bf;
+      border-radius: 14px;
+      background: #edf8f2;
+      color: var(--green);
+      font-weight: 800;
+      text-align: center;
+    }
+    .lesson-result.visible { display: flex; }
+    .lesson-result .comparison-time { font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+    .lesson-result .comparison-arrow { color: var(--orange); font-size: 1.3rem; }
+    .achievement-banner {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: -4px 0 14px;
+      padding: 13px 16px;
+      border: 1px solid #70be96;
+      border-radius: 14px;
+      color: #0f5d42;
+      background: linear-gradient(90deg, #dff5e9, #f1fbf5, #dff5e9);
+      font-weight: 850;
+      text-align: center;
+      animation: achievementIn .45s ease-out;
+    }
+    .achievement-banner.visible { display: flex; }
+    .achievement-banner .star { font-size: 1.35rem; }
+    @keyframes achievementIn { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
+    .metric.time-metric.achieved { border-color: #70be96; background: #e8f8ef; }
+    .metric.time-metric.achieved .metric-value { color: var(--green); }
+    .simulator.achieved { background: #115c43; box-shadow: 0 0 0 3px rgba(102,210,159,.22); }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(210px, 250px) minmax(430px, 1fr) minmax(250px, 310px);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .panel {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panel-head { padding: 16px 17px 12px; border-bottom: 1px solid var(--line); }
+    .panel-head h2 { margin: 0; font-size: .98rem; letter-spacing: -.015em; }
+    .panel-head p { margin: 4px 0 0; color: var(--muted); font-size: .76rem; }
+    .panel-body { flex: 1; padding: 14px; }
+
+    .template-list, .solver-list { display: grid; gap: 9px; }
+    .template {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      text-align: left;
+      cursor: grab;
+    }
+    .template:active, .task-card.dragging { cursor: grabbing; opacity: .55; }
+    .template-icon {
+      display: grid; place-items: center;
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      background: var(--orange-2);
+      font-weight: 900;
+    }
+    .template strong { display: block; font-size: .82rem; }
+    .template small { display: block; color: var(--muted); font-size: .7rem; }
+    .effort-pill { padding: 3px 7px; border-radius: 99px; background: #f0eee8; font-size: .67rem; font-weight: 800; }
+
+    .hint-card {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px dashed #bdb8aa;
+      border-radius: 12px;
+      color: var(--muted);
+      background: #faf8f1;
+      font-size: .73rem;
+    }
+    .hint-card strong { display: block; margin-bottom: 3px; color: var(--ink); }
+
+    .canvas { min-height: 588px; }
+    .canvas .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+    .canvas-title { min-width: 0; }
+    .tree {
+      min-height: 510px;
+      padding: 16px;
+      background-image: radial-gradient(#d9d5c9 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    .tree.empty { display: grid; place-items: center; }
+    .empty-state { max-width: 300px; color: var(--muted); text-align: center; }
+    .empty-state .big { display: block; color: var(--green); font-size: 2.5rem; font-weight: 300; }
+    .empty-state strong { display: block; margin-bottom: 4px; color: var(--ink); }
+    .task-node { position: relative; }
+    .task-node + .task-node { margin-top: 9px; }
+    .task-node.depth-1, .task-node.depth-2, .task-node.depth-3 { margin-left: 30px; }
+    .task-node.depth-1::before, .task-node.depth-2::before, .task-node.depth-3::before {
+      content: ""; position: absolute; left: -18px; top: -10px; bottom: 50%; width: 12px;
+      border-left: 1.5px solid #aaa69a; border-bottom: 1.5px solid #aaa69a; border-radius: 0 0 0 8px;
+    }
+    .task-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--orange);
+      border-radius: 13px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 3px 10px rgba(34,47,40,.07);
+      cursor: grab;
+      transition: border-color .15s, transform .15s, background .15s;
+    }
+    .task-card:hover { transform: translateY(-1px); border-color: #bcb7a9; }
+    .task-card.drop-target { background: var(--green-2); border-color: var(--green); }
+    .task-card.running { border-left-color: var(--blue); background: #f7fbff; }
+    .task-card.done { border-left-color: var(--green); background: #f7fcf9; }
+    .task-card.parent { border-left-color: var(--purple); }
+    .drag-handle { color: #aaa69a; font-size: 1rem; letter-spacing: -3px; user-select: none; }
+    .task-main { min-width: 0; }
+    .task-name {
+      width: 100%; padding: 0; border: 0; color: var(--ink); background: transparent;
+      font-weight: 800; font-size: .84rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .task-meta { display: flex; align-items: center; gap: 7px; margin-top: 5px; color: var(--muted); font-size: .68rem; }
+    .effort-input {
+      width: 48px;
+      padding: 2px 5px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      background: #faf9f4;
+      font-size: .68rem;
+      font-weight: 750;
+    }
+    .mini-progress { flex: 1; max-width: 100px; height: 5px; border-radius: 99px; background: #ece9df; overflow: hidden; }
+    .mini-progress > span { display: block; height: 100%; width: 0; background: var(--green); transition: width .12s linear; }
+    .task-controls { display: flex; align-items: center; gap: 6px; }
+    .solver-select {
+      max-width: 108px; padding: 5px 7px; border: 1px solid var(--line); border-radius: 8px;
+      color: var(--ink); background: #faf9f4; font-size: .69rem; font-weight: 700;
+    }
+    .icon-btn { width: 29px; height: 29px; border: 0; border-radius: 8px; color: var(--muted); background: transparent; font-weight: 900; }
+    .icon-btn:hover { color: #a23d22; background: var(--orange-2); }
+    .children { margin-top: 9px; }
+
+    .solver-card {
+      --solver: var(--blue);
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      cursor: grab;
+    }
+    .solver-card[data-solver="atlas"] { --solver: var(--purple); }
+    .solver-card[data-solver="bolt"] { --solver: var(--orange); }
+    .solver-card.dragging { opacity: .55; }
+    .solver-top { display: flex; align-items: center; gap: 9px; }
+    .solver-avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: white; background: var(--solver); font-weight: 900; }
+    .solver-name { font-size: .82rem; font-weight: 850; }
+    .solver-role { color: var(--muted); font-size: .68rem; }
+    .speed-row { display: flex; align-items: center; justify-content: space-between; margin-top: 9px; color: var(--muted); font-size: .68rem; }
+    .speed-row strong { color: var(--solver); font-size: .78rem; }
+    .loadbar { height: 5px; margin-top: 6px; border-radius: 99px; background: #ece9df; overflow: hidden; }
+    .loadbar span { display: block; height: 100%; background: var(--solver); }
+
+    .simulator { margin-top: 12px; padding: 10px 11px; border-radius: 12px; color: white; background: var(--ink); }
+    .timer-label { color: #aeb8b3; font-size: .68rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+    .timer { margin: 1px 0 6px; font-size: 1.85rem; font-weight: 850; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+    .sim-progress { height: 6px; border-radius: 99px; background: #3d4843; overflow: hidden; }
+    .sim-progress span { display: block; height: 100%; width: 0; background: #66d29f; transition: width .15s linear; }
+    .sim-actions { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-top: 8px; }
+    .sim-actions .btn { border-color: #4c5752; color: white; background: #303b36; }
+    .sim-actions .btn.primary { border-color: #66d29f; color: #10261c; background: #66d29f; }
+    .status { min-height: 30px; margin-top: 6px; color: #c7d0cc; font-size: .68rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .tour-focus {
+      position: relative;
+      z-index: 12;
+      outline: 4px solid rgba(229,108,58,.52) !important;
+      outline-offset: 4px;
+      animation: tourPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes tourPulse { 50% { outline-color: rgba(229,108,58,.2); } }
+    .tour-card {
+      position: fixed;
+      z-index: 20;
+      left: 50%;
+      bottom: 20px;
+      width: min(540px, calc(100% - 28px));
+      padding: 17px;
+      border: 1px solid #49554f;
+      border-radius: 18px;
+      color: white;
+      background: rgba(24,35,31,.97);
+      box-shadow: 0 20px 60px rgba(13,22,18,.3);
+      transform: translateX(-50%);
+    }
+    .tour-card[hidden] { display: none; }
+    .tour-kicker { color: #8edbb4; font-size: .7rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+    .tour-card h2 { margin: 5px 0 6px; font-size: 1.08rem; }
+    .tour-card p { margin: 0; color: #d3dcd8; font-size: .84rem; }
+    .tour-footer { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 14px; }
+    .tour-dots { display: flex; gap: 5px; }
+    .tour-dots span { width: 7px; height: 7px; border-radius: 50%; background: #55625c; }
+    .tour-dots span.active { width: 20px; border-radius: 99px; background: #66d29f; }
+    .tour-actions { display: flex; gap: 7px; }
+    .tour-card .btn { border-color: #58645e; color: white; background: #303b36; }
+    .tour-card .btn.primary { border-color: #66d29f; color: #10261c; background: #66d29f; }
+
+    @media (max-width: 1040px) {
+      .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .workspace { grid-template-columns: 220px minmax(420px, 1fr); }
+      .solver-panel { grid-column: 1 / -1; }
+      .solver-panel .panel-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .simulator { margin-top: 0; }
+    }
+    @media (max-width: 760px) {
+      .widget { padding: 16px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .top-actions { justify-content: flex-start; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .workspace { grid-template-columns: 1fr; }
+      .solver-panel { grid-column: auto; }
+      .solver-panel .panel-body { grid-template-columns: 1fr; }
+      .canvas { order: -1; }
+      .task-controls { align-items: flex-end; flex-direction: column; }
+      .task-node.depth-1, .task-node.depth-2, .task-node.depth-3 { margin-left: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="widget" aria-labelledby="widget-title">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Computational thinking lab</p>
+        <h1 id="widget-title">Divide &amp; Deliver</h1>
+        <p class="subtitle">Break a big job into smaller tasks, match each task to a solver, then race the clock. Good decomposition makes parallel work possible.</p>
+      </div>
+      <div class="top-actions">
+        <button class="btn primary" id="guided-lesson" type="button">Guided lesson</button>
+        <button class="btn" id="fullscreen-toggle" type="button">⛶ Full screen</button>
+        <label class="sr-only" for="scenario-select">Choose a practice scenario</label>
+        <select class="scenario-select" id="scenario-select">
+          <option value="">Choose scenario…</option>
+          <option value="website">Launch a class website · Starter</option>
+          <option value="science-fair">Host a science fair · Intermediate</option>
+          <option value="mars-rover">Prepare a Mars rover · Challenge</option>
+        </select>
+        <button class="btn danger" id="clear-all" type="button">Clear board</button>
+      </div>
+    </header>
+
+    <section class="metrics" aria-label="Plan summary">
+      <div class="metric"><div class="metric-label">Task cards</div><div class="metric-value" id="task-count">0</div><div class="metric-note">including parent tasks</div></div>
+      <div class="metric"><div class="metric-label">Runnable leaves</div><div class="metric-value" id="leaf-count">0</div><div class="metric-note">smallest pieces of work</div></div>
+      <div class="metric"><div class="metric-label">Total effort</div><div class="metric-value" id="effort-total">0</div><div class="metric-note">work units</div></div>
+      <div class="metric time-metric"><div class="metric-label">Estimated finish</div><div class="metric-value" id="finish-estimate">—</div><div class="metric-note">with current assignments</div></div>
+      <div class="metric time-metric"><div class="metric-label">Last time</div><div class="metric-value" id="last-time">—</div><div class="metric-note">previous completed run</div></div>
+      <div class="metric time-metric"><div class="metric-label">Best time</div><div class="metric-value" id="best-time">—</div><div class="metric-note" id="best-note">since board was cleared</div></div>
+    </section>
+    <div class="lesson-result" id="lesson-result" role="status" aria-live="polite"></div>
+    <div class="achievement-banner" id="achievement-banner" role="status" aria-live="polite"></div>
+
+    <section class="workspace">
+      <aside class="panel" aria-labelledby="tasks-heading">
+        <div class="panel-head"><h2 id="tasks-heading">Task shelf</h2><p>Drag a card onto the board or another task.</p></div>
+        <div class="panel-body">
+          <div class="template-list" id="template-list"></div>
+          <div class="hint-card"><strong>Try this</strong>Drop a task onto another card to make it a subtask. A task with subtasks becomes a container and is no longer run directly.</div>
+        </div>
+      </aside>
+
+      <section class="panel canvas" aria-labelledby="plan-heading">
+        <div class="panel-head">
+          <div class="canvas-title"><h2 id="plan-heading">Decomposition board</h2><p id="board-help">Drop tasks here. Drag cards to reorganize the plan.</p></div>
+          <button class="btn" id="add-custom" type="button">+ Custom task</button>
+        </div>
+        <div class="tree empty" id="tree" aria-describedby="board-help"></div>
+      </section>
+
+      <aside class="panel solver-panel" aria-labelledby="solvers-heading">
+        <div class="panel-head"><h2 id="solvers-heading">General-purpose solvers</h2><p>Drag a solver onto a leaf task, or use its menu.</p></div>
+        <div class="panel-body">
+          <div class="solver-list" id="solver-list"></div>
+          <section class="simulator" aria-labelledby="timer-heading">
+            <div class="timer-label" id="timer-heading">Simulated time</div>
+            <div class="timer" id="timer">00:00.0</div>
+            <div class="sim-progress" aria-hidden="true"><span id="overall-progress"></span></div>
+            <div class="sim-actions">
+              <button class="btn primary" id="run-sim" type="button">Run plan</button>
+              <button class="btn" id="reset-sim" type="button" aria-label="Reset simulation">↺</button>
+            </div>
+            <div class="status" id="status" aria-live="polite">Build a plan, then assign every leaf task.</div>
+          </section>
+        </div>
+      </aside>
+    </section>
+    <div class="sr-only" id="announcer" aria-live="assertive"></div>
+    <aside class="tour-card" id="tour-card" aria-labelledby="tour-title" hidden>
+      <div class="tour-kicker" id="tour-kicker">Guided lesson</div>
+      <h2 id="tour-title"></h2>
+      <p id="tour-copy"></p>
+      <div class="tour-footer">
+        <div class="tour-dots" id="tour-dots" aria-hidden="true"></div>
+        <div class="tour-actions"><button class="btn" id="tour-exit" type="button">Exit</button><button class="btn primary" id="tour-next" type="button">Next</button></div>
+      </div>
+    </aside>
+    <button class="teacher-key" id="teacher-key" type="button" aria-label="Teacher resources" title="Teacher resources">◆</button>
+    <dialog class="teacher-dialog" id="teacher-dialog">
+      <form id="teacher-form">
+        <h2>Teacher resources</h2>
+        <p>Enter the teacher number to open the scenario solutions.</p>
+        <label class="sr-only" for="teacher-number">Teacher number</label>
+        <input id="teacher-number" type="password" inputmode="numeric" autocomplete="off" placeholder="Teacher number" required>
+        <div class="dialog-error" id="teacher-error" role="alert"></div>
+        <div class="dialog-actions"><button class="btn" id="teacher-cancel" type="button">Cancel</button><button class="btn primary" type="submit">Open solutions</button></div>
+      </form>
+    </dialog>
+  </main>
+
+  <script>
+    (() => {
+      const templates = [
+        { name: 'Research', effort: 6, icon: '?' },
+        { name: 'Design', effort: 8, icon: '✦' },
+        { name: 'Build', effort: 12, icon: '{ }' },
+        { name: 'Test', effort: 7, icon: '✓' },
+        { name: 'Document', effort: 5, icon: '¶' }
+      ];
+      const solvers = [
+        { id: 'nova', name: 'Nova', role: 'Fast generalist', efficiency: 1.5, mark: 'N' },
+        { id: 'atlas', name: 'Atlas', role: 'Steady planner', efficiency: 1.0, mark: 'A' },
+        { id: 'bolt', name: 'Bolt', role: 'Careful apprentice', efficiency: 0.75, mark: 'B' }
+      ];
+      const state = { tasks: [], elapsed: 0, duration: 0, running: false, raf: null, startedAt: 0, snapshot: [], dragged: null };
+      const runHistory = { last: null, best: null, runs: 0 };
+      const scenarioTargets = { website: 13.3333333333, 'science-fair': 14.6666666667, 'mars-rover': 17 };
+      const scenarioLabels = { website: 'Class website', 'science-fair': 'Science fair', 'mars-rover': 'Mars rover' };
+      const guidedSeenKey = 'divide-deliver-guided-seen-v1';
+      let activeScenario = null;
+      let optimalAchieved = false;
+      const tour = { active: false, step: 0, baseline: null, decomposed: null };
+      const $ = (s) => document.querySelector(s);
+      const tree = $('#tree');
+      let nextId = 1;
+
+      const makeTask = (name, effort, solver = '', custom = false) => ({ id: `task-${nextId++}`, name, effort, solver, custom, children: [], progress: 0 });
+      const allTasks = (tasks = state.tasks) => tasks.flatMap(t => [t, ...allTasks(t.children)]);
+      const leafTasks = () => allTasks().filter(t => !t.children.length);
+      const taskEffort = (task) => task.children.length
+        ? allTasks(task.children).filter(child => !child.children.length).reduce((sum, child) => sum + child.effort, 0)
+        : task.effort;
+      const findTask = (id, tasks = state.tasks) => {
+        for (const task of tasks) { if (task.id === id) return task; const found = findTask(id, task.children); if (found) return found; }
+        return null;
+      };
+      const removeTask = (id, tasks = state.tasks) => {
+        const index = tasks.findIndex(t => t.id === id);
+        if (index >= 0) return tasks.splice(index, 1)[0];
+        for (const task of tasks) { const found = removeTask(id, task.children); if (found) return found; }
+        return null;
+      };
+      const contains = (task, id) => task.id === id || task.children.some(c => contains(c, id));
+      const announce = (message) => { $('#announcer').textContent = ''; setTimeout(() => $('#announcer').textContent = message, 20); };
+      function hasSeenGuidedLesson() {
+        try { return localStorage.getItem(guidedSeenKey) === '1'; }
+        catch (error) { return false; }
+      }
+      function markGuidedLessonSeen() {
+        try { localStorage.setItem(guidedSeenKey, '1'); }
+        catch (error) { /* Storage may be unavailable in a restricted embed. */ }
+      }
+      const tourSteps = [
+        { title: 'Start with one big task', copy: '“Build a boat” has 20 effort units. Assign the whole task to Atlas using the solver menu.', target: '[data-assign]', label: 'Next' },
+        { title: 'Measure the sequential plan', copy: 'Click Run plan. Atlas must complete all 20 units alone, so the project will take 20 simulated seconds.', target: '#run-sim', label: 'Next' },
+        { title: 'Record the baseline', copy: 'That 20-second result is our baseline. Now split the same amount of work into three independent subtasks.', target: '[data-task]', label: 'Decompose task' },
+        { title: 'Balance work by solver speed', copy: 'Assign Build the hull (9u) to Nova, Raise the mast (6u) to Atlas, and Paint & finish (5u) to Bolt.', target: '.tree', label: 'Next' },
+        { title: 'Run the parallel plan', copy: 'Click Run plan again. This time all three solvers work at once on separate parts of the boat.', target: '#run-sim', label: 'Next' },
+        { title: 'Compare the results', copy: 'The total effort stayed at 20 units. Decomposition exposed parallel work, and balanced assignment shortened the elapsed time.', target: '#lesson-result', label: 'Finish lesson' }
+      ];
+
+      function tourReady() {
+        if (!tour.active) return false;
+        const leaves = leafTasks();
+        if (tour.step === 0) return leaves.length === 1 && leaves[0].solver === 'atlas';
+        if (tour.step === 1) return tour.baseline !== null;
+        if (tour.step === 2) return true;
+        if (tour.step === 3) return leaves.length === 3 && leaves.find(t => t.name === 'Build the hull')?.solver === 'nova' && leaves.find(t => t.name === 'Raise the mast')?.solver === 'atlas' && leaves.find(t => t.name === 'Paint & finish')?.solver === 'bolt';
+        if (tour.step === 4) return tour.decomposed !== null;
+        return true;
+      }
+
+      function renderTour() {
+        document.querySelectorAll('.tour-focus').forEach(el => el.classList.remove('tour-focus'));
+        const card = $('#tour-card');
+        if (!tour.active) { card.hidden = true; return; }
+        card.hidden = false;
+        const current = tourSteps[tour.step];
+        $('#tour-kicker').textContent = `Guided lesson · Step ${tour.step + 1} of ${tourSteps.length}`;
+        $('#tour-title').textContent = current.title;
+        $('#tour-copy').textContent = current.copy;
+        $('#tour-next').textContent = current.label;
+        $('#tour-next').disabled = !tourReady();
+        $('#tour-dots').innerHTML = tourSteps.map((_, i) => `<span class="${i === tour.step ? 'active' : ''}"></span>`).join('');
+        const target = document.querySelector(current.target);
+        if (target) target.classList.add('tour-focus');
+      }
+
+      function updateLessonResult() {
+        const result = $('#lesson-result');
+        if (tour.baseline === null || (!tour.active && tour.decomposed === null)) { result.className = 'lesson-result'; result.innerHTML = ''; return; }
+        if (tour.decomposed === null) {
+          result.className = 'lesson-result visible';
+          result.innerHTML = `<span>Baseline recorded:</span><span class="comparison-time">${tour.baseline.toFixed(1)}s</span>`;
+          return;
+        }
+        const saved = tour.baseline - tour.decomposed;
+        const percent = Math.round(saved / tour.baseline * 100);
+        result.className = 'lesson-result visible';
+        result.innerHTML = `<span class="comparison-time">${tour.baseline.toFixed(1)}s</span><span class="comparison-arrow">→</span><span class="comparison-time">${tour.decomposed.toFixed(1)}s</span><span>${saved.toFixed(1)}s saved · ${percent}% faster</span>`;
+      }
+
+      function startTour() {
+        markGuidedLessonSeen();
+        stopSimulation(true); nextId = 1;
+        $('#scenario-select').value = '';
+        activeScenario = null;
+        optimalAchieved = false;
+        tour.active = true; tour.step = 0; tour.baseline = null; tour.decomposed = null;
+        state.tasks = [makeTask('Build a boat', 20)];
+        render(); renderTour(); announce('Guided decomposition lesson started.');
+      }
+
+      function endTour(preserveResult = false) {
+        tour.active = false;
+        document.querySelectorAll('.tour-focus').forEach(el => el.classList.remove('tour-focus'));
+        $('#tour-card').hidden = true;
+        if (!preserveResult) {
+          tour.baseline = null; tour.decomposed = null;
+          $('#lesson-result').className = 'lesson-result'; $('#lesson-result').innerHTML = '';
+        }
+      }
+
+      function advanceTour() {
+        if (!tourReady()) return;
+        if (tour.step === 2) {
+          stopSimulation(true);
+          const parent = state.tasks[0];
+          parent.solver = '';
+          parent.children = [makeTask('Build the hull', 9), makeTask('Raise the mast', 6), makeTask('Paint & finish', 5)];
+        }
+        if (tour.step === tourSteps.length - 1) { endTour(true); announce('Guided lesson complete.'); return; }
+        tour.step += 1;
+        render(); renderTour();
+      }
+
+      function renderTemplates() {
+        $('#template-list').innerHTML = templates.map((t, i) => `
+          <button class="template" type="button" draggable="true" data-template="${i}" aria-label="Add ${t.name}, ${t.effort} effort units">
+            <span class="template-icon">${t.icon}</span><span><strong>${t.name}</strong><small>Drag or click to add</small></span><span class="effort-pill">${t.effort}u</span>
+          </button>`).join('');
+      }
+
+      function renderSolvers() {
+        const leaves = leafTasks();
+        $('#solver-list').innerHTML = solvers.map(s => {
+          const load = leaves.filter(t => t.solver === s.id).reduce((sum, t) => sum + t.effort / s.efficiency, 0);
+          const max = Math.max(1, ...solvers.map(x => leaves.filter(t => t.solver === x.id).reduce((sum, t) => sum + t.effort / x.efficiency, 0)));
+          return `<div class="solver-card" draggable="true" data-solver="${s.id}" tabindex="0" aria-label="${s.name}, ${s.efficiency} times efficiency. Drag onto a task.">
+            <div class="solver-top"><span class="solver-avatar">${s.mark}</span><span><span class="solver-name">${s.name}</span><span class="solver-role">${s.role}</span></span></div>
+            <div class="speed-row"><span>Efficiency</span><strong>${s.efficiency}×</strong></div>
+            <div class="loadbar" title="Assigned time: ${load.toFixed(1)} seconds"><span style="width:${load / max * 100}%"></span></div>
+          </div>`;
+        }).join('');
+      }
+
+      function taskMarkup(task, depth) {
+        const parent = task.children.length > 0;
+        const solver = solvers.find(s => s.id === task.solver);
+        const statusClass = task.progress >= 1 ? 'done' : task.progress > 0 ? 'running' : '';
+        return `<div class="task-node depth-${Math.min(depth, 3)}" data-node="${task.id}">
+          <article class="task-card ${parent ? 'parent' : ''} ${statusClass}" draggable="true" data-task="${task.id}" tabindex="0" aria-label="${task.name}, ${parent ? `${task.children.length} subtasks, ${taskEffort(task)} total effort units` : `${task.effort} effort units`}">
+            <span class="drag-handle" aria-hidden="true">⠿</span>
+            <div class="task-main">
+              <input class="task-name" data-name="${task.id}" value="${escapeHtml(task.name)}" aria-label="Task name">
+              <div class="task-meta"><span>${parent ? `${task.children.length} subtask${task.children.length === 1 ? '' : 's'} · ${taskEffort(task)} total effort` : task.custom ? `<label><input class="effort-input" type="number" min="1" max="99" step="1" value="${task.effort}" data-effort="${task.id}" aria-label="Effort units for ${escapeHtml(task.name)}"> effort</label> · ${solver ? solver.name : 'unassigned'}` : `${task.effort} effort · ${solver ? solver.name : 'unassigned'}`}</span><span class="mini-progress"><span style="width:${task.progress * 100}%"></span></span></div>
+            </div>
+            <div class="task-controls">
+              ${parent ? '' : `<select class="solver-select" data-assign="${task.id}" aria-label="Assign solver to ${escapeHtml(task.name)}"><option value="">Unassigned</option>${solvers.map(s => `<option value="${s.id}" ${task.solver === s.id ? 'selected' : ''}>${s.name} · ${s.efficiency}×</option>`).join('')}</select>`}
+              <button class="icon-btn" data-delete="${task.id}" type="button" aria-label="Delete ${escapeHtml(task.name)}">×</button>
+            </div>
+          </article>
+          ${parent ? `<div class="children">${task.children.map(c => taskMarkup(c, depth + 1)).join('')}</div>` : ''}
+        </div>`;
+      }
+
+      function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML.replace(/"/g, '&quot;'); }
+      function render() {
+        if (!state.tasks.length) {
+          tree.className = 'tree empty';
+          tree.innerHTML = '<div class="empty-state"><span class="big">↓</span><strong>Start with a big task</strong>Drag a card here, click one on the shelf, or choose a scenario.</div>';
+        } else {
+          tree.className = 'tree';
+          tree.innerHTML = state.tasks.map(t => taskMarkup(t, 0)).join('');
+        }
+        renderSolvers(); updateSummary(); updateLessonResult(); updateAchievementDisplay();
+        if (tour.active) setTimeout(renderTour, 0);
+      }
+
+      function workloads() {
+        return solvers.map(s => ({ ...s, load: leafTasks().filter(t => t.solver === s.id).reduce((sum, t) => sum + t.effort / s.efficiency, 0) }));
+      }
+      function updateHistoryDisplay() {
+        $('#last-time').textContent = runHistory.last === null ? '—' : `${runHistory.last.toFixed(1)}s`;
+        $('#best-time').textContent = runHistory.best === null ? '—' : `${runHistory.best.toFixed(1)}s`;
+        $('#best-note').textContent = 'since board was cleared';
+      }
+      function updateAchievementDisplay() {
+        const banner = $('#achievement-banner');
+        document.querySelectorAll('.time-metric').forEach(metric => metric.classList.toggle('achieved', optimalAchieved));
+        $('.simulator').classList.toggle('achieved', optimalAchieved);
+        if (optimalAchieved && activeScenario) {
+          banner.className = 'achievement-banner visible';
+          banner.innerHTML = `<span class="star">★</span><span>Optimal solution! ${scenarioLabels[activeScenario]} completed in the fastest possible time: ${scenarioTargets[activeScenario].toFixed(1)}s.</span>`;
+        } else { banner.className = 'achievement-banner'; banner.innerHTML = ''; }
+      }
+      function updateSummary() {
+        const all = allTasks(), leaves = leafTasks(), assigned = leaves.filter(t => t.solver);
+        const estimate = assigned.length === leaves.length && leaves.length ? Math.max(...workloads().map(w => w.load)) : 0;
+        $('#task-count').textContent = all.length;
+        $('#leaf-count').textContent = leaves.length;
+        $('#effort-total').textContent = leaves.reduce((sum, t) => sum + t.effort, 0);
+        $('#finish-estimate').textContent = estimate ? `${estimate.toFixed(1)}s` : '—';
+        updateHistoryDisplay();
+        if (!state.running) {
+          $('#run-sim').disabled = !leaves.length || assigned.length !== leaves.length;
+          if (!leaves.length) $('#status').textContent = 'Build a plan, then assign every leaf task.';
+          else if (assigned.length !== leaves.length) $('#status').textContent = `Assign ${leaves.length - assigned.length} remaining leaf task${leaves.length - assigned.length === 1 ? '' : 's'}.`;
+          else $('#status').textContent = `Ready. ${leaves.length} tasks can run across ${new Set(assigned.map(t => t.solver)).size} solvers.`;
+        }
+      }
+
+      function addTemplate(index, parentId = null) {
+        activeScenario = null; optimalAchieved = false;
+        stopSimulation(true);
+        const t = templates[index], task = makeTask(t.name, t.effort);
+        if (parentId) findTask(parentId).children.push(task); else state.tasks.push(task);
+        render(); announce(`${task.name} added${parentId ? ' as a subtask' : ''}.`);
+      }
+      function moveTask(id, parentId = null) {
+        if (id === parentId) return;
+        const moving = findTask(id);
+        if (!moving || (parentId && contains(moving, parentId))) { announce('A task cannot be placed inside itself.'); return; }
+        activeScenario = null; optimalAchieved = false; stopSimulation(true); removeTask(id);
+        if (parentId) findTask(parentId).children.push(moving); else state.tasks.push(moving);
+        render(); announce(`${moving.name} moved${parentId ? ' into another task' : ' to the top level'}.`);
+      }
+
+      function loadScenario(key) {
+        stopSimulation(true); nextId = 1;
+        activeScenario = key;
+        optimalAchieved = false;
+        if (key === 'website') {
+          const root = makeTask('Launch a class website', 1);
+          const plan = makeTask('Plan the content', 1);
+          plan.children = [makeTask('Research audience', 6), makeTask('Outline pages', 5)];
+          const create = makeTask('Create the site', 1);
+          create.children = [makeTask('Design interface', 8), makeTask('Build pages', 12), makeTask('Test on devices', 7)];
+          root.children = [plan, create, makeTask('Write launch guide', 5)];
+          state.tasks = [root];
+        }
+        if (key === 'science-fair') {
+          const root = makeTask('Host a school science fair', 1);
+          const organize = makeTask('Organize the event', 1);
+          organize.children = [makeTask('Book the gym', 11), makeTask('Recruit student teams', 6)];
+          const exhibits = makeTask('Prepare the exhibits', 1);
+          exhibits.children = [makeTask('Build the main demonstration', 14), makeTask('Test exhibit safety', 7)];
+          root.children = [organize, exhibits, makeTask('Publish the event guide', 5)];
+          state.tasks = [root];
+        }
+        if (key === 'mars-rover') {
+          const root = makeTask('Prepare a Mars rover mission', 1);
+          const plan = makeTask('Plan the mission', 1);
+          plan.children = [makeTask('Analyze the landing map', 9), makeTask('Design the rover route', 8)];
+          const rover = makeTask('Prepare the rover', 1);
+          rover.children = [makeTask('Build the rover chassis', 15), makeTask('Install science sensors', 10), makeTask('Test rover systems', 7)];
+          root.children = [plan, rover, makeTask('Write the mission checklist', 5)];
+          state.tasks = [root];
+        }
+        render();
+        const rootName = state.tasks[0]?.name || 'Scenario';
+        $('#status').textContent = 'Challenge: assign every leaf task, then improve your plan toward the optimal time.';
+        announce(`${rootName} loaded. Assign every leaf task to a solver.`);
+      }
+
+      function resetProgress() {
+        state.elapsed = 0; allTasks().forEach(t => t.progress = 0);
+        $('#timer').textContent = '00:00.0'; $('#overall-progress').style.width = '0%';
+      }
+      function stopSimulation(reset = false) {
+        state.running = false; if (state.raf) cancelAnimationFrame(state.raf); state.raf = null;
+        $('#run-sim').textContent = 'Run plan';
+        if (reset) resetProgress();
+      }
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+        const tenths = Math.floor((seconds % 1) * 10);
+        return `${mins}:${secs}.${tenths}`;
+      }
+      function buildSnapshot() {
+        const queues = new Map(solvers.map(s => [s.id, []]));
+        leafTasks().forEach(t => queues.get(t.solver).push(t));
+        state.snapshot = [];
+        solvers.forEach(s => {
+          let cursor = 0;
+          queues.get(s.id).forEach(t => { const duration = t.effort / s.efficiency; state.snapshot.push({ task: t, start: cursor, end: cursor + duration }); cursor += duration; });
+        });
+        state.duration = Math.max(0, ...state.snapshot.map(x => x.end));
+      }
+      function updateGroupProgress(tasks = state.tasks) {
+        tasks.forEach(task => {
+          if (!task.children.length) return;
+          updateGroupProgress(task.children);
+          const leaves = allTasks(task.children).filter(child => !child.children.length);
+          const totalEffort = leaves.reduce((sum, child) => sum + child.effort, 0);
+          task.progress = totalEffort
+            ? leaves.reduce((sum, child) => sum + child.effort * child.progress, 0) / totalEffort
+            : 0;
+        });
+      }
+      function tick(now) {
+        if (!state.running) return;
+        state.elapsed = Math.min(state.duration, (now - state.startedAt) / 350);
+        state.snapshot.forEach(x => x.task.progress = Math.max(0, Math.min(1, (state.elapsed - x.start) / (x.end - x.start))));
+        updateGroupProgress();
+        $('#timer').textContent = formatTime(state.elapsed);
+        $('#overall-progress').style.width = `${state.elapsed / state.duration * 100}%`;
+        tree.querySelectorAll('[data-task]').forEach(el => {
+          const task = findTask(el.dataset.task), bar = el.querySelector('.mini-progress span');
+          el.classList.toggle('running', task.progress > 0 && task.progress < 1);
+          el.classList.toggle('done', task.progress >= 1);
+          if (bar) bar.style.width = `${task.progress * 100}%`;
+        });
+        $('#status').textContent = `${state.snapshot.filter(x => x.task.progress >= 1).length} of ${state.snapshot.length} leaf tasks complete.`;
+        if (state.elapsed >= state.duration) {
+          state.running = false; state.raf = null; $('#run-sim').textContent = 'Run again'; $('#run-sim').disabled = false;
+          const previousBest = runHistory.best;
+          runHistory.last = state.duration;
+          runHistory.best = previousBest === null ? state.duration : Math.min(previousBest, state.duration);
+          runHistory.runs += 1;
+          updateHistoryDisplay();
+          if (activeScenario && Math.abs(state.duration - scenarioTargets[activeScenario]) <= 0.05) optimalAchieved = true;
+          updateAchievementDisplay();
+          const resultNote = previousBest === null || state.duration < previousBest - 0.05
+            ? ' New best time!'
+            : Math.abs(state.duration - previousBest) <= 0.05
+              ? ' You matched your best time.'
+              : ` ${(state.duration - previousBest).toFixed(1)} seconds slower than your best.`;
+          $('#status').textContent = `Finished in ${state.duration.toFixed(1)} simulated seconds.${resultNote}`; announce('Simulation complete.');
+          if (tour.active && tour.step === 1) tour.baseline = state.duration;
+          if (tour.active && tour.step === 4) tour.decomposed = state.duration;
+          updateLessonResult(); renderTour();
+        } else state.raf = requestAnimationFrame(tick);
+      }
+      function runSimulation() {
+        if (state.running) { stopSimulation(false); $('#status').textContent = 'Simulation paused.'; $('#run-sim').textContent = 'Resume'; return; }
+        if (state.elapsed > 0 && state.elapsed < state.duration) {
+          state.running = true; state.startedAt = performance.now() - state.elapsed * 350; $('#run-sim').textContent = 'Pause'; state.raf = requestAnimationFrame(tick); return;
+        }
+        resetProgress(); buildSnapshot(); if (!state.duration) return;
+        state.running = true; state.startedAt = performance.now(); $('#run-sim').textContent = 'Pause'; $('#status').textContent = 'Solvers are working in parallel…'; state.raf = requestAnimationFrame(tick);
+      }
+
+      document.addEventListener('dragstart', e => {
+        const template = e.target.closest('[data-template]'), task = e.target.closest('[data-task]'), solver = e.target.closest('.solver-card');
+        if (template) state.dragged = { type: 'template', value: Number(template.dataset.template) };
+        else if (task && !e.target.closest('input,select,button')) { state.dragged = { type: 'task', value: task.dataset.task }; task.classList.add('dragging'); }
+        else if (solver) { state.dragged = { type: 'solver', value: solver.dataset.solver }; solver.classList.add('dragging'); }
+        else { e.preventDefault(); return; }
+        e.dataTransfer.effectAllowed = state.dragged.type === 'solver' ? 'copy' : 'move';
+      });
+      document.addEventListener('dragend', () => { document.querySelectorAll('.dragging,.drop-target').forEach(e => e.classList.remove('dragging','drop-target')); state.dragged = null; });
+      tree.addEventListener('dragover', e => { e.preventDefault(); const card = e.target.closest('[data-task]'); document.querySelectorAll('.drop-target').forEach(x => x.classList.remove('drop-target')); if (card) card.classList.add('drop-target'); });
+      tree.addEventListener('dragleave', e => { if (!tree.contains(e.relatedTarget)) document.querySelectorAll('.drop-target').forEach(x => x.classList.remove('drop-target')); });
+      tree.addEventListener('drop', e => {
+        e.preventDefault(); const card = e.target.closest('[data-task]'), parentId = card?.dataset.task || null;
+        document.querySelectorAll('.drop-target').forEach(x => x.classList.remove('drop-target'));
+        if (!state.dragged) return;
+        if (state.dragged.type === 'template') addTemplate(state.dragged.value, parentId);
+        if (state.dragged.type === 'task') moveTask(state.dragged.value, parentId);
+        if (state.dragged.type === 'solver' && parentId) { const task = findTask(parentId); if (task.children.length) announce('Assign solvers to leaf tasks, not task groups.'); else { optimalAchieved = false; task.solver = state.dragged.value; stopSimulation(true); render(); announce(`${solvers.find(s => s.id === task.solver).name} assigned to ${task.name}.`); } }
+      });
+      $('#template-list').addEventListener('click', e => { const item = e.target.closest('[data-template]'); if (item) addTemplate(Number(item.dataset.template)); });
+      tree.addEventListener('change', e => {
+        if (e.target.matches('[data-assign]')) { optimalAchieved = false; stopSimulation(true); findTask(e.target.dataset.assign).solver = e.target.value; render(); }
+        if (e.target.matches('[data-name]')) { findTask(e.target.dataset.name).name = e.target.value.trim() || 'Untitled task'; render(); }
+        if (e.target.matches('[data-effort]')) {
+          activeScenario = null; optimalAchieved = false; stopSimulation(true);
+          const task = findTask(e.target.dataset.effort);
+          task.effort = Math.max(1, Math.min(99, Math.round(Number(e.target.value) || 1)));
+          render();
+          announce(`${task.name} changed to ${task.effort} effort units.`);
+        }
+      });
+      tree.addEventListener('click', e => {
+        const del = e.target.closest('[data-delete]'); if (!del) return; activeScenario = null; optimalAchieved = false; stopSimulation(true); const task = removeTask(del.dataset.delete); render(); announce(`${task.name} deleted.`);
+      });
+      $('#add-custom').addEventListener('click', () => { activeScenario = null; optimalAchieved = false; stopSimulation(true); state.tasks.push(makeTask('New task', 6, '', true)); render(); const inputs = tree.querySelectorAll('[data-name]'); const input = inputs[inputs.length - 1]; if (input) { input.focus(); input.select(); } });
+      $('#guided-lesson').addEventListener('click', startTour);
+      $('#tour-next').addEventListener('click', advanceTour);
+      $('#tour-exit').addEventListener('click', () => { endTour(); announce('Guided lesson exited.'); });
+      $('#scenario-select').addEventListener('change', e => {
+        if (!e.target.value) return;
+        endTour(); loadScenario(e.target.value);
+      });
+      $('#clear-all').addEventListener('click', () => {
+        endTour(); $('#scenario-select').value = ''; stopSimulation(true); state.tasks = [];
+        activeScenario = null;
+        optimalAchieved = false;
+        runHistory.last = null; runHistory.best = null; runHistory.runs = 0;
+        render(); announce('Board and run history cleared.');
+      });
+      $('#run-sim').addEventListener('click', runSimulation);
+      $('#reset-sim').addEventListener('click', () => { stopSimulation(true); render(); announce('Simulation reset.'); });
+      $('#fullscreen-toggle').addEventListener('click', async () => {
+        try {
+          if (document.fullscreenElement) await document.exitFullscreen();
+          else await document.documentElement.requestFullscreen();
+        } catch (error) {
+          $('#status').textContent = 'Full screen is unavailable. The embedding page may need to allow fullscreen access.';
+        }
+      });
+      document.addEventListener('fullscreenchange', () => {
+        $('#fullscreen-toggle').textContent = document.fullscreenElement ? '⛶ Exit full screen' : '⛶ Full screen';
+      });
+      $('#teacher-key').addEventListener('click', () => {
+        $('#teacher-error').textContent = '';
+        $('#teacher-number').value = '';
+        $('#teacher-dialog').showModal();
+        $('#teacher-number').focus();
+      });
+      $('#teacher-cancel').addEventListener('click', () => $('#teacher-dialog').close());
+      $('#teacher-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const pin = $('#teacher-number').value.trim();
+        let digest = '';
+        try {
+          const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
+          digest = [...new Uint8Array(bytes)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+        } catch (error) {
+          digest = Number(pin) * 7 + 13 === 22000 ? '51c94a510b50e68f490e35edd977845f9b008e3bb1a5c7f0d8eecf8b0b9794bf' : '';
+        }
+        if (digest === '51c94a510b50e68f490e35edd977845f9b008e3bb1a5c7f0d8eecf8b0b9794bf') window.location.href = 'solutions.html';
+        else { $('#teacher-error').textContent = 'That number is not recognized.'; $('#teacher-number').select(); }
+      });
+
+      const shouldAutoStartGuidedLesson = !hasSeenGuidedLesson();
+      renderTemplates(); render();
+      if (shouldAutoStartGuidedLesson) startTour();
+    })();
+  </script>
+</body>
+</html>
