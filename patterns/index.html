@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173d35">
+  <title>Monty's Pattern Factory</title>
+  <meta name="description" content="Watch the production line, discover its hidden rule, and predict what the factory will make next.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="widget" id="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Computational thinking lab</p>
+        <h1>Monty’s Pattern Factory</h1>
+        <p class="subtitle">Watch the line. Discover the rule. Predict what the factory makes next.</p>
+      </div>
+      <div class="top-actions">
+        <button class="btn" id="lessonButton" type="button">Guided lesson</button>
+        <button class="btn" id="fullscreenButton" type="button">⛶ Full screen</button>
+      </div>
+    </header>
+
+    <section class="setup-panel" aria-label="Activity setup">
+      <label for="scenarioSelect">Factory job</label>
+      <select id="scenarioSelect">
+        <option value="">Choose a factory job…</option>
+        <optgroup label="Visual patterns">
+          <option value="starter">Production Forecast</option>
+          <option value="visualGroups">Grouped Goods</option>
+          <option value="colorTracks">Crossed Wires</option>
+          <option value="signalLoom">Signal Loom</option>
+          <option value="batchEcho">Batch Echo</option>
+        </optgroup>
+        <optgroup label="Changing patterns">
+          <option value="intermediate">Call the Line</option>
+          <option value="growingGroups">Packing Pressure</option>
+          <option value="shapeColorCycle">Twin Gears</option>
+          <option value="turningTides">Turning Tides</option>
+          <option value="pulseStack">Pulse Stack</option>
+        </optgroup>
+        <optgroup label="Number patterns">
+          <option value="arithmetic">Stamped Steps</option>
+          <option value="geometric">Multiplier Mill</option>
+          <option value="squares">Rivet Run</option>
+          <option value="cubes">Heavy Press</option>
+          <option value="fibonacci">Sum Forge</option>
+          <option value="interleaved">Split Shift</option>
+          <option value="offsetForge">Offset Forge</option>
+          <option value="relayGrowth">Relay Growth</option>
+        </optgroup>
+        <optgroup label="Quality control">
+          <option value="challenge">Quality Control</option>
+          <option value="qualityShape">Misfit Batch</option>
+          <option value="qualityCount">Packing Audit</option>
+          <option value="qualityNumber">Faulty Stamp</option>
+          <option value="circuitAudit">Circuit Audit</option>
+          <option value="brokenRelay">Broken Relay</option>
+        </optgroup>
+      </select>
+      <button class="btn danger" id="clearButton" type="button">Clear board</button>
+      <div class="mini-stats" aria-label="Performance summary">
+        <div><span>Jobs solved</span><strong id="jobsSolvedResult">0 / 24</strong></div>
+        <div><span>Best call</span><strong id="bestResult">—</strong></div>
+        <div><span>Accuracy</span><strong id="accuracyResult">—</strong></div>
+        <div class="rank-stat"><span>Factory rank</span><strong id="rankResult">Trainee · 0</strong></div>
+      </div>
+    </section>
+
+    <section class="factory-shell" aria-labelledby="jobTitle">
+      <div class="factory-background" aria-hidden="true"></div>
+
+      <div class="factory-heading">
+        <div>
+          <p class="machine-label">Pattern production line 07</p>
+          <h2 id="jobTitle">Factory awaiting assignment</h2>
+          <p id="jobBrief">Choose a factory job to start the machinery.</p>
+        </div>
+        <div class="line-status" id="lineStatus"><span class="status-lamp"></span><span>Standby</span></div>
+      </div>
+
+      <div class="machine-stage">
+        <div class="producer" aria-hidden="true">
+          <div class="pressure-gauge" id="pressureGauge">
+            <span class="gauge-tick tick-0">0</span>
+            <span class="gauge-tick tick-1">1</span>
+            <span class="gauge-tick tick-2">2</span>
+            <span class="gauge-tick tick-3">3</span>
+            <span class="gauge-tick tick-4">4</span>
+            <span class="gauge-tick tick-5">5</span>
+            <strong class="gauge-readout" id="clueCount">0</strong>
+          </div>
+          <div class="machine-face">
+            <div class="machine-lights"><i></i><i></i><i></i></div>
+            <strong>MK-IV</strong>
+          </div>
+          <div class="output-door"></div>
+          <div class="piston"></div>
+        </div>
+
+        <div class="belt-window" aria-label="Pattern conveyor">
+          <div class="scanner-beam" aria-hidden="true"></div>
+          <ol class="product-line" id="productLine"></ol>
+          <div class="empty-line" id="emptyLine">
+            <span class="empty-icon">⚙</span>
+            <strong>No production job loaded</strong>
+          </div>
+          <div class="conveyor" aria-hidden="true">
+            <div class="belt-surface"></div>
+            <div class="rollers"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-deck">
+        <section class="control-console" aria-labelledby="controlsTitle">
+          <div class="panel-title">
+            <div><span>Operator console</span><h3 id="controlsTitle">Line controls</h3></div>
+          </div>
+          <div class="main-controls">
+            <button class="machine-button next" id="nextButton" type="button" disabled>
+              <span aria-hidden="true">▶</span> Next item
+            </button>
+            <button class="machine-button call" id="callButton" type="button" disabled>
+              <span aria-hidden="true">!</span> Stop! I know it
+            </button>
+            <button class="machine-button reset" id="resetRoundButton" type="button" disabled>
+              <span aria-hidden="true">↻</span> Restart job
+            </button>
+            <button class="machine-button calculator" id="calculatorButton" type="button">
+              <span aria-hidden="true">#</span> Calculator
+            </button>
+          </div>
+          <p class="console-message" id="consoleMessage">Load a job to begin.</p>
+        </section>
+
+        <section class="scanner-panel" aria-labelledby="scannerTitle">
+          <div class="panel-title">
+            <div><span>Inspection tools</span><h3 id="scannerTitle">Evidence scanners</h3></div>
+          </div>
+          <p class="small-copy">Focus on one feature at a time. Scanners never reduce your result.</p>
+          <div class="scanner-buttons" id="scannerButtons">
+            <button type="button" data-scan="color" aria-pressed="false"><span class="scan-dot color"></span>Color</button>
+            <button type="button" data-scan="shape" aria-pressed="false"><span class="scan-dot shape"></span>Shape</button>
+            <button type="button" data-scan="direction" aria-pressed="false"><span class="scan-dot direction"></span>Direction</button>
+            <button type="button" data-scan="count" aria-pressed="false"><span class="scan-dot count"></span>Amount</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="prediction-bay" id="predictionBay" aria-labelledby="predictionTitle" hidden>
+      <div class="bay-heading">
+        <div>
+          <p class="machine-label">Prototype bay</p>
+          <h2 id="predictionTitle">Manufacture your prediction</h2>
+          <p id="predictionPrompt">Build the product you expect the line to make.</p>
+        </div>
+        <div class="prototype-preview" id="prototypePreview" aria-label="Your prototype"></div>
+      </div>
+
+      <div class="builder-grid">
+        <fieldset>
+          <legend>Shape</legend>
+          <div class="choice-row" id="shapeChoices"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Color</legend>
+          <div class="choice-row" id="colorChoices"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Direction</legend>
+          <div class="choice-row" id="directionChoices"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Amount</legend>
+          <div class="choice-row" id="countChoices"></div>
+        </fieldset>
+        <fieldset id="numberFieldset" hidden>
+          <legend>Next number</legend>
+          <label class="number-entry-label" for="numberGuess">Stamp this value</label>
+          <input class="number-entry" id="numberGuess" type="number" inputmode="numeric" autocomplete="off">
+        </fieldset>
+      </div>
+
+      <div class="submit-row">
+        <p id="builderHint">Choose every product feature.</p>
+        <button class="machine-button submit" id="submitButton" type="button" disabled>Send prototype to line</button>
+      </div>
+    </section>
+
+    <section class="feedback-panel" id="feedbackPanel" aria-labelledby="feedbackTitle" hidden>
+      <div class="feedback-mark" id="feedbackMark" aria-hidden="true">✓</div>
+      <div>
+        <p class="machine-label">Inspection report</p>
+        <h2 id="feedbackTitle">Result</h2>
+        <p id="feedbackText"></p>
+      </div>
+    </section>
+
+    <section class="badge-ribbon" aria-labelledby="badgesTitle">
+      <div class="ribbon-heading">
+        <div><p class="machine-label">Pattern engineer certifications</p><h2 id="badgesTitle">Badge rail</h2></div>
+        <button class="btn small" id="viewBadgesButton" type="button">View all</button>
+      </div>
+      <div class="badges" id="badgeRail"></div>
+      <p class="storage-note">Badges are saved on this browser.</p>
+    </section>
+  </main>
+
+  <button class="teacher-key" id="teacherButton" type="button" aria-label="Teacher resources" title="Teacher resources">◆</button>
+
+  <dialog class="modal teacher-dialog" id="teacherDialog">
+    <form method="dialog" id="teacherForm">
+      <p class="machine-label">Restricted panel</p>
+      <h2>Teacher resources</h2>
+      <p>Enter the teacher number to open the answer key.</p>
+      <label for="teacherNumber">Teacher number</label>
+      <input id="teacherNumber" inputmode="numeric" autocomplete="off">
+      <p class="dialog-error" id="teacherError" role="alert"></p>
+      <div class="dialog-actions">
+        <button class="btn" value="cancel">Cancel</button>
+        <button class="btn primary" id="teacherSubmit" type="submit">Unlock</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal badge-dialog" id="badgeDialog">
+    <div class="dialog-content">
+      <div class="dialog-head">
+        <div><p class="machine-label">Certification cabinet</p><h2>Your factory badges</h2></div>
+        <button class="icon-button" id="closeBadgesButton" type="button" aria-label="Close badge cabinet">×</button>
+      </div>
+      <div class="badge-cabinet" id="badgeCabinet"></div>
+      <div class="dialog-actions spread">
+        <button class="btn danger" id="resetBadgesButton" type="button">Reset achievements</button>
+        <button class="btn primary" id="doneBadgesButton" type="button">Done</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal calculator-dialog" id="calculatorDialog">
+    <div class="calculator-shell">
+      <div class="dialog-head">
+        <div><p class="machine-label">Operator tool</p><h2>Factory calculator</h2></div>
+        <button class="icon-button" id="closeCalculatorButton" type="button" aria-label="Close calculator">×</button>
+      </div>
+      <output class="calculator-display" id="calculatorDisplay" aria-live="polite">0</output>
+      <div class="calculator-keys" id="calculatorKeys">
+        <button type="button" data-calc="clear">C</button>
+        <button type="button" data-calc="backspace">⌫</button>
+        <button type="button" data-calc="sign">±</button>
+        <button type="button" class="operator" data-calc="divide">÷</button>
+        <button type="button" data-calc="7">7</button>
+        <button type="button" data-calc="8">8</button>
+        <button type="button" data-calc="9">9</button>
+        <button type="button" class="operator" data-calc="multiply">×</button>
+        <button type="button" data-calc="4">4</button>
+        <button type="button" data-calc="5">5</button>
+        <button type="button" data-calc="6">6</button>
+        <button type="button" class="operator" data-calc="subtract">−</button>
+        <button type="button" data-calc="1">1</button>
+        <button type="button" data-calc="2">2</button>
+        <button type="button" data-calc="3">3</button>
+        <button type="button" class="operator" data-calc="add">+</button>
+        <button type="button" class="wide" data-calc="0">0</button>
+        <button type="button" data-calc=".">.</button>
+        <button type="button" class="equals" data-calc="equals">=</button>
+      </div>
+    </div>
+  </dialog>
+
+  <aside class="lesson-card" id="lessonCard" aria-labelledby="lessonTitle" hidden>
+    <div class="lesson-progress" id="lessonProgress">Guided lesson · Step 1 of 6</div>
+    <h2 id="lessonTitle">Welcome to the line</h2>
+    <p id="lessonText"></p>
+    <div class="lesson-actions">
+      <button class="btn" id="exitLessonButton" type="button">Exit</button>
+      <button class="btn primary" id="lessonNextButton" type="button" disabled>Next</button>
+    </div>
+  </aside>
+
+  <div class="sr-only" id="liveRegion" aria-live="polite" aria-atomic="true"></div>
+  <script src="app.js"></script>
+</body>
+</html>

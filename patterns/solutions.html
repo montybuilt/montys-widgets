@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Teacher Solutions · Monty's Pattern Factory</title>
+  <style>
+    :root{--ink:#17231f;--muted:#68736f;--paper:#f2ead8;--panel:#fffaf0;--line:#c9bda6;--green:#174f40;--copper:#b85f36;--blue:#3b7fc4}
+    *{box-sizing:border-box}body{margin:0;color:var(--ink);background:radial-gradient(circle at 12% 0,rgba(216,162,63,.18),transparent 30rem),var(--paper);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+    main{width:min(1100px,100%);margin:0 auto;padding:30px 20px 60px}header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px}.eyebrow{margin:0 0 5px;color:var(--copper);font-size:.72rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}h1{margin:0;font-size:clamp(2rem,5vw,3.5rem);line-height:1;letter-spacing:-.055em}.lede{max-width:700px;margin:10px 0 0;color:var(--muted)}
+    .back{flex:none;padding:9px 14px;border:1px solid var(--line);border-radius:999px;color:var(--ink);background:var(--panel);font-weight:800;text-decoration:none}.note{margin-bottom:15px;padding:13px 15px;border:1px solid #9ec8b2;border-radius:13px;background:#e9f5ee}.solutions{display:grid;gap:14px}article{padding:19px;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:0 8px 25px rgba(50,42,29,.08)}h2{margin:0 0 4px;font-size:1.18rem}.rule{margin:0 0 13px;color:var(--green);font-weight:850}.sequence{padding:11px;border-radius:10px;background:#263c39;color:#fff8e5;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-weight:750;overflow:auto}
+    table{width:100%;margin-top:12px;border-collapse:collapse;font-size:.84rem}th,td{padding:9px 10px;border-top:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--muted);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}.prompts{margin:10px 0 0;padding-left:20px}.prompts li+li{margin-top:5px}.guided{border-left:5px solid var(--blue)}@media(max-width:650px){header{flex-direction:column}table{font-size:.76rem}th,td{padding:8px 5px}}
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><p class="eyebrow">Teacher resources</p><h1>Pattern Factory answer key</h1><p class="lede">Solutions, common interpretations, and discussion prompts for the guided lesson and factory job board.</p></div>
+      <a class="back" href="index.html">← Back to activity</a>
+    </header>
+    <div class="note"><strong>Teaching emphasis:</strong> a prediction alone is not enough. Ask whether the student’s rule explains every visible example and continues to work on unseen products.</div>
+    <section class="solutions">
+      <article class="guided">
+        <h2>Guided lesson · Training Line</h2>
+        <p class="rule">Rule: shape and color alternate while direction rotates clockwise.</p>
+        <div class="sequence">orange circle ↑ · blue square → · orange circle ↓ · blue square ← · orange circle ↑</div>
+        <table><thead><tr><th>Task</th><th>Solution</th><th>Reasoning</th></tr></thead><tbody>
+          <tr><td>Prediction</td><td>One orange circle pointing up</td><td>Odd positions share the orange circle; direction completes a four-step rotation.</td></tr>
+          <tr><td>Earliest supported call</td><td>4 clues</td><td>Four clues establish both the alternating pair and a complete direction cycle.</td></tr>
+          <tr><td>Common partial rule</td><td>“The color alternates.”</td><td>True, but it ignores shape and direction.</td></tr>
+        </tbody></table>
+      </article>
+      <article>
+        <h2>Starter · Production Forecast</h2>
+        <p class="rule">Rule: orange circles and blue squares repeat ABAB.</p>
+        <div class="sequence">orange circle · blue square · orange circle · blue square · [orange circle]</div>
+        <table><thead><tr><th>Answer</th><th>Common interpretation</th><th>Useful response</th></tr></thead><tbody>
+          <tr><td>Orange circle</td><td>“Only the color changes.”</td><td>Ask whether the shape also stays the same or changes.</td></tr>
+          <tr><td>Rule: products alternate</td><td>“The next one just looks like a circle.”</td><td>Ask the student to identify at least two repeated pairs as evidence.</td></tr>
+        </tbody></table>
+        <ul class="prompts"><li>What stays the same between positions 1 and 3?</li><li>How could you describe this pattern without using the words orange, blue, circle, or square?</li></ul>
+      </article>
+      <article>
+        <h2>Intermediate · Call the Line</h2>
+        <p class="rule">Rule: color alternates purple/green while the triangle rotates clockwise.</p>
+        <div class="sequence">purple triangle ↑ · green triangle → · purple triangle ↓ · green triangle ← · [purple triangle ↑]</div>
+        <table><thead><tr><th>Answer</th><th>Common interpretation</th><th>Useful response</th></tr></thead><tbody>
+          <tr><td>Purple triangle pointing up, amount 1</td><td>“Only the colors alternate.”</td><td>That explains one feature. What happens to the direction every step?</td></tr>
+          <tr><td>Earliest supported call: 4 clues</td><td>Calling after 2 clues</td><td>Two clues allow many possible rules; request another clue or two for stronger evidence.</td></tr>
+        </tbody></table>
+        <ul class="prompts"><li>Which hypothesis becomes less likely after the fourth product?</li><li>Is calling early always better? What else must an early call do?</li></ul>
+      </article>
+      <article>
+        <h2>Compact visual jobs</h2>
+        <table><thead><tr><th>Job</th><th>Rule</th><th>Next after six clues</th></tr></thead><tbody>
+          <tr><td>Grouped Goods</td><td>Two orange circles, then one blue square (AAB).</td><td>Orange circle</td></tr>
+          <tr><td>Crossed Wires</td><td>Shape cycles circle/square/triangle; color alternates orange/blue.</td><td>Orange circle</td></tr>
+          <tr><td>Packing Pressure</td><td>Shape/color alternate; amounts are 1,1,2,2,3,3.</td><td>One orange circle</td></tr>
+          <tr><td>Twin Gears</td><td>Shape alternates; color cycles orange/blue/green.</td><td>Orange circle</td></tr>
+          <tr><td>Signal Loom</td><td>Shape cycles through three forms; each color lasts for two products.</td><td>Orange circle</td></tr>
+          <tr><td>Batch Echo</td><td>A four-part ABCC batch repeats.</td><td>Green triangle</td></tr>
+          <tr><td>Turning Tides</td><td>Direction rotates clockwise; colors occur in pairs.</td><td>Orange arrow pointing down</td></tr>
+          <tr><td>Pulse Stack</td><td>Shape/color alternate while amount cycles 1,2,3.</td><td>One orange circle</td></tr>
+        </tbody></table>
+      </article>
+      <article>
+        <h2>Number production jobs</h2>
+        <table><thead><tr><th>Job</th><th>Rule</th><th>Prediction after six clues</th></tr></thead><tbody>
+          <tr><td>Stamped Steps</td><td>Add 4.</td><td>27</td></tr>
+          <tr><td>Multiplier Mill</td><td>Multiply by 3.</td><td>1458</td></tr>
+          <tr><td>Rivet Run</td><td>Consecutive square numbers.</td><td>49</td></tr>
+          <tr><td>Heavy Press</td><td>Consecutive cube numbers.</td><td>343</td></tr>
+          <tr><td>Sum Forge</td><td>Add the previous two values.</td><td>13</td></tr>
+          <tr><td>Split Shift</td><td>Odd positions count by 1; even positions count by 10.</td><td>4</td></tr>
+          <tr><td>Offset Forge</td><td>2ⁿ + 3, beginning at n = 0.</td><td>67</td></tr>
+          <tr><td>Relay Growth</td><td>Double the previous value and add 2; equivalently 3 × 2ⁿ − 2.</td><td>190</td></tr>
+        </tbody></table>
+      </article>
+      <article>
+        <h2>Challenge · Quality Control</h2>
+        <p class="rule">Rule: odd positions are one yellow diamond; even positions are two blue circles. Direction rotates clockwise.</p>
+        <div class="sequence">yellow diamond ↑ · 2 blue circles → · yellow diamond ↓ · 2 blue circles ← · [yellow diamond ↑] · 2 blue circles →</div>
+        <table><thead><tr><th>Task</th><th>Solution</th><th>Common interpretation</th></tr></thead><tbody>
+          <tr><td>Defective product</td><td>Position 5</td><td>The supplied yellow circle has the right color, amount, and direction but the wrong shape.</td></tr>
+          <tr><td>Replacement</td><td>One yellow diamond pointing up</td><td>“Color and amount are enough.” This ignores the alternating shape track.</td></tr>
+          <tr><td>Complete rule</td><td>Three alternating attributes plus clockwise direction</td><td>Students may recognize only one or two of the simultaneous changes.</td></tr>
+        </tbody></table>
+        <ul class="prompts"><li>Which product features can be examined as separate tracks?</li><li>How would the same rule look if the factory produced animals or numbers instead?</li><li>What should positions 7 and 8 contain?</li></ul>
+      </article>
+      <article>
+        <h2>Additional quality-control jobs</h2>
+        <table><thead><tr><th>Job</th><th>Defect</th><th>Replacement and rule</th></tr></thead><tbody>
+          <tr><td>Misfit Batch</td><td>Position 5: blue diamond</td><td>Blue square; orange circle, blue square, green triangle repeat.</td></tr>
+          <tr><td>Packing Audit</td><td>Position 4: only one green circle</td><td>Two green circles; one purple triangle alternates with two green circles.</td></tr>
+          <tr><td>Faulty Stamp</td><td>Position 5: 27</td><td>24; add 5 to each stamped value.</td></tr>
+          <tr><td>Circuit Audit</td><td>Position 5: blue square pointing up</td><td>Blue circle pointing up; shape alternates, color cycles, and direction rotates.</td></tr>
+          <tr><td>Broken Relay</td><td>Position 5: 20</td><td>19; the values follow 2ⁿ + 3.</td></tr>
+        </tbody></table>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
