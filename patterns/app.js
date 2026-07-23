@@ -323,6 +323,46 @@
       sequence: [4,5,7,11,20,35].map(num),
       rule: "power-offset", rules: [],
       explanation: "The values follow 2ⁿ + 3, so position 5 should be 19 rather than 20."
+    },
+    nestedBatch: {
+      title: "Deep Batch", brief: "A small product rhythm is nested inside a larger repeating batch.", mode: "call",
+      density: "compact", features: ["shape", "color"], minSupport: 8, minCallClues: 6, maxClues: 12, initialReveal: 0,
+      sequence: [
+        item("circle","orange"), item("circle","orange"), item("square","blue"),
+        item("circle","orange"), item("square","blue"), item("square","blue"),
+        item("circle","orange"), item("circle","orange"), item("square","blue"),
+        item("circle","orange"), item("square","blue"), item("square","blue"),
+        item("circle","orange")
+      ],
+      rule: "nested-six", rules: [],
+      explanation: "A six-product batch repeats: AABABB. Inside it, orange circles and blue squares form groups that grow from one to two."
+    },
+    phaseShift: {
+      title: "Phase Works", brief: "Three product features move on cycles of different lengths.", mode: "call",
+      density: "compact", features: ["shape", "color", "direction"], minSupport: 9, minCallClues: 7, maxClues: 12, initialReveal: 0,
+      sequence: Array.from({length:13}, (_, index) =>
+        item(
+          index % 2 ? "square" : "circle",
+          ["orange","blue","green"][index % 3],
+          ["up","right","down","left"][index % 4]
+        )
+      ),
+      rule: "three-phases", rules: [],
+      explanation: "Shape alternates every two products, color cycles every three, and direction turns every four. The complete combination resets after twelve products."
+    },
+    differenceLoom: {
+      title: "Gap Workshop", brief: "The pattern is hidden in the changing gaps between stamped values.", mode: "call",
+      density: "data", features: ["number"], minSupport: 8, minCallClues: 6, maxClues: 12, initialReveal: 0,
+      sequence: [3,4,5,7,8,9,11,12,13,15,16,17,19].map(num),
+      rule: "repeating-gaps", rules: [],
+      explanation: "The gaps repeat +1, +1, +2. The values form repeating groups of three before jumping to the next group."
+    },
+    tripleShift: {
+      title: "Three Crews", brief: "Three number-making crews take turns placing plates on one conveyor.", mode: "call",
+      density: "data", features: ["number"], minSupport: 9, minCallClues: 7, maxClues: 12, initialReveal: 0,
+      sequence: [2,10,100,4,20,90,6,30,80,8,40,70,10].map(num),
+      rule: "three-interleaved", rules: [],
+      explanation: "Every third position belongs to a separate sequence: one counts by 2, one by 10, and one counts backward by 10."
     }
   };
 
@@ -344,6 +384,7 @@
     "badgeCabinet","closeBadgesButton","doneBadgesButton","resetBadgesButton","lessonButton","lessonCard",
     "lessonProgress","lessonTitle","lessonText","lessonNextButton","exitLessonButton","fullscreenButton",
     "calculatorButton","calculatorDialog","closeCalculatorButton","calculatorDisplay","calculatorKeys",
+    "historyButton","historyDialog","closeHistoryButton","doneHistoryButton","historyLine","historyCount",
     "teacherButton","teacherDialog","teacherForm","teacherNumber","teacherError","liveRegion"
   ].map(id => [id, document.getElementById(id)]));
   els.factoryShell = document.querySelector(".factory-shell");
@@ -495,12 +536,37 @@
     if (newest) newest.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", inline: "start", block: "nearest" });
   }
 
+  function renderHistory() {
+    if (!state.scenario || state.revealCount === 0) {
+      els.historyLine.innerHTML = "";
+      els.historyCount.textContent = "No clues recorded";
+      return;
+    }
+    const features = state.scenario.features;
+    const revealed = state.scenario.sequence.slice(0, state.revealCount);
+    els.historyLine.innerHTML = revealed.map((product, index) => `
+      <li class="product-slot" aria-label="Clue ${index + 1}: ${escapeText(describeProduct(product, features))}">
+        <span class="slot-number">${String(index + 1).padStart(2,"0")}</span>
+        ${features.includes("direction") ? `<span class="direction-mark" aria-hidden="true">${ARROWS[product.direction]}</span>` : ""}
+        ${productMarkup(product)}
+        <span class="product-name">${features.includes("number") ? "stamped value" : `${escapeText(product.color)} ${escapeText(product.shape)}`}</span>
+      </li>
+    `).join("");
+    els.historyCount.textContent = `${revealed.length} ${revealed.length === 1 ? "clue" : "clues"} recorded`;
+  }
+
   function updateClueGauge(count) {
-    const gaugeCount = Math.max(0, Math.min(6, count));
-    const angle = -90 + gaugeCount * 60;
-    els.clueCount.textContent = gaugeCount;
+    const total = Math.max(0, count);
+    const dialPosition = total % 6;
+    const angle = -90 + dialPosition * 60;
+    els.clueCount.textContent = total;
     els.pressureGauge.style.setProperty("--gauge-angle", `${angle}deg`);
-    els.pressureGauge.setAttribute("aria-label", `${gaugeCount} ${gaugeCount === 1 ? "clue" : "clues"} observed`);
+    els.pressureGauge.setAttribute("aria-label", `${total} ${total === 1 ? "clue" : "clues"} observed`);
+  }
+
+  function maxRevealFor(scenario) {
+    if (scenario.mode === "repair") return scenario.sequence.length;
+    return Math.min(scenario.maxClues ?? 6, scenario.sequence.length - 1);
   }
 
   function updateControls() {
@@ -508,20 +574,20 @@
     if (!s) {
       els.nextButton.disabled = true;
       els.callButton.disabled = true;
+      els.historyButton.disabled = true;
       return;
     }
-    const maxReveal = s.mode === "repair" ? s.sequence.length : Math.min(6, s.sequence.length - 1);
-    const minCallClues = s.minCallClues ?? 2;
+    const maxReveal = maxRevealFor(s);
+    const minCallClues = s.maxClues > 6 ? 3 : 2;
     els.nextButton.disabled = state.stopped || state.roundDone || !["call", "repair"].includes(s.mode) || state.revealCount >= maxReveal;
     els.callButton.disabled = state.stopped || state.roundDone || s.mode !== "call" || state.revealCount < minCallClues;
     els.callButton.textContent = state.revealCount >= maxReveal ? "Make your prediction" : "Stop! I know it";
+    els.historyButton.disabled = state.revealCount === 0;
   }
 
   function revealNext() {
     if (!state.scenario || els.nextButton.disabled) return;
-    const maxReveal = state.scenario.mode === "repair"
-      ? state.scenario.sequence.length
-      : Math.min(6, state.scenario.sequence.length - 1);
+    const maxReveal = maxRevealFor(state.scenario);
     if (state.revealCount < maxReveal) {
       state.revealCount += 1;
       setFactoryState("running", "Producing");
@@ -1059,6 +1125,13 @@
     const button = e.target.closest("[data-calc]");
     if (button) useCalculator(button.dataset.calc);
   });
+  els.historyButton.addEventListener("click", () => {
+    renderHistory();
+    els.historyDialog.showModal();
+    requestAnimationFrame(() => { els.historyLine.scrollLeft = els.historyLine.scrollWidth; });
+  });
+  els.closeHistoryButton.addEventListener("click", () => els.historyDialog.close());
+  els.doneHistoryButton.addEventListener("click", () => els.historyDialog.close());
   document.addEventListener("keydown", e => {
     if (!els.calculatorDialog.open) return;
     const keyMap = { "+":"add", "-":"subtract", "*":"multiply", "/":"divide", "Enter":"equals", "=":"equals", "Backspace":"backspace", "Escape":null };

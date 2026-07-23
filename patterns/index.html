@@ -58,6 +58,12 @@
           <option value="circuitAudit">Circuit Audit</option>
           <option value="brokenRelay">Broken Relay</option>
         </optgroup>
+        <optgroup label="Master mechanic">
+          <option value="nestedBatch">Deep Batch</option>
+          <option value="phaseShift">Phase Works</option>
+          <option value="differenceLoom">Gap Workshop</option>
+          <option value="tripleShift">Three Crews</option>
+        </optgroup>
       </select>
       <button class="btn danger" id="clearButton" type="button">Clear board</button>
       <div class="mini-stats" aria-label="Performance summary">
@@ -130,6 +136,9 @@
             </button>
             <button class="machine-button calculator" id="calculatorButton" type="button">
               <span aria-hidden="true">#</span> Calculator
+            </button>
+            <button class="machine-button history" id="historyButton" type="button" disabled>
+              <span aria-hidden="true">⌕</span> Inspection history
             </button>
           </div>
           <p class="console-message" id="consoleMessage">Load a job to begin.</p>
@@ -267,6 +276,24 @@
         <button type="button" class="wide" data-calc="0">0</button>
         <button type="button" data-calc=".">.</button>
         <button type="button" class="equals" data-calc="equals">=</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal history-dialog" id="historyDialog">
+    <div class="history-shell">
+      <div class="dialog-head">
+        <div>
+          <p class="machine-label">Production archive</p>
+          <h2>Inspection history</h2>
+          <p>Every clue produced so far, in order. Future products remain hidden.</p>
+        </div>
+        <button class="icon-button" id="closeHistoryButton" type="button" aria-label="Close inspection history">×</button>
+      </div>
+      <ol class="history-line" id="historyLine"></ol>
+      <div class="history-footer">
+        <span id="historyCount">0 clues recorded</span>
+        <button class="btn primary" id="doneHistoryButton" type="button">Return to line</button>
       </div>
     </div>
   </dialog>

@@ -263,6 +263,7 @@ h2, h3, p { margin-top: 0; }
 .machine-button.call { background:linear-gradient(#dd6b42,#a63d27); }
 .machine-button.reset { color:#25322d; background:linear-gradient(#f0c663,#cc9637); text-shadow:none; }
 .machine-button.calculator { color:#eef5f2; background:linear-gradient(#596c70,#33474b); }
+.machine-button.history { color:#fff4ce; background:linear-gradient(#80633c,#564129); }
 .machine-button.submit { background:linear-gradient(#427fc3,#28568d); }
 .console-message { min-height:20px; margin:12px 0 0; color:#654f3c; font-size:.76rem; font-weight:700; }
 .small-copy { margin:0 0 9px; color:#654f3c; font-size:.75rem; }
@@ -364,6 +365,22 @@ legend { padding:0 5px; color:#5f5240; font-size:.69rem; font-weight:900; letter
 .calculator-keys .operator { color:#fff8e6; background:linear-gradient(#477469,#285047); }
 .calculator-keys .equals { color:white; background:linear-gradient(#d36a42,#9d3d27); }
 .calculator-keys .wide { grid-column:span 2; }
+.history-dialog { width:min(1120px,calc(100% - 30px)); background:#d2c4a5; border:4px solid #463a31; }
+.history-shell { padding:18px; }
+.history-shell .dialog-head p:not(.machine-label) { margin:4px 0 0; color:#665744; font-size:.82rem; }
+.history-line {
+  display:flex; align-items:flex-end; gap:8px; min-height:164px; margin:16px 0 12px; padding:18px;
+  overflow-x:auto; list-style:none; scrollbar-color:#b78b45 #263638; scrollbar-width:auto;
+  border:4px solid #4b3b31; border-radius:14px;
+  background:linear-gradient(180deg,#294143,#18292b);
+  box-shadow:inset 0 14px 28px rgba(0,0,0,.3);
+}
+.history-line .product-slot { flex-basis:76px; height:116px; padding:5px; }
+.history-line .product-wrap { height:80px; padding-top:10px; gap:2px; }
+.history-line .product { width:31px; height:31px; border-width:2px; }
+.history-line .product-wrap[data-count="3"] .product { width:20px; height:20px; }
+.history-line .product-name { font-size:.56rem; }
+.history-footer { display:flex; align-items:center; justify-content:space-between; gap:14px; color:#554735; font-size:.78rem; font-weight:850; }
 .teacher-dialog form,.dialog-content { padding:21px; }
 .teacher-dialog h2,.dialog-head h2 { margin-bottom:6px; }
 .teacher-dialog label { display:block; margin-bottom:5px; font-weight:800; }
@@ -437,7 +454,7 @@ body.lesson-active::after { content:""; position:fixed; inset:0; z-index:15; bac
   .product-slot { flex-basis:86px; height:116px; }
   .product { width:38px; height:38px; }
   .main-controls { display:grid; grid-template-columns:1fr 1fr; }
-  .machine-button.reset,.machine-button.calculator { grid-column:1/-1; }
+  .machine-button.reset,.machine-button.calculator,.machine-button.history { grid-column:1/-1; }
   .scanner-buttons { grid-template-columns:repeat(4,1fr); }
   .scanner-buttons button { padding:5px 2px; font-size:.66rem; }
   .scan-dot { display:block; margin:0 auto 2px; }
@@ -448,6 +465,9 @@ body.lesson-active::after { content:""; position:fixed; inset:0; z-index:15; bac
   .submit-row { align-items:stretch; flex-direction:column; }
   .badges { display:flex; overflow-x:auto; }
   .badge { flex:0 0 105px; }
+  .history-shell { padding:12px; }
+  .history-line { min-height:148px; padding:12px; }
+  .history-footer { align-items:stretch; flex-direction:column; }
 }
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
