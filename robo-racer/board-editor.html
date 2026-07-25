@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Board Editor — Monty's Robo-Racer</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="board-editor.css">
+</head>
+<body>
+  <header class="editor-header">
+    <div>
+      <p class="eyebrow">Teacher tool</p>
+      <h1>Robo-Racer Board Editor</h1>
+      <p class="subtitle">Choose an element, set its properties, then click or drop it onto the grid.</p>
+    </div>
+    <a class="button secondary" href="index.html">Back to game</a>
+  </header>
+
+  <main class="editor-layout">
+    <aside class="editor-sidebar">
+      <section class="editor-panel">
+        <h2>Board details</h2>
+        <label>Board ID<input id="boardId" value="my-course"></label>
+        <label>Title<input id="boardTitle" value="My Robo-Racer Course"></label>
+        <label>Brief<input id="boardBrief" value="Reach the beacon."></label>
+        <label>Round limit<input id="maxRounds" type="number" min="1" max="30" value="10"></label>
+        <div class="dimension-fields">
+          <label>Rows<input id="boardRows" type="number" min="6" max="15" value="9"></label>
+          <label>Columns<input id="boardColumns" type="number" min="9" max="20" value="15"></label>
+        </div>
+      </section>
+
+      <section class="editor-panel">
+        <h2>Elements</h2>
+        <div id="palette" class="palette">
+          <button type="button" class="tool active" data-tool="select">↖ Select</button>
+          <button type="button" class="tool" data-tool="start" draggable="true">▲ Start</button>
+          <button type="button" class="tool" data-tool="goal" draggable="true">★ Goal</button>
+          <button type="button" class="tool" data-tool="pit" draggable="true">● Pit</button>
+          <button type="button" class="tool" data-tool="dead-square" draggable="true">■ Dead square</button>
+          <button type="button" class="tool" data-tool="belt" draggable="true">→ Conveyor</button>
+          <button type="button" class="tool" data-tool="gear" draggable="true">↻ Gear</button>
+          <button type="button" class="tool" data-tool="wormhole" draggable="true">@ Wormhole</button>
+          <button type="button" class="tool" data-tool="warp" draggable="true">◎ Warp</button>
+          <button type="button" class="tool" data-tool="laser" draggable="true">━ Laser</button>
+          <button type="button" class="tool" data-tool="wall" draggable="true">▰ Wall</button>
+          <button type="button" class="tool" data-tool="erase" draggable="true">× Erase</button>
+        </div>
+        <label>Direction
+          <select id="direction">
+            <option value="north">North ↑</option><option value="east">East →</option>
+            <option value="south">South ↓</option><option value="west">West ←</option>
+          </select>
+        </label>
+        <label>Gear rotation
+          <select id="gearTurn"><option value="1">Clockwise ↻</option><option value="-1">Counterclockwise ↺</option></select>
+        </label>
+        <label>Laser orientation
+          <select id="laserOrientation"><option value="horizontal">Horizontal ━</option><option value="vertical">Vertical ┃</option></select>
+        </label>
+        <label class="form-check"><input id="laserActive" type="checkbox" checked> Laser starts active</label>
+        <label class="form-check"><input id="wormholeActive" type="checkbox" checked> Wormhole starts active</label>
+        <label class="form-check"><input id="warpActive" type="checkbox" checked> Warp starts active</label>
+      </section>
+
+      <section class="editor-panel">
+        <h2>Selected element</h2>
+        <p id="selectedElement" class="selected-summary">Nothing selected. Choose Select, then click an element.</p>
+        <div class="rotate-actions">
+          <button id="rotateLeft" class="button secondary" type="button" disabled>↶ Rotate left</button>
+          <button id="rotateRight" class="button secondary" type="button" disabled>↷ Rotate right</button>
+        </div>
+        <label>Laser color<input id="elementColor" type="color" value="#da2722" disabled></label>
+        <button id="deleteSelected" class="button secondary delete-selected" type="button" disabled>Delete selected</button>
+      </section>
+
+      <section class="editor-panel">
+        <h2>Board library</h2>
+        <label>Board
+          <select id="boardLibrarySelect"><option value="">No boards loaded</option></select>
+        </label>
+        <div class="editor-actions">
+          <button id="saveBoardsFile" class="button primary" type="button">Save board</button>
+          <p id="fileStatus" class="file-status" role="status" aria-live="polite">
+            <strong>File status</strong>
+            <span id="fileStatusText">Loading boards from data/boards.json…</span>
+          </p>
+          <button id="testBoard" class="button secondary" type="button">Test current board</button>
+          <button id="newBoard" class="button secondary" type="button">New board</button>
+          <button id="duplicateBoard" class="button secondary" type="button">Duplicate board</button>
+          <button id="deleteBoard" class="button secondary" type="button" disabled>Delete board</button>
+        </div>
+      </section>
+    </aside>
+
+    <section class="editor-workspace" aria-labelledby="gridTitle">
+      <div class="editor-grid-heading">
+        <div><p id="courseSizeLabel" class="eyebrow">15 × 9 course</p><h2 id="gridTitle">Design grid</h2></div>
+        <span id="selectionStatus">Select</span>
+      </div>
+      <div id="editorGrid" class="editor-grid" role="grid" aria-label="Board design grid"></div>
+      <div id="validation" class="validation" aria-live="polite">Add one start and one goal.</div>
+    </section>
+  </main>
+  <script src="board-editor.js"></script>
+</body>
+</html>

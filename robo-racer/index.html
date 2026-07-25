@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <title>Monty's Robo-Racer — Algorithmic Thinking</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to game</a>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Computational Thinking Lab</p>
+      <h1>Monty's Robo-Racer</h1>
+      <p class="subtitle">Build algorithms to get your robot to the goal</p>
+    </div>
+    <div class="top-actions">
+      <button id="helpBtn" class="button secondary" type="button">How to play</button>
+      <button id="fullscreenBtn" class="button secondary" type="button">Full screen</button>
+    </div>
+  </header>
+  <button id="teacherBtn" class="icon-button admin-diamond" type="button" aria-label="Teacher resources">◆</button>
+
+  <main id="workspace" class="workspace">
+    <section class="game-panel" aria-labelledby="missionTitle">
+      <div class="mission-bar compact-nav">
+        <div class="sr-only">
+          <h2 id="missionTitle">Loading factory…</h2>
+          <p id="missionBrief" class="mission-brief"></p>
+        </div>
+        <div class="course-controls">
+          <label class="scenario-picker">Course
+            <select id="scenarioSelect">
+              <option value="">Loading boards…</option>
+            </select>
+          </label>
+          <label class="scenario-picker">Goal rule
+            <select id="modeSelect">
+              <option value="easy">Easy · Touch goal</option>
+              <option value="hard">Hard · End on goal</option>
+            </select>
+          </label>
+        </div>
+        <div class="status-strip" aria-label="Mission status">
+          <div><span>Round</span><strong id="roundValue">1</strong></div>
+          <div><span>Reboots</span><strong id="damageValue">0</strong></div>
+          <div><span>Goal</span><strong id="goalValue">10</strong></div>
+          <div><span>Best</span><strong id="bestValue">—</strong></div>
+          <button id="newGameBtn" class="button new-game-button" type="button" disabled>New Game</button>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board-column">
+          <div class="board-stage">
+            <div id="board" class="board" role="grid" aria-label="Factory race course"></div>
+            <section id="feedback" class="feedback board-feedback" aria-live="polite" hidden></section>
+          </div>
+          <aside class="legend" aria-label="Board legend">
+            <span><b class="legend-mark robot-mark">▲</b> Robot</span>
+            <span><b class="legend-mark goal-mark">★</b> Goal</span>
+            <span><b class="legend-mark pit-mark">●</b> Pit</span>
+            <span><b class="legend-mark dead-square-mark"></b> Dead square</span>
+            <span><b class="legend-mark belt-mark">➜</b> Belt</span>
+            <span><b class="legend-mark gear-mark">↻</b> Gear</span>
+            <span><b class="legend-mark wormhole-mark">@</b> Wormhole</span>
+            <span><b class="legend-mark warp-mark">◎</b> Warp</span>
+            <span><b class="legend-mark laser-mark">━</b> Laser</span>
+          </aside>
+        </div>
+        <div class="program-area">
+          <div class="card-columns">
+            <aside class="hand-stack" aria-label="Available instruction cards">
+              <div class="hand-heading">
+                <h3>Instructions</h3>
+                <span id="cardsRemaining" class="sr-only" aria-live="polite"></span>
+              </div>
+              <div id="hand" class="hand"></div>
+            </aside>
+            <aside class="chosen-program" aria-label="Chosen instructions">
+              <h3>Program</h3>
+              <div class="registers" id="registers" aria-label="Program registers"></div>
+              <div class="program-controls" aria-label="Program controls">
+                <button id="clearProgramBtn" class="button clear-program-button" type="button">Clear</button>
+                <button id="runBtn" class="button primary" type="button" disabled>Run program</button>
+                <button id="traceBtn" class="button secondary" type="button" aria-label="Open execution trace">☷ Trace Steps</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+        <aside class="course-badges" aria-labelledby="badgesTitle">
+          <h3 id="badgesTitle">Course badges</h3>
+          <div id="courseBadges" class="course-badge-list"></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="announcer" class="sr-only" aria-live="assertive"></div>
+
+  <dialog id="traceDialog">
+    <div class="dialog-content">
+      <button class="dialog-close icon-button" type="button" aria-label="Close execution trace">×</button>
+      <div class="trace-heading">
+        <h2 id="traceTitle">Execution trace</h2>
+        <span id="traceStatus">Waiting for a program</span>
+      </div>
+      <ol id="traceList" class="trace-list">
+        <li>Your instructions and the factory's response will appear here.</li>
+      </ol>
+    </div>
+  </dialog>
+
+  <dialog id="helpDialog">
+    <div class="dialog-content">
+      <button class="dialog-close icon-button" type="button" aria-label="Close">×</button>
+      <p class="eyebrow">Your mission</p>
+      <h2>Program first. Then watch it run.</h2>
+      <ol class="steps">
+        <li><strong>Observe.</strong> Find the robot, beacon, walls, and hazards. The robot moves relative to the direction it faces.</li>
+        <li><strong>Plan.</strong> Choose five cards. Their order is your algorithm.</li>
+        <li><strong>Predict.</strong> Entering a belt ends the current card and carries the robot off its exit. An active wormhole transports the robot to the Warp target when it is available; otherwise it chooses a random empty square. Wormholes toggle with the lasers after each round, while Warp availability is randomized. Any element on an exit square resolves before the next unplayed card runs.</li>
+        <li><strong>Test and debug.</strong> In Easy mode, touching the goal wins immediately. In Hard mode, the robot must occupy the goal after all five cards finish.</li>
+      </ol>
+      <p class="dialog-note">Keyboard tip: Tab to a card and press Enter. Select a programmed card to return it to your hand.</p>
+      <button class="button primary dialog-done" type="button">Start racing</button>
+    </div>
+  </dialog>
+
+  <dialog id="teacherDialog">
+    <form method="dialog" class="dialog-content" id="teacherForm">
+      <button class="dialog-close icon-button" type="button" aria-label="Close">×</button>
+      <div id="teacherGate">
+        <p class="eyebrow">Teacher resources</p>
+        <h2>Enter the teacher number</h2>
+        <label for="teacherCode">Four-digit number</label>
+        <input id="teacherCode" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off">
+        <p id="teacherError" class="error" aria-live="polite"></p>
+        <button class="button primary" value="default">Unlock resources</button>
+      </div>
+      <div id="teacherResources" hidden>
+        <p class="eyebrow">Teacher resources</p>
+        <h2>Choose a resource</h2>
+        <div class="resource-actions">
+          <a class="button secondary" href="solutions.html">Teacher guide</a>
+          <a class="button primary" href="board-editor.html">Board editor</a>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

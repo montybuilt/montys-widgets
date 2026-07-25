@@ -1,0 +1,1447 @@
+[
+  {
+    "id": "training-a",
+    "title": "Training Floor · Core route",
+    "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
+    "maxRounds": 3,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      4,
+      3,
+      "east"
+    ],
+    "goal": [
+      4,
+      12
+    ],
+    "pits": [
+      [
+        4,
+        5
+      ]
+    ],
+    "deadSquares": [],
+    "belts": [
+      [
+        2,
+        4,
+        "north"
+      ],
+      [
+        1,
+        4,
+        "east"
+      ],
+      [
+        1,
+        5,
+        "east"
+      ],
+      [
+        1,
+        6,
+        "east"
+      ],
+      [
+        1,
+        7,
+        "east"
+      ],
+      [
+        1,
+        8,
+        "east"
+      ],
+      [
+        2,
+        9,
+        "south"
+      ],
+      [
+        6,
+        4,
+        "south"
+      ],
+      [
+        7,
+        5,
+        "east"
+      ],
+      [
+        7,
+        6,
+        "east"
+      ],
+      [
+        7,
+        7,
+        "east"
+      ],
+      [
+        7,
+        8,
+        "east"
+      ],
+      [
+        7,
+        9,
+        "north"
+      ],
+      [
+        6,
+        9,
+        "north"
+      ],
+      [
+        1,
+        9,
+        "south"
+      ],
+      [
+        7,
+        4,
+        "east"
+      ]
+    ],
+    "gears": [
+      [
+        3,
+        9,
+        -1
+      ],
+      [
+        5,
+        9,
+        1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [],
+    "walls": [
+      "3,7,w",
+      "4,7,w",
+      "5,7,w",
+      "4,11,w"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "right",
+      "right",
+      "back1"
+    ],
+    "tip": "Break the route into smaller parts: first reach the belt, then use its movement."
+  },
+  {
+    "id": "training-b",
+    "title": "Training Floor · Crossflow route",
+    "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
+    "maxRounds": 3,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      7,
+      12,
+      "west"
+    ],
+    "goal": [
+      1,
+      2
+    ],
+    "pits": [
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        5
+      ]
+    ],
+    "deadSquares": [],
+    "belts": [
+      [
+        6,
+        11,
+        "north"
+      ],
+      [
+        5,
+        11,
+        "west"
+      ],
+      [
+        5,
+        10,
+        "west"
+      ],
+      [
+        5,
+        9,
+        "west"
+      ],
+      [
+        5,
+        8,
+        "west"
+      ],
+      [
+        5,
+        7,
+        "north"
+      ],
+      [
+        1,
+        6,
+        "west"
+      ],
+      [
+        1,
+        5,
+        "west"
+      ],
+      [
+        1,
+        4,
+        "west"
+      ]
+    ],
+    "gears": [
+      [
+        4,
+        7,
+        -1
+      ],
+      [
+        1,
+        3,
+        1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [],
+    "walls": [
+      "3,5,e",
+      "3,7,w",
+      "2,5,e",
+      "2,7,w",
+      "7,10,w",
+      "8,10,w",
+      "7,9,n",
+      "7,8,n",
+      "7,7,n"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "right",
+      "right",
+      "back1"
+    ],
+    "tip": "Break the route into smaller parts: first reach the belt, then use its movement."
+  },
+  {
+    "id": "training-c",
+    "title": "Training Floor · Switchback route",
+    "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
+    "maxRounds": 4,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      7,
+      3,
+      "south"
+    ],
+    "goal": [
+      1,
+      2
+    ],
+    "pits": [
+      [
+        4,
+        10
+      ],
+      [
+        0,
+        2
+      ]
+    ],
+    "deadSquares": [
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        5,
+        1
+      ]
+    ],
+    "belts": [
+      [
+        6,
+        10,
+        "east"
+      ],
+      [
+        6,
+        11,
+        "east"
+      ],
+      [
+        6,
+        12,
+        "north"
+      ],
+      [
+        5,
+        12,
+        "north"
+      ],
+      [
+        4,
+        12,
+        "north"
+      ],
+      [
+        3,
+        12,
+        "north"
+      ],
+      [
+        2,
+        12,
+        "west"
+      ],
+      [
+        2,
+        11,
+        "west"
+      ],
+      [
+        2,
+        10,
+        "west"
+      ],
+      [
+        2,
+        9,
+        "west"
+      ],
+      [
+        2,
+        8,
+        "west"
+      ],
+      [
+        2,
+        7,
+        "west"
+      ],
+      [
+        2,
+        6,
+        "west"
+      ],
+      [
+        2,
+        5,
+        "west"
+      ],
+      [
+        2,
+        4,
+        "north"
+      ]
+    ],
+    "gears": [],
+    "wormholes": [
+      [
+        3,
+        0,
+        true
+      ]
+    ],
+    "warp": [
+      6,
+      14,
+      true
+    ],
+    "lasers": [
+      [
+        5,
+        0,
+        false,
+        "horizontal",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "3,6,n",
+      "3,7,n",
+      "3,8,n",
+      "3,9,n",
+      "7,13,n",
+      "7,14,n"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "right",
+      "right",
+      "back1"
+    ],
+    "tip": "Break the route into smaller parts: first reach the belt, then use its movement."
+  },
+  {
+    "id": "sorting-b",
+    "title": "Sorting Works · Crossflow route",
+    "brief": "Ride the conveyor system and account for the purple gears, which rotate your robot.",
+    "maxRounds": 11,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      8,
+      0,
+      "east"
+    ],
+    "goal": [
+      0,
+      14
+    ],
+    "pits": [
+      [
+        7,
+        9
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        1,
+        11
+      ]
+    ],
+    "deadSquares": [],
+    "belts": [
+      [
+        8,
+        4,
+        "north"
+      ],
+      [
+        7,
+        4,
+        "north"
+      ],
+      [
+        6,
+        4,
+        "east"
+      ],
+      [
+        6,
+        5,
+        "east"
+      ],
+      [
+        6,
+        6,
+        "east"
+      ],
+      [
+        6,
+        7,
+        "north"
+      ],
+      [
+        5,
+        11,
+        "north"
+      ],
+      [
+        4,
+        11,
+        "north"
+      ],
+      [
+        3,
+        11,
+        "west"
+      ],
+      [
+        3,
+        10,
+        "west"
+      ],
+      [
+        3,
+        9,
+        "west"
+      ]
+    ],
+    "gears": [
+      [
+        5,
+        7,
+        1
+      ],
+      [
+        3,
+        7,
+        1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [
+      [
+        2,
+        0,
+        false,
+        "horizontal",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "7,0,n",
+      "6,0,s",
+      "5,9,e",
+      "5,11,w",
+      "1,12,s",
+      "2,12,n"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "left",
+      "right",
+      "right",
+      "uturn",
+      "back1"
+    ],
+    "tip": "Trace both systems: your card acts first, then the tile under the robot acts."
+  },
+  {
+    "id": "sorting-c",
+    "title": "Sorting Works · Switchback route",
+    "brief": "Ride the conveyor system and account for the purple gears, which rotate your robot.",
+    "maxRounds": 11,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      8,
+      14,
+      "west"
+    ],
+    "goal": [
+      0,
+      2
+    ],
+    "pits": [
+      [
+        7,
+        5
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        1,
+        9
+      ]
+    ],
+    "deadSquares": [],
+    "belts": [
+      [
+        7,
+        12,
+        "north"
+      ],
+      [
+        6,
+        12,
+        "west"
+      ],
+      [
+        6,
+        11,
+        "west"
+      ],
+      [
+        6,
+        10,
+        "west"
+      ],
+      [
+        6,
+        9,
+        "north"
+      ],
+      [
+        5,
+        9,
+        "north"
+      ],
+      [
+        4,
+        5,
+        "north"
+      ],
+      [
+        3,
+        5,
+        "north"
+      ],
+      [
+        2,
+        5,
+        "west"
+      ],
+      [
+        2,
+        4,
+        "west"
+      ]
+    ],
+    "gears": [
+      [
+        4,
+        9,
+        -1
+      ],
+      [
+        2,
+        2,
+        1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [
+      [
+        1,
+        0,
+        false,
+        "horizontal",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "8,9,n",
+      "7,9,s",
+      "4,7,e",
+      "4,9,w",
+      "1,4,e",
+      "1,5,w"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "left",
+      "right",
+      "right",
+      "uturn",
+      "back1"
+    ],
+    "tip": "Trace both systems: your card acts first, then the tile under the robot acts."
+  },
+  {
+    "id": "laser-a",
+    "title": "Laser Lab · Core route",
+    "brief": "Lasers toggle after each round. Cross their rows when the beams are offline.",
+    "maxRounds": 12,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      7,
+      2,
+      "north"
+    ],
+    "goal": [
+      1,
+      12
+    ],
+    "pits": [
+      [
+        6,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        4,
+        12
+      ]
+    ],
+    "deadSquares": [],
+    "belts": [
+      [
+        7,
+        4,
+        "east"
+      ],
+      [
+        7,
+        5,
+        "east"
+      ],
+      [
+        5,
+        9,
+        "north"
+      ],
+      [
+        4,
+        9,
+        "north"
+      ]
+    ],
+    "gears": [
+      [
+        7,
+        7,
+        -1
+      ],
+      [
+        3,
+        9,
+        1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [
+      [
+        5,
+        0,
+        true,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        3,
+        0,
+        false,
+        "horizontal",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "6,4,e",
+      "6,5,w",
+      "4,4,e",
+      "4,5,w",
+      "2,11,s",
+      "3,11,n"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "left",
+      "right",
+      "right",
+      "uturn",
+      "back1"
+    ],
+    "tip": "A good algorithm includes timing. Use a turn card to wait safely when a laser is active."
+  },
+  {
+    "id": "laser-b",
+    "title": "Laser Lab · Crossflow route",
+    "brief": "Lasers toggle after each round. Cross their rows when the beams are offline.",
+    "maxRounds": 12,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      8,
+      0,
+      "east"
+    ],
+    "goal": [
+      0,
+      14
+    ],
+    "pits": [
+      [
+        7,
+        11
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        1,
+        4
+      ]
+    ],
+    "deadSquares": [],
+    "belts": [
+      [
+        8,
+        5,
+        "east"
+      ],
+      [
+        8,
+        6,
+        "east"
+      ],
+      [
+        8,
+        7,
+        "north"
+      ],
+      [
+        5,
+        11,
+        "north"
+      ],
+      [
+        4,
+        11,
+        "north"
+      ]
+    ],
+    "gears": [
+      [
+        7,
+        7,
+        -1
+      ],
+      [
+        3,
+        11,
+        1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [
+      [
+        6,
+        0,
+        true,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        3,
+        0,
+        false,
+        "horizontal",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "7,2,n",
+      "6,2,s",
+      "5,7,e",
+      "5,9,w",
+      "2,12,s",
+      "3,12,n"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "left",
+      "right",
+      "right",
+      "uturn",
+      "back1"
+    ],
+    "tip": "A good algorithm includes timing. Use a turn card to wait safely when a laser is active."
+  },
+  {
+    "id": "laser-c",
+    "title": "Laser Lab · Switchback route",
+    "brief": "Lasers toggle after each round. Cross their rows when the beams are offline.",
+    "maxRounds": 12,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      8,
+      14,
+      "west"
+    ],
+    "goal": [
+      0,
+      0
+    ],
+    "pits": [
+      [
+        7,
+        4
+      ],
+      [
+        4,
+        12
+      ],
+      [
+        1,
+        7
+      ]
+    ],
+    "deadSquares": [],
+    "belts": [
+      [
+        8,
+        11,
+        "north"
+      ],
+      [
+        7,
+        11,
+        "west"
+      ],
+      [
+        7,
+        10,
+        "west"
+      ],
+      [
+        7,
+        9,
+        "west"
+      ],
+      [
+        3,
+        5,
+        "north"
+      ],
+      [
+        2,
+        5,
+        "west"
+      ]
+    ],
+    "gears": [
+      [
+        7,
+        7,
+        1
+      ],
+      [
+        2,
+        4,
+        -1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [
+      [
+        5,
+        0,
+        true,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        2,
+        0,
+        false,
+        "horizontal",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "6,12,w",
+      "6,11,e",
+      "4,7,n",
+      "3,7,s",
+      "1,2,e",
+      "1,4,w"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "left",
+      "right",
+      "right",
+      "uturn",
+      "back1"
+    ],
+    "tip": "A good algorithm includes timing. Use a turn card to wait safely when a laser is active."
+  },
+  {
+    "id": "mr-1",
+    "title": "Monty's Revenge 1",
+    "brief": "Reach the beacon.",
+    "maxRounds": 12,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      8,
+      0,
+      "south"
+    ],
+    "goal": [
+      1,
+      12
+    ],
+    "pits": [
+      [
+        7,
+        2
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        3,
+        14
+      ],
+      [
+        0,
+        9
+      ]
+    ],
+    "deadSquares": [],
+    "belts": [
+      [
+        6,
+        0,
+        "north"
+      ],
+      [
+        5,
+        0,
+        "north"
+      ],
+      [
+        4,
+        0,
+        "north"
+      ],
+      [
+        3,
+        2,
+        "north"
+      ],
+      [
+        8,
+        4,
+        "east"
+      ],
+      [
+        8,
+        7,
+        "east"
+      ],
+      [
+        8,
+        8,
+        "east"
+      ],
+      [
+        8,
+        5,
+        "east"
+      ],
+      [
+        8,
+        6,
+        "east"
+      ],
+      [
+        3,
+        0,
+        "east"
+      ],
+      [
+        3,
+        1,
+        "east"
+      ],
+      [
+        8,
+        9,
+        "north"
+      ],
+      [
+        7,
+        9,
+        "east"
+      ]
+    ],
+    "gears": [
+      [
+        2,
+        2,
+        -1
+      ],
+      [
+        7,
+        11,
+        1
+      ],
+      [
+        6,
+        4,
+        1
+      ],
+      [
+        5,
+        14,
+        1
+      ],
+      [
+        0,
+        5,
+        -1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [
+      [
+        8,
+        2,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        7,
+        0,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        5,
+        12,
+        true,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        5,
+        11,
+        true,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        5,
+        9,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        5,
+        7,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        1,
+        5,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        2,
+        5,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        3,
+        5,
+        false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        4,
+        5,
+        false,
+        "vertical",
+        "#da2722"
+      ]
+    ],
+    "walls": [],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "left",
+      "right",
+      "right",
+      "uturn",
+      "back1"
+    ]
+  },
+  {
+    "id": "legion-a",
+    "title": "Legion · Core route",
+    "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
+    "maxRounds": 3,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      4,
+      1,
+      "west"
+    ],
+    "goal": [
+      4,
+      12
+    ],
+    "pits": [
+      [
+        4,
+        2
+      ]
+    ],
+    "deadSquares": [
+      [
+        6,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        12
+      ],
+      [
+        5,
+        12
+      ]
+    ],
+    "belts": [
+      [
+        2,
+        4,
+        "north"
+      ],
+      [
+        1,
+        4,
+        "east"
+      ],
+      [
+        1,
+        5,
+        "east"
+      ],
+      [
+        1,
+        6,
+        "east"
+      ],
+      [
+        1,
+        7,
+        "east"
+      ],
+      [
+        1,
+        8,
+        "east"
+      ],
+      [
+        2,
+        9,
+        "south"
+      ],
+      [
+        6,
+        4,
+        "south"
+      ],
+      [
+        7,
+        5,
+        "east"
+      ],
+      [
+        7,
+        6,
+        "east"
+      ],
+      [
+        7,
+        7,
+        "east"
+      ],
+      [
+        7,
+        8,
+        "east"
+      ],
+      [
+        7,
+        9,
+        "north"
+      ],
+      [
+        6,
+        9,
+        "north"
+      ],
+      [
+        1,
+        9,
+        "south"
+      ],
+      [
+        7,
+        4,
+        "east"
+      ]
+    ],
+    "gears": [
+      [
+        3,
+        9,
+        -1
+      ],
+      [
+        5,
+        9,
+        1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [
+      [
+        3,
+        10,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        5,
+        10,
+        false,
+        "vertical",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "3,7,w",
+      "4,7,w",
+      "5,7,w",
+      "4,11,w"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "right",
+      "right",
+      "back1"
+    ],
+    "tip": "Break the route into smaller parts: first reach the belt, then use its movement."
+  }
+]

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Teacher Guide — Monty's Robo-Racer</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .guide{max-width:980px;margin:auto;padding:2rem 1rem}.guide-card{background:var(--panel);border:1px solid var(--line);border-radius:1rem;padding:1.2rem;margin:1rem 0;box-shadow:var(--shadow)}
+    .guide h2{margin-top:1.4rem}.prompt{padding:.7rem;border-left:4px solid var(--orange);background:var(--cream)}
+  </style>
+</head>
+<body>
+  <main class="guide">
+    <p class="eyebrow">Teacher resource</p>
+    <h1>Monty's Robo-Racer guide</h1>
+    <p class="subtitle">Facilitation notes for an algorithmic-thinking lesson.</p>
+    <p>
+      <a class="button secondary" href="index.html">← Back to the activity</a>
+      <a class="button secondary" href="board-editor.html">Open board editor</a>
+    </p>
+
+    <section class="guide-card">
+      <h2>Learning target</h2>
+      <p>Students create an ordered sequence of instructions, predict the interaction between that sequence and a changing environment, test it, and debug from an execution trace.</p>
+      <p>Useful vocabulary after students have attempted a course: <strong>algorithm, sequence, state, execution, trace, prediction, debugging, iteration.</strong></p>
+    </section>
+
+    <section class="guide-card">
+      <h2>How the simulation works</h2>
+      <ol>
+        <li>The student selects five cards from a constrained-random hand of eight. Every hand includes at least one left turn, one right turn, and four forward cards.</li>
+        <li>One card executes relative to the robot's current facing.</li>
+        <li>Entering a conveyor or gear ends the current movement card. A conveyor follows every belt tile and moves the robot one square off its exit; an element on that exit square then resolves. Only after that does the next register execute.</li>
+        <li>Active lasers and pits both cause an immediate reboot at the course's starting square, end the current program, and deal a fresh hand.</li>
+        <li>The process repeats for all five registers. Lasers toggle between rounds on the Laser Lab course.</li>
+      </ol>
+      <p>Walls stop movement. A move-two or move-three card stops when a wall or pit interrupts it. The goal also stops movement in Easy mode; in Hard mode the robot may continue through it.</p>
+      <p><strong>Goal modes:</strong> Easy mode completes immediately when the robot touches the goal. Hard mode allows the robot to pass through the goal and succeeds only when all five registers finish with the robot occupying it.</p>
+    </section>
+
+    <section class="guide-card">
+      <h2>Course intentions</h2>
+      <p>Each course has three handcrafted layouts: Core Route, Crossflow Route, and Switchback Route. They use different starts, goals, conveyor networks, gear sequences, walls, pits, and laser rows while retaining the course's intended concept.</p>
+      <h3>1 · Training Floor</h3>
+      <p>Introduces relative movement and a single environmental action. Ask students to identify which movement came from their algorithm and which came from the board.</p>
+      <h3>2 · Sorting Works</h3>
+      <p>Requires composition: the student's sequence combines with conveyor translation and gear rotation. More than one solution may be valid because the hand is random.</p>
+      <h3>3 · Laser Lab</h3>
+      <p>Adds state that changes over time. A turn can function as a deliberate wait, demonstrating that an instruction can be useful without changing position.</p>
+    </section>
+
+    <section class="guide-card">
+      <h2>Discussion prompts</h2>
+      <p class="prompt">Where did your robot's actual state first differ from the state you predicted?</p>
+      <p class="prompt">Can you change only one instruction and improve the result?</p>
+      <p class="prompt">Does the same instruction always produce the same position? What other state matters?</p>
+      <p class="prompt">How is the execution trace similar to output from a computer program?</p>
+    </section>
+
+    <section class="guide-card">
+      <h2>Common misconceptions</h2>
+      <ul>
+        <li><strong>“Forward means up.”</strong> Forward is relative to the robot's direction.</li>
+        <li><strong>“The board changes after the whole program.”</strong> It activates after every register.</li>
+        <li><strong>“A failed run was wasted.”</strong> A failure provides a trace locating the earliest incorrect assumption.</li>
+        <li><strong>“There is one correct program.”</strong> Random hands and alternate routes support many correct algorithms.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
