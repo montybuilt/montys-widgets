@@ -6,10 +6,11 @@ Monty's widgets are small, playful, rigorous learning activities for computation
 
 The widgets are published as static directories on GitHub Pages and embedded in Canvas LMS or other web applications with an iframe. They should remain useful when opened directly in a browser, embedded in a constrained page, or expanded into fullscreen mode.
 
-Two reference implementations define the current approach:
+Three reference implementations define the current approach:
 
 - `patterns/` contains **Monty's Pattern Factory**, a pattern-recognition activity.
 - `decomposition/` contains **Divide & Deliver**, a task-decomposition and parallel-work activity.
+- `robo-racer/` contains **Monty's Robo-Racer**, an algorithm construction and debugging activity.
 
 These widgets have different metaphors and mechanics, but share the same technical and instructional philosophy.
 
@@ -83,6 +84,9 @@ Current layouts:
 - `patterns/index.html`, `patterns/styles.css`, and `patterns/app.js` separate the larger Pattern Factory implementation.
 - `patterns/factoryb.png` is a purposeful full-page background.
 - `patterns/solutions.html` is the Pattern Factory teacher key.
+- `robo-racer/index.html`, `robo-racer/styles.css`, and `robo-racer/app.js` contain the published game.
+- `robo-racer/data/boards.json` is the single published course library.
+- `robo-racer/board-editor.html` and its local editor service are repository-authoring tools, not production persistence.
 
 ## Reference widget: Divide & Deliver
 
@@ -284,6 +288,227 @@ Reusable ideas include:
 - badges reward successful work across distinct challenges rather than tour completion.
 
 Pattern Factory is a useful model when a future widget needs many data-defined scenarios, long-term progress, badges, multiple activity modes, or a strong thematic presentation.
+
+## Reference widget: Monty's Robo-Racer
+
+### Project summary
+
+`robo-racer/` is the algorithmic-thinking reference. It adapts the planning loop of RoboRally into a student-friendly programming activity. Students receive eight movement cards, drag five into ordered program registers, run the complete program, observe the robot and factory response, and revise their next algorithm.
+
+Its core cycle is:
+
+**inspect state -> predict relative movement -> build an ordered algorithm -> execute -> trace state changes -> debug and continue**
+
+The activity deliberately separates planning from execution. Students commit to all five instructions before the robot moves. They must account for orientation, position, forced board effects, hazards, randomness, and the fact that the board state may change between rounds.
+
+### Instruction cards and program construction
+
+The hand contains eight dealt cards. The program has five fixed registers.
+
+Current instruction types include:
+
+- Forward 1, Forward 2, and Forward 3;
+- Turn left;
+- Turn right;
+- U-turn when included in a course deck;
+- Back 1 when included in a course deck.
+
+The deal should always contain enough basic ingredients to support meaningful planning. Robo-Racer guarantees at least one left turn, one right turn, and four forward cards when those types exist in the course deck, then fills and shuffles the remaining hand.
+
+Program construction uses drag-and-drop. Important interaction rules:
+
+- Hand cards remain in fixed positions after the deal. Selecting one must not cause the remaining cards to rearrange under the pointer.
+- A used hand card should be removed visually or clearly disabled in place.
+- Program registers remain fixed. Removing a programmed card clears only that register and does not shift the other instructions.
+- The five register positions communicate order directly.
+- Dragging should be implemented carefully for both mouse and touch/pointer input.
+- A **Clear** button clears the five selected program cards, not the course state or current hand.
+
+Do not add a freely available course-restart button when it undermines the lesson. In Robo-Racer, an unrestricted restart allowed students to repeatedly redeal the first hand until they received ideal cards. Removing that escape encourages resourcefulness, recovery from bad luck, and longer-term planning. A **New Game** action becomes available only after a course has already been completed. Running out of rounds automatically starts a fresh attempt.
+
+### Deterministic execution order
+
+Board-resolution order is part of the algorithm and must be treated as rigorously as instruction order.
+
+For each program register:
+
+1. Execute the next unplayed instruction card.
+2. Stop the remaining movement on that card as soon as the robot enters a board element that takes control.
+3. Resolve the complete board effect.
+4. If that effect places the robot on another board element, resolve the new element immediately.
+5. Only after the board reaches a stable state should the next unplayed instruction card begin.
+
+Examples:
+
+- A conveyor carries the robot through its full connected path before another card executes.
+- Conveyor turns rotate the robot so it always faces the belt's direction of travel.
+- If a conveyor exits onto a gear, the gear rotates the robot immediately.
+- The next instruction then uses the robot's new position and orientation.
+- A gear must never consume, skip, reorder, or repeat a program card.
+- Robot orientation must always end as an exact cardinal direction: north, east, south, or west.
+
+Maintain a clear separation between:
+
+- the program register index;
+- the robot's current state;
+- the board-effect resolution loop;
+- the next instruction to execute.
+
+Do not implement board effects by mutating the card loop index. Resolve effects inside the current register, then return control to the unchanged program loop.
+
+Execution traces should expose enough intermediate state to diagnose apparent ordering errors. When a movement card enters a conveyor, a useful trace identifies the entry square before summarizing the conveyor and its exit effects. Trace coordinates shown to students are one-based even though stored board coordinates are zero-based.
+
+### Board elements and hazard protocol
+
+Robo-Racer currently supports:
+
+- **Start** - initial position and cardinal orientation.
+- **Goal** - completion destination.
+- **Walls** - stop movement without rebooting.
+- **Dead squares** - nearly black impassable cells; the robot and conveyors stop before entering.
+- **Pits** - reboot the robot to Start but do not advance the round.
+- **Lasers** - single-cell hazards that can be horizontal or vertical and start active or inactive. Touching or passing through an active laser reboots the robot and ends the round.
+- **Energized perimeter** - attempting to leave the board behaves like hitting an active laser: reboot and end the round. The perimeter is rendered red to communicate the hazard.
+- **Conveyors** - dark-green cells with thick neon-green arrows. Entering a belt ends the current card, carries the robot through the connected belt, and turns it with every change of direction.
+- **Gears** - rotate the robot clockwise or counterclockwise before the next card.
+- **Wormholes** - when active, trigger immediately upon entry. Without an available Warp, they transport the robot to a random empty square that contains no existing board element.
+- **Warp** - a red-and-white target. When available, every active wormhole transports to it instead of choosing a random destination. Warp availability is randomized each round; its course setting controls only its opening availability.
+
+Lasers and wormholes alternate active/inactive state after a completed round. Warp availability is rolled independently. The current state of every alternating element must remain visually identifiable even when inactive; do not replace an inactive laser with an unrelated arrow or ambiguous mark.
+
+### Goal rules and completion
+
+Robo-Racer has two goal modes:
+
+- **Easy: Touch goal** - reaching the goal at any point during a program completes the course.
+- **Hard: End on goal** - the robot must occupy the goal after all five program registers have resolved.
+
+Use abbreviated status labels in the compact course bar. The interface already explains the modes in the selector and help content; do not repeat full sentences in permanent status boxes.
+
+Successful completion persists locally:
+
+- Easy completion earns a yellow course badge.
+- Hard completion earns a green course badge and supersedes the Easy badge color.
+- Uncompleted badges remain muted gray.
+- Best round count is stored per course and mode.
+- Badge lists should scroll when there are more courses than fit vertically.
+
+Completion feedback appears centered over the board. Temporary messages between rounds or after hazards should disappear after approximately three seconds so they do not obscure the course.
+
+### Course and difficulty design
+
+Courses use a 9-row by 15-column board. A wide board takes advantage of the horizontal room available in laptop and desktop embeds while keeping the activity short enough for a constrained usable viewport.
+
+Courses are organized into route families and difficulty tiers. In Robo-Racer, Core, Crossflow, and Switchback routes preserve distinct planning ideas across Training, Legion, Ranger, and Elite tiers.
+
+Good progression means:
+
+- preserve the recognizable route idea;
+- add a small number of meaningful complications at each tier;
+- require students to transfer a learned strategy rather than solve a rotated duplicate;
+- combine previously introduced elements at higher tiers;
+- tighten round limits in proportion to the route while leaving success realistically possible;
+- make advanced courses demand several attempts without depending on a single lucky deal.
+
+Difficulty should come from interacting systems, not visual clutter. Examples include:
+
+- choosing between upper and lower conveyor routes with different exit orientations;
+- crossing a laser lane on the correct round;
+- deciding whether a currently available Warp helps or harms the plan;
+- recovering after a random wormhole relocation;
+- planning around impassable regions;
+- anticipating a gear at a conveyor exit.
+
+Every board should be validated programmatically for:
+
+- required 9 by 15 dimensions;
+- in-bounds coordinates;
+- valid wall sides;
+- valid conveyor directions;
+- conveyor exits that remain inside the board;
+- no Start or Goal on a dead square;
+- at least one route from Start to Goal that avoids walls, pits, and dead squares.
+
+Structural route validation is a minimum check, not proof of instructional quality. Play-test the actual card system, forced board effects, Easy and Hard goal rules, alternating hazards, random destinations, and round limit.
+
+### Board data and local editor
+
+The only published source of courses is:
+
+`robo-racer/data/boards.json`
+
+Do not ask the author to choose, open, import, or name a board file. The editor always loads and saves this one repository file.
+
+The Board Editor supports:
+
+- creating a blank board;
+- duplicating an existing board;
+- loading a board from the library dropdown;
+- editing and orienting elements;
+- changing active state and laser color;
+- deleting a board;
+- moving a board up or down in library order;
+- testing the current board in the game;
+- saving the complete ordered library to `data/boards.json`.
+
+The JSON array order determines the game selector and badge order. Reordering should be done through visible **Move up** and **Move down** controls, followed by **Save board**.
+
+GitHub Pages is static and cannot write to the repository. Therefore:
+
+- the published game can read `data/boards.json`;
+- the production site cannot save editor changes;
+- the editor is an authoring tool used locally;
+- `start-editor.cmd` launches the local save-capable service;
+- the editor service exposes the fixed board file through a local API;
+- after editing, the author commits and pushes the changed JSON with Git;
+- production users should not be offered a save workflow that implies GitHub Pages can modify repository files.
+
+Opening `index.html` directly may display the game, but `fetch()` behavior and editor saving require local HTTP. Use the provided local launcher for authoring and reliable testing.
+
+When testing from the editor, provide an obvious route back to the board editor. Test mode may use temporary browser storage for the unsaved board, but published courses still come only from `boards.json`.
+
+### Robo-Racer layout and visual language
+
+The title is **Computational Thinking Lab** with the subtitle **Build algorithms to get your robot to the goal**.
+
+Desktop composition is intentionally wide and vertically compact:
+
+- a short title container aligned to the width of the course/status bar;
+- a narrow course/status navigation bar above the activity;
+- a left-aligned 15 by 9 playing grid;
+- the item key connected directly below the grid at equal width;
+- eight vertically arranged instruction cards beside five vertically arranged program registers;
+- Clear, Run Program, and Trace Steps grouped below the program registers;
+- a narrow, vertically scrollable course-badge column to the right.
+
+The execution trace is hidden by default in a dialog opened by **Trace Steps**. Detailed diagnostics should be available without permanently consuming the main viewport.
+
+The local wallpaper is a compressed WebP asset. Major structural containers may be transparent so the wallpaper shows through, while interactive cards remain dark with approximately 80% opacity and light text/icons. Use local, optimized assets because GitHub Pages repository size and load speed matter.
+
+The board should be visually dominant, but do not assume it must be square. The 15 by 9 format was chosen after testing the real usable viewport on a 1920 by 1080 laptop at 125% scaling.
+
+Screen resolution is not the same as usable CSS viewport. Browser chrome, operating-system scaling, zoom, bookmarks bars, and embedding containers reduce available space. For layout testing:
+
+1. Measure the actual browser viewport with `window.innerWidth` and `window.innerHeight`.
+2. Test that exact CSS viewport in responsive tools.
+3. Also test the final iframe at the width and height used by the host page.
+4. Do not infer fit from physical panel resolution alone.
+
+The item key uses hover and keyboard-focus tooltips with brief descriptions of what each element does. Keep these explanations short and ensure edge tooltips do not render off-screen.
+
+The admin/teacher diamond is intentionally small, discreet, and positioned in the lower-right corner. Authoring and teacher utilities should remain available without competing with the student task.
+
+### Robo-Racer persistence keys
+
+Robo-Racer uses consistent, widget-specific local storage:
+
+- `roboRacerProgress:v1` - per-course completion, completed modes, timestamps, and best round progress used by badges;
+- `roboRacerMode` - most recently selected Easy or Hard goal rule;
+- `roboRacerBest-<course-id>-<mode>` - best round for a specific course and goal mode;
+- `roboRacerLessonSeen` - whether first-visit help has already opened;
+- `roboRacerTestBoard` - temporary local board used when testing from the editor.
+
+Keep identifiers stable after publication. Changing a course ID disconnects it from previously stored completion and best-round data.
 
 ## Shared scenario design
 

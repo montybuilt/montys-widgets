@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Black Box Lab — Teacher Resources</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .teacher-page { width: min(980px, 100%); margin: 0 auto; padding: 30px 20px 60px; }
+    .teacher-page header { margin-bottom: 24px; }
+    .answer-card { margin: 14px 0; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow); }
+    .answer-card h2 { color: var(--green); }
+    .answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 680px) { .answer-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="teacher-page">
+    <header>
+      <p class="eyebrow">Teacher resources</p>
+      <h1>Monty's Black Box Lab</h1>
+      <p>Answer notes and discussion prompts for the abstraction activity.</p>
+      <a class="button secondary" href="index.html">← Back to activity</a>
+    </header>
+
+    <section class="answer-card">
+      <h2>Learning target</h2>
+      <p>Students distinguish essential from incidental information, organize related data under meaningful names, and replace a detailed procedure with a clear operation. They should be able to explain that abstraction hides complexity without eliminating it.</p>
+    </section>
+
+    <section class="answer-grid">
+      <article class="answer-card">
+        <h2>Breakfast Catapult</h2>
+        <p><b>Keep:</b> Table 7 Coordinates, Launch Angle, Bread Type, Toast Weight, Landing Zone Clear.</p>
+        <p><b>Groups:</b> Targeting (Table 7 Coordinates, Launch Angle, Toast Weight); Breakfast (Bread Type); Safety (Landing Zone Clear).</p>
+        <p><b>Procedure:</b> Check landing zone → Load toast → Set angle → Charge spring → Release toast.</p>
+      </article>
+      <article class="answer-card">
+        <h2>School Bus</h2>
+        <p><b>Keep:</b> route number, next stop, stops until destination, stop requested, service alert.</p>
+        <p><b>Key idea:</b> engine temperature and battery voltage might matter greatly to a mechanic but not to this passenger. Relevance depends on context.</p>
+      </article>
+      <article class="answer-card">
+        <h2>Moon Base</h2>
+        <p><b>Keep:</b> leak location, crew clear, oxygen reserve, hatch seal status, pressure difference.</p>
+        <p><b>Key idea:</b> an abstraction can be compact while still preserving safety-critical confirmation.</p>
+      </article>
+      <article class="answer-card">
+        <h2>Common misconceptions</h2>
+        <ul>
+          <li>“Good abstraction means hiding as much as possible.” Missing essential details makes an interface unusable or unsafe.</li>
+          <li>“A detail is always relevant or irrelevant.” The user and goal determine relevance.</li>
+          <li>“The simple button removes the work.” The internal procedure still runs.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="answer-card">
+      <h2>Discussion prompts</h2>
+      <ul>
+        <li>Which hidden detail would become relevant if the user changed from operator to mechanic?</li>
+        <li>When can hiding information become dangerous?</li>
+        <li>What familiar object is a “black box” for you? What simple controls does it expose?</li>
+        <li>Could two equally good abstractions organize the same details differently? Defend your answer.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <title>Monty's Black Box Lab — Abstraction</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to the lab</a>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Computational Thinking Lab</p>
+      <h1>Monty's Black Box Lab</h1>
+      <p class="subtitle">Turn a complicated machine into a clear, useful interface.</p>
+    </div>
+    <div id="missionBadges" class="mission-badges" aria-label="Mission badges"></div>
+    <div class="top-actions">
+      <button id="helpBtn" class="button secondary" type="button">How to play</button>
+      <button id="fullscreenBtn" class="button secondary" type="button">Full screen</button>
+    </div>
+  </header>
+  <button id="teacherBtn" class="teacher-button" type="button" aria-label="Teacher resources">◆</button>
+
+  <main id="workspace" class="workspace">
+    <div class="activity-layout">
+    <section class="mission-panel" aria-labelledby="missionTitle">
+      <div class="mission-copy">
+        <p class="kicker">Current commission</p>
+        <h2 id="missionTitle">Monty's Breakfast Catapult</h2>
+        <p id="missionBrief"></p>
+      </div>
+      <label class="mission-picker">Mission
+        <select id="missionSelect"></select>
+      </label>
+      <div class="progress-rail" aria-label="Lab progress">
+        <span class="progress-step active" data-step="1"><b>1</b> Focus</span>
+        <span class="progress-step" data-step="2"><b>2</b> Group</span>
+        <span class="progress-step" data-step="3"><b>3</b> Function</span>
+        <span class="progress-step" data-step="4"><b>4</b> Test</span>
+      </div>
+    </section>
+
+    <section class="lab-grid">
+      <article id="setupPanel" class="work-panel panel" aria-labelledby="workHeading" hidden>
+        <div class="panel-heading">
+          <div>
+            <p id="phaseKicker" class="kicker">Setup panel</p>
+            <h2 id="workHeading">What does the operator need?</h2>
+          </div>
+          <button id="hintBtn" class="text-button" type="button">Hint</button>
+        </div>
+        <p id="instruction" class="instruction"></p>
+        <div id="workArea"></div>
+        <div id="feedback" class="feedback" aria-live="polite"></div>
+        <div class="work-actions">
+          <button id="backBtn" class="button secondary" type="button" hidden>Back</button>
+          <button id="checkBtn" class="button primary" type="button">Check my choices</button>
+        </div>
+      </article>
+
+      <aside id="operatorPanel" class="operator-panel panel" aria-labelledby="operatorHeading">
+        <div class="panel-heading">
+          <div>
+            <p class="kicker">Your abstraction</p>
+            <h2 id="operatorHeading">Operator panel</h2>
+          </div>
+          <span id="panelStatus" class="status-dot">Draft</span>
+        </div>
+        <div id="operatorPreview" class="operator-preview"></div>
+        <div class="abstraction-meter">
+          <div class="meter-label"><span>Abstraction progress</span><strong id="clarityValue">0%</strong></div>
+          <div class="meter-track"><span id="clarityBar"></span></div>
+          <p id="meterNote">Keep what matters. Hide what does not.</p>
+        </div>
+      </aside>
+    </section>
+    </div>
+  </main>
+
+  <dialog id="helpDialog">
+    <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
+    <p class="kicker">Lab notebook</p>
+    <h2>Abstraction manages complexity</h2>
+    <ol>
+      <li><b>Focus:</b> keep the information this user needs for this goal.</li>
+      <li><b>Group:</b> organize details under meaningful names.</li>
+      <li><b>Function:</b> organize an algorithm under one clear command name.</li>
+      <li><b>Test:</b> make sure the interface is both simple and complete.</li>
+    </ol>
+    <p>The goal is not to hide everything. A useful abstraction hides unnecessary detail while preserving what the user needs.</p>
+    <button class="button primary" type="button" data-close>Enter the lab</button>
+  </dialog>
+
+  <dialog id="revealDialog" class="reveal-dialog">
+    <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
+    <p class="kicker">Inside the black box</p>
+    <h2>Expand the layers of abstraction</h2>
+    <p id="revealSummary"></p>
+    <div id="revealFlow" class="reveal-flow"></div>
+    <p class="big-idea"><b>Abstraction does not remove complexity.</b> It gives that complexity a useful boundary and a meaningful name.</p>
+    <button id="nextMissionBtn" class="button primary" type="button">Try another mission</button>
+  </dialog>
+
+  <dialog id="stepSuccessDialog" class="step-success-dialog">
+    <h2 id="stepSuccessHeading">You created an abstraction</h2>
+    <p id="stepSuccessMessage"></p>
+    <button id="stepSuccessNext" class="button primary" type="button">Next</button>
+  </dialog>
+
+  <dialog id="teacherDialog">
+    <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
+    <h2>Teacher resources</h2>
+    <label>Enter teacher number
+      <input id="teacherCode" type="password" inputmode="numeric" autocomplete="off">
+    </label>
+    <p id="teacherFeedback" class="feedback" aria-live="polite"></p>
+    <button id="teacherSubmit" class="button primary" type="button">Open resources</button>
+  </dialog>
+
+  <div id="liveRegion" class="sr-only" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
