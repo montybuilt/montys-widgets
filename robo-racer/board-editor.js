@@ -21,6 +21,8 @@ const rotateLeft = document.getElementById("rotateLeft");
 const rotateRight = document.getElementById("rotateRight");
 const deleteSelected = document.getElementById("deleteSelected");
 const boardLibrarySelect = document.getElementById("boardLibrarySelect");
+const moveBoardUp = document.getElementById("moveBoardUp");
+const moveBoardDown = document.getElementById("moveBoardDown");
 const fileStatus = document.getElementById("fileStatusText");
 const status = document.getElementById("selectionStatus");
 const validation = document.getElementById("validation");
@@ -46,6 +48,8 @@ document.getElementById("testBoard").addEventListener("click", testCurrentBoard)
 document.getElementById("newBoard").addEventListener("click", newBoard);
 document.getElementById("duplicateBoard").addEventListener("click", duplicateBoard);
 document.getElementById("deleteBoard").addEventListener("click", deleteBoard);
+moveBoardUp.addEventListener("click", () => moveSelectedBoard(-1));
+moveBoardDown.addEventListener("click", () => moveSelectedBoard(1));
 boardLibrarySelect.addEventListener("change", loadSelectedLibraryBoard);
 ["boardId","boardTitle","boardBrief","maxRounds"].forEach(id => document.getElementById(id).addEventListener("input", renderPreview));
 [boardRows, boardColumns].forEach(input => input.addEventListener("change", resizeBoard));
@@ -329,6 +333,7 @@ async function loadBoardLibrary() {
     if(recovery) {
       applyImported(JSON.parse(recovery));
       boardLibrarySelect.value="";
+      updateBoardOrderButtons();
       fileStatus.textContent="Recovered an unsaved board. Click Save board to write it to data/boards.json.";
     } else if(boardLibrary.length) {
       boardLibrarySelect.value=boardLibrary[0].id;
@@ -361,14 +366,35 @@ async function saveBoardsFile() {
 }
 
 function renderBoardLibrary() {
+  const selectedId=boardLibrarySelect.value;
   boardLibrarySelect.innerHTML="";
   if(!boardLibrary.length) boardLibrarySelect.add(new Option("No saved boards",""));
   boardLibrary.forEach(item=>boardLibrarySelect.add(new Option(item.title,item.id)));
+  if(boardLibrary.some(item=>item.id===selectedId)) boardLibrarySelect.value=selectedId;
   document.getElementById("deleteBoard").disabled=!boardLibrary.length;
+  updateBoardOrderButtons();
 }
 function loadSelectedLibraryBoard() {
   const selected=boardLibrary.find(item=>item.id===boardLibrarySelect.value);
   if(selected) applyImported(selected);
+  updateBoardOrderButtons();
+}
+function updateBoardOrderButtons() {
+  const index=boardLibrary.findIndex(item=>item.id===boardLibrarySelect.value);
+  moveBoardUp.disabled=index<=0;
+  moveBoardDown.disabled=index<0||index>=boardLibrary.length-1;
+}
+function moveSelectedBoard(step) {
+  const id=boardLibrarySelect.value;
+  const index=boardLibrary.findIndex(item=>item.id===id);
+  const destination=index+step;
+  if(index<0||destination<0||destination>=boardLibrary.length) return;
+
+  [boardLibrary[index],boardLibrary[destination]]=[boardLibrary[destination],boardLibrary[index]];
+  renderBoardLibrary();
+  boardLibrarySelect.value=id;
+  updateBoardOrderButtons();
+  fileStatus.textContent=`Moved ${boardLibrary[destination].title} ${step<0?"up":"down"}. Click Save board to write the new order to boards.json.`;
 }
 function newBoard() {
   applyImported(emptyBoard());
@@ -376,12 +402,14 @@ function newBoard() {
   document.getElementById("boardTitle").value="New Robo-Racer Course";
   renderPreview();
   boardLibrarySelect.value="";
+  updateBoardOrderButtons();
   fileStatus.textContent="New board started. Save to boards.json when it is valid.";
 }
 function duplicateBoard() {
   const source=currentBoard();
   applyImported({...source,id:`${source.id}-copy`,title:`${source.title} Copy`});
   boardLibrarySelect.value="";
+  updateBoardOrderButtons();
   fileStatus.textContent="Board duplicated. Give it a unique ID, then save it.";
 }
 function deleteBoard() {

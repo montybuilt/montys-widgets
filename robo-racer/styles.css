@@ -221,6 +221,58 @@ select, input { min-height: 42px; color: var(--ink); background: white; border: 
 .legend { display: grid; gap: .35rem; min-width: 78px; font-size: .7rem; }
 .legend span { display: flex; align-items: center; gap: .3rem; }
 .legend-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: .3rem; }
+.legend-item {
+  position: relative;
+  cursor: help;
+  outline-offset: 3px;
+}
+.legend-item::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  bottom: calc(100% + .55rem);
+  width: max-content;
+  max-width: min(240px, 75vw);
+  padding: .45rem .55rem;
+  border: 1px solid rgb(255 255 255 / .3);
+  border-radius: .45rem;
+  color: #fff;
+  background: rgb(10 15 13 / .96);
+  box-shadow: 0 4px 14px rgb(0 0 0 / .35);
+  font-size: .72rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  text-shadow: none;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, .25rem);
+  transition: opacity .14s ease, transform .14s ease;
+}
+.legend-item:hover::after,
+.legend-item:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.legend-item:first-child::after {
+  left: 0;
+  transform: translate(0, .25rem);
+}
+.legend-item:first-child:hover::after,
+.legend-item:first-child:focus-visible::after {
+  transform: translate(0, 0);
+}
+.legend-item:last-child::after {
+  right: 0;
+  left: auto;
+  transform: translate(0, .25rem);
+}
+.legend-item:last-child:hover::after,
+.legend-item:last-child:focus-visible::after {
+  transform: translate(0, 0);
+}
 .robot-mark { color: white; background: var(--orange); }
 .goal-mark { background: var(--yellow); } .pit-mark { color: white; background: #26342f; }
 .dead-square-mark { background: #171a19; box-shadow: inset 0 0 0 1px #3a403d; }

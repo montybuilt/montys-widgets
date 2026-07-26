@@ -81,6 +81,10 @@
         <label>Board
           <select id="boardLibrarySelect"><option value="">No boards loaded</option></select>
         </label>
+        <div class="library-order-actions" aria-label="Change board order">
+          <button id="moveBoardUp" class="button secondary" type="button" disabled>↑ Move up</button>
+          <button id="moveBoardDown" class="button secondary" type="button" disabled>↓ Move down</button>
+        </div>
         <div class="editor-actions">
           <button id="saveBoardsFile" class="button primary" type="button">Save board</button>
           <p id="fileStatus" class="file-status" role="status" aria-live="polite">

@@ -12,6 +12,12 @@
 .tool { min-height: 44px; border: 1px solid var(--line); border-radius: .6rem; background: var(--cream); color: var(--ink); cursor: grab; font-weight: 800; }
 .tool.active { color: white; background: var(--green); border-color: var(--green); }
 .editor-actions { display: grid; gap: .45rem; }
+.library-order-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .4rem;
+  margin: .45rem 0;
+}
 .file-status {
   display: grid; gap: .2rem; margin: .15rem 0 .35rem; padding: .7rem;
   color: var(--ink); background: var(--cream); border: 2px solid var(--orange); border-radius: .6rem;

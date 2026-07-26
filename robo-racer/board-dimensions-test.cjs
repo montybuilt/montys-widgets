@@ -23,7 +23,10 @@ function blocked(board, row, column, direction) {
 }
 
 function hasRoute(board) {
-  const pitKeys = new Set(board.pits.map(([row, column]) => `${row},${column}`));
+  const impassableKeys = new Set([
+    ...board.pits.map(([row, column]) => `${row},${column}`),
+    ...(board.deadSquares || []).map(([row, column]) => `${row},${column}`)
+  ]);
   const goalKey = `${board.goal[0]},${board.goal[1]}`;
   const queue = [[board.start[0], board.start[1]]];
   const visited = new Set([`${queue[0][0]},${queue[0][1]}`]);
@@ -35,7 +38,7 @@ function hasRoute(board) {
       const nextRow = row + dr;
       const nextColumn = column + dc;
       const key = `${nextRow},${nextColumn}`;
-      if (!inBounds(board, nextRow, nextColumn) || pitKeys.has(key) || visited.has(key) ||
+      if (!inBounds(board, nextRow, nextColumn) || impassableKeys.has(key) || visited.has(key) ||
           blocked(board, row, column, direction)) return;
       visited.add(key);
       queue.push([nextRow, nextColumn]);

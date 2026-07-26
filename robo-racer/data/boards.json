@@ -1,7 +1,225 @@
 [
   {
+    "id": "ad-1",
+    "title": "Adventure Begins",
+    "brief": "Reach the beacon.",
+    "maxRounds": 3,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      8,
+      0,
+      "south"
+    ],
+    "goal": [
+      1,
+      12
+    ],
+    "pits": [
+      [
+        7,
+        2
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        3,
+        14
+      ],
+      [
+        0,
+        9
+      ]
+    ],
+    "deadSquares": [],
+    "belts": [
+      [
+        6,
+        0,
+        "north"
+      ],
+      [
+        5,
+        0,
+        "north"
+      ],
+      [
+        4,
+        0,
+        "north"
+      ],
+      [
+        3,
+        2,
+        "north"
+      ],
+      [
+        8,
+        4,
+        "east"
+      ],
+      [
+        8,
+        7,
+        "east"
+      ],
+      [
+        8,
+        8,
+        "east"
+      ],
+      [
+        8,
+        5,
+        "east"
+      ],
+      [
+        8,
+        6,
+        "east"
+      ],
+      [
+        3,
+        0,
+        "east"
+      ],
+      [
+        3,
+        1,
+        "east"
+      ],
+      [
+        8,
+        9,
+        "north"
+      ],
+      [
+        7,
+        9,
+        "east"
+      ]
+    ],
+    "gears": [
+      [
+        2,
+        2,
+        -1
+      ],
+      [
+        7,
+        11,
+        1
+      ],
+      [
+        6,
+        4,
+        1
+      ],
+      [
+        5,
+        14,
+        1
+      ],
+      [
+        0,
+        5,
+        -1
+      ]
+    ],
+    "wormholes": [],
+    "warp": null,
+    "lasers": [
+      [
+        8,
+        2,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        7,
+        0,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        5,
+        12,
+        true,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        5,
+        11,
+        true,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        5,
+        9,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        5,
+        7,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        1,
+        5,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        2,
+        5,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        3,
+        5,
+        false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        4,
+        5,
+        false,
+        "vertical",
+        "#da2722"
+      ]
+    ],
+    "walls": [],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "left",
+      "right",
+      "right",
+      "uturn",
+      "back1"
+    ]
+  },
+  {
     "id": "training-a",
-    "title": "Training Floor · Core route",
+    "title": "Training Floor · Core",
     "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
     "maxRounds": 3,
     "rows": 9,
@@ -140,7 +358,7 @@
   },
   {
     "id": "training-b",
-    "title": "Training Floor · Crossflow route",
+    "title": "Training Floor · Crossflow",
     "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
     "maxRounds": 3,
     "rows": 9,
@@ -210,6 +428,26 @@
         1,
         4,
         "west"
+      ],
+      [
+        0,
+        3,
+        "west"
+      ],
+      [
+        0,
+        2,
+        "west"
+      ],
+      [
+        0,
+        1,
+        "west"
+      ],
+      [
+        0,
+        0,
+        "south"
       ]
     ],
     "gears": [
@@ -253,7 +491,7 @@
   },
   {
     "id": "training-c",
-    "title": "Training Floor · Switchback route",
+    "title": "Training Floor · Switchback",
     "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
     "maxRounds": 4,
     "rows": 9,
@@ -460,102 +698,136 @@
     "tip": "Break the route into smaller parts: first reach the belt, then use its movement."
   },
   {
-    "id": "sorting-b",
-    "title": "Sorting Works · Crossflow route",
-    "brief": "Ride the conveyor system and account for the purple gears, which rotate your robot.",
-    "maxRounds": 11,
+    "id": "legion-a",
+    "title": "Legion · Core",
+    "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
+    "maxRounds": 3,
     "rows": 9,
     "columns": 15,
     "start": [
-      8,
-      0,
-      "east"
+      4,
+      1,
+      "west"
     ],
     "goal": [
-      0,
-      14
+      4,
+      12
     ],
     "pits": [
       [
-        7,
-        9
+        4,
+        2
+      ]
+    ],
+    "deadSquares": [
+      [
+        6,
+        3
       ],
       [
+        2,
+        3
+      ],
+      [
+        3,
+        12
+      ],
+      [
+        5,
+        12
+      ]
+    ],
+    "belts": [
+      [
+        2,
         4,
-        4
+        "north"
       ],
       [
         1,
-        11
-      ]
-    ],
-    "deadSquares": [],
-    "belts": [
+        4,
+        "east"
+      ],
       [
+        1,
+        5,
+        "east"
+      ],
+      [
+        1,
+        6,
+        "east"
+      ],
+      [
+        1,
+        7,
+        "east"
+      ],
+      [
+        1,
         8,
-        4,
-        "north"
-      ],
-      [
-        7,
-        4,
-        "north"
-      ],
-      [
-        6,
-        4,
         "east"
       ],
       [
-        6,
-        5,
-        "east"
-      ],
-      [
-        6,
-        6,
-        "east"
-      ],
-      [
-        6,
-        7,
-        "north"
-      ],
-      [
-        5,
-        11,
-        "north"
-      ],
-      [
-        4,
-        11,
-        "north"
-      ],
-      [
-        3,
-        11,
-        "west"
-      ],
-      [
-        3,
-        10,
-        "west"
-      ],
-      [
-        3,
+        2,
         9,
-        "west"
+        "south"
+      ],
+      [
+        6,
+        4,
+        "south"
+      ],
+      [
+        7,
+        5,
+        "east"
+      ],
+      [
+        7,
+        6,
+        "east"
+      ],
+      [
+        7,
+        7,
+        "east"
+      ],
+      [
+        7,
+        8,
+        "east"
+      ],
+      [
+        7,
+        9,
+        "north"
+      ],
+      [
+        6,
+        9,
+        "north"
+      ],
+      [
+        1,
+        9,
+        "south"
+      ],
+      [
+        7,
+        4,
+        "east"
       ]
     ],
     "gears": [
       [
-        5,
-        7,
-        1
+        3,
+        9,
+        -1
       ],
       [
-        3,
-        7,
+        5,
+        9,
         1
       ]
     ],
@@ -563,20 +835,25 @@
     "warp": null,
     "lasers": [
       [
-        2,
-        0,
+        3,
+        10,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        5,
+        10,
         false,
-        "horizontal",
+        "vertical",
         "#da2722"
       ]
     ],
     "walls": [
-      "7,0,n",
-      "6,0,s",
-      "5,9,e",
-      "5,11,w",
-      "1,12,s",
-      "2,12,n"
+      "3,7,w",
+      "4,7,w",
+      "5,7,w",
+      "4,11,w"
     ],
     "deck": [
       "forward1",
@@ -585,127 +862,542 @@
       "forward2",
       "forward3",
       "left",
-      "left",
       "right",
       "right",
-      "uturn",
       "back1"
     ],
-    "tip": "Trace both systems: your card acts first, then the tile under the robot acts."
+    "tip": "Break the route into smaller parts: first reach the belt, then use its movement."
   },
   {
-    "id": "sorting-c",
-    "title": "Sorting Works · Switchback route",
-    "brief": "Ride the conveyor system and account for the purple gears, which rotate your robot.",
-    "maxRounds": 11,
+    "id": "legion-b",
+    "title": "Legion · Crossflow",
+    "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
+    "maxRounds": 4,
     "rows": 9,
     "columns": 15,
     "start": [
-      8,
-      14,
+      7,
+      12,
       "west"
     ],
     "goal": [
-      0,
+      1,
       2
     ],
     "pits": [
       [
-        7,
+        4,
         5
+      ],
+      [
+        6,
+        5
+      ]
+    ],
+    "deadSquares": [
+      [
+        4,
+        4
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        0,
+        14
+      ],
+      [
+        0,
+        13
+      ],
+      [
+        0,
+        12
+      ],
+      [
+        0,
+        11
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        1,
+        9
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        2,
+        11
+      ],
+      [
+        1,
+        12
+      ],
+      [
+        1,
+        11
+      ],
+      [
+        2,
+        12
+      ],
+      [
+        2,
+        13
+      ],
+      [
+        1,
+        13
+      ],
+      [
+        2,
+        14
+      ],
+      [
+        1,
+        14
+      ],
+      [
+        3,
+        14
+      ],
+      [
+        3,
+        13
+      ],
+      [
+        3,
+        12
+      ],
+      [
+        4,
+        14
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        6,
+        0
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        2
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        8,
+        3
+      ]
+    ],
+    "belts": [
+      [
+        6,
+        11,
+        "north"
+      ],
+      [
+        5,
+        11,
+        "west"
+      ],
+      [
+        5,
+        10,
+        "west"
+      ],
+      [
+        5,
+        9,
+        "west"
+      ],
+      [
+        5,
+        8,
+        "west"
+      ],
+      [
+        5,
+        7,
+        "north"
+      ],
+      [
+        1,
+        6,
+        "west"
+      ],
+      [
+        1,
+        5,
+        "west"
+      ],
+      [
+        1,
+        4,
+        "west"
+      ],
+      [
+        0,
+        3,
+        "west"
+      ],
+      [
+        0,
+        2,
+        "west"
+      ],
+      [
+        0,
+        1,
+        "west"
+      ],
+      [
+        0,
+        0,
+        "south"
+      ]
+    ],
+    "gears": [
+      [
+        4,
+        7,
+        -1
+      ],
+      [
+        1,
+        3,
+        1
+      ]
+    ],
+    "wormholes": [
+      [
+        3,
+        6,
+        true
+      ],
+      [
+        1,
+        1,
+        true
+      ]
+    ],
+    "warp": null,
+    "lasers": [],
+    "walls": [
+      "3,5,e",
+      "3,7,w",
+      "2,5,e",
+      "2,7,w",
+      "7,10,w",
+      "8,10,w",
+      "7,9,n",
+      "7,8,n",
+      "7,7,n"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "right",
+      "right",
+      "back1"
+    ],
+    "tip": "Break the route into smaller parts: first reach the belt, then use its movement."
+  },
+  {
+    "id": "legion-c",
+    "title": "Legion - Switchback",
+    "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
+    "maxRounds": 4,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      7,
+      3,
+      "south"
+    ],
+    "goal": [
+      1,
+      2
+    ],
+    "pits": [
+      [
+        4,
+        10
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        8,
+        3
+      ]
+    ],
+    "deadSquares": [
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        5,
+        3
       ],
       [
         5,
         2
       ],
       [
-        1,
-        9
-      ]
-    ],
-    "deadSquares": [],
-    "belts": [
-      [
-        7,
-        12,
-        "north"
+        4,
+        1
       ],
       [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        5,
+        1
+      ]
+    ],
+    "belts": [
+      [
         6,
-        12,
-        "west"
+        10,
+        "east"
       ],
       [
         6,
         11,
-        "west"
+        "east"
       ],
       [
         6,
-        10,
-        "west"
-      ],
-      [
-        6,
-        9,
+        12,
         "north"
       ],
       [
         5,
-        9,
+        12,
         "north"
       ],
       [
         4,
-        5,
+        12,
         "north"
       ],
       [
         3,
-        5,
+        12,
         "north"
       ],
       [
         2,
+        12,
+        "west"
+      ],
+      [
+        2,
+        11,
+        "west"
+      ],
+      [
+        2,
+        10,
+        "west"
+      ],
+      [
+        2,
+        9,
+        "west"
+      ],
+      [
+        2,
+        8,
+        "west"
+      ],
+      [
+        2,
+        7,
+        "west"
+      ],
+      [
+        2,
+        6,
+        "west"
+      ],
+      [
+        2,
         5,
         "west"
       ],
       [
         2,
         4,
-        "west"
+        "north"
       ]
     ],
     "gears": [
       [
-        4,
-        9,
+        0,
+        3,
         -1
+      ]
+    ],
+    "wormholes": [
+      [
+        3,
+        0,
+        true
+      ],
+      [
+        8,
+        0,
+        true
       ],
       [
         2,
-        2,
-        1
+        1,
+        true
       ]
     ],
-    "wormholes": [],
-    "warp": null,
+    "warp": [
+      1,
+      14,
+      true
+    ],
     "lasers": [
       [
-        1,
+        5,
         0,
         false,
         "horizontal",
         "#da2722"
+      ],
+      [
+        0,
+        11,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        1,
+        10,
+        false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        1,
+        7,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        0,
+        6,
+        false,
+        "vertical",
+        "#da2722"
       ]
     ],
     "walls": [
-      "8,9,n",
-      "7,9,s",
-      "4,7,e",
-      "4,9,w",
-      "1,4,e",
-      "1,5,w"
+      "3,6,n",
+      "3,7,n",
+      "3,8,n",
+      "3,9,n",
+      "7,13,n",
+      "7,14,n",
+      "5,8,e",
+      "6,8,e",
+      "7,8,e"
     ],
     "deck": [
       "forward1",
@@ -714,46 +1406,118 @@
       "forward2",
       "forward3",
       "left",
-      "left",
       "right",
       "right",
-      "uturn",
       "back1"
     ],
-    "tip": "Trace both systems: your card acts first, then the tile under the robot acts."
+    "tip": "Break the route into smaller parts: first reach the belt, then use its movement."
   },
   {
-    "id": "laser-a",
-    "title": "Laser Lab · Core route",
-    "brief": "Lasers toggle after each round. Cross their rows when the beams are offline.",
-    "maxRounds": 12,
+    "id": "ranger-a",
+    "title": "Ranger - Core",
+    "brief": "Choose a conveyor loop, account for its gears, and cross the laser gates at the right time.",
+    "maxRounds": 4,
     "rows": 9,
     "columns": 15,
     "start": [
-      7,
-      2,
-      "north"
+      4,
+      1,
+      "west"
     ],
     "goal": [
-      1,
-      12
+      4,
+      13
     ],
     "pits": [
       [
-        6,
-        7
+        4,
+        2
       ],
       [
         2,
         7
-      ],
-      [
-        4,
-        12
       ]
     ],
-    "deadSquares": [],
+    "deadSquares": [
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        3,
+        12
+      ],
+      [
+        5,
+        12
+      ],
+      [
+        2,
+        13
+      ],
+      [
+        6,
+        13
+      ]
+    ],
     "belts": [
+      [
+        2,
+        4,
+        "north"
+      ],
+      [
+        1,
+        4,
+        "east"
+      ],
+      [
+        1,
+        5,
+        "east"
+      ],
+      [
+        1,
+        6,
+        "east"
+      ],
+      [
+        1,
+        7,
+        "east"
+      ],
+      [
+        1,
+        8,
+        "east"
+      ],
+      [
+        1,
+        9,
+        "south"
+      ],
+      [
+        2,
+        9,
+        "south"
+      ],
+      [
+        6,
+        4,
+        "south"
+      ],
       [
         7,
         4,
@@ -765,53 +1529,422 @@
         "east"
       ],
       [
-        5,
+        7,
+        6,
+        "east"
+      ],
+      [
+        7,
+        7,
+        "east"
+      ],
+      [
+        7,
+        8,
+        "east"
+      ],
+      [
+        7,
         9,
         "north"
       ],
       [
-        4,
+        6,
         9,
         "north"
       ]
     ],
     "gears": [
       [
+        3,
+        9,
+        -1
+      ],
+      [
+        5,
+        9,
+        1
+      ],
+      [
+        4,
         7,
+        1
+      ]
+    ],
+    "wormholes": [
+      [
+        1,
+        3,
+        true
+      ],
+      [
+        7,
+        3,
+        true
+      ]
+    ],
+    "warp": [
+      2,
+      5,
+      true
+    ],
+    "lasers": [
+      [
+        3,
+        10,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        5,
+        10,
+        false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        4,
+        6,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        4,
+        11,
+        true,
+        "horizontal",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "3,7,w",
+      "4,7,w",
+      "5,7,w",
+      "4,12,w",
+      "2,5,s",
+      "6,8,n"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "right",
+      "right",
+      "back1"
+    ],
+    "tip": "The upper and lower loops do not leave the robot facing the same way. Plan the exit before committing to a conveyor."
+  },
+  {
+    "id": "ranger-b",
+    "title": "Ranger - Crossflow",
+    "brief": "Use the crossflow conveyors while avoiding wormholes that can break your planned route.",
+    "maxRounds": 5,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      7,
+      12,
+      "west"
+    ],
+    "goal": [
+      1,
+      2
+    ],
+    "pits": [
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        7,
+        6
+      ]
+    ],
+    "deadSquares": [
+      [
+        0,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        0,
+        11
+      ],
+      [
+        0,
+        12
+      ],
+      [
+        0,
+        13
+      ],
+      [
+        0,
+        14
+      ],
+      [
+        1,
+        9
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        1,
+        11
+      ],
+      [
+        1,
+        12
+      ],
+      [
+        1,
+        13
+      ],
+      [
+        1,
+        14
+      ],
+      [
+        2,
+        11
+      ],
+      [
+        2,
+        12
+      ],
+      [
+        2,
+        13
+      ],
+      [
+        2,
+        14
+      ],
+      [
+        3,
+        12
+      ],
+      [
+        3,
+        13
+      ],
+      [
+        3,
+        14
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        4,
+        14
+      ],
+      [
+        6,
+        0
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        7,
+        2
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ]
+    ],
+    "belts": [
+      [
+        6,
+        11,
+        "north"
+      ],
+      [
+        5,
+        11,
+        "west"
+      ],
+      [
+        5,
+        10,
+        "west"
+      ],
+      [
+        5,
+        9,
+        "west"
+      ],
+      [
+        5,
+        8,
+        "west"
+      ],
+      [
+        5,
+        7,
+        "north"
+      ],
+      [
+        1,
+        6,
+        "west"
+      ],
+      [
+        1,
+        5,
+        "west"
+      ],
+      [
+        1,
+        4,
+        "west"
+      ],
+      [
+        0,
+        3,
+        "west"
+      ],
+      [
+        0,
+        2,
+        "west"
+      ],
+      [
+        0,
+        1,
+        "west"
+      ],
+      [
+        0,
+        0,
+        "south"
+      ]
+    ],
+    "gears": [
+      [
+        4,
         7,
         -1
       ],
       [
+        1,
         3,
-        9,
+        1
+      ],
+      [
+        4,
+        6,
         1
       ]
     ],
-    "wormholes": [],
+    "wormholes": [
+      [
+        3,
+        6,
+        true
+      ],
+      [
+        1,
+        1,
+        true
+      ],
+      [
+        6,
+        9,
+        false
+      ]
+    ],
     "warp": null,
     "lasers": [
       [
-        5,
-        0,
+        4,
+        9,
         true,
         "horizontal",
         "#da2722"
       ],
       [
-        3,
-        0,
+        2,
+        6,
         false,
         "horizontal",
         "#da2722"
       ]
     ],
     "walls": [
-      "6,4,e",
-      "6,5,w",
-      "4,4,e",
-      "4,5,w",
-      "2,11,s",
-      "3,11,n"
+      "3,5,e",
+      "3,7,w",
+      "2,5,e",
+      "2,7,w",
+      "7,10,w",
+      "8,10,w",
+      "7,9,n",
+      "7,8,n",
+      "7,7,n",
+      "4,10,n",
+      "2,4,s"
     ],
     "deck": [
       "forward1",
@@ -820,225 +1953,296 @@
       "forward2",
       "forward3",
       "left",
-      "left",
       "right",
       "right",
-      "uturn",
       "back1"
     ],
-    "tip": "A good algorithm includes timing. Use a turn card to wait safely when a laser is active."
+    "tip": "Treat each conveyor as a subroutine. Recheck the board state before crossing the center lane."
   },
   {
-    "id": "laser-b",
-    "title": "Laser Lab · Crossflow route",
-    "brief": "Lasers toggle after each round. Cross their rows when the beams are offline.",
-    "maxRounds": 12,
+    "id": "ranger-c",
+    "title": "Ranger - Switchback",
+    "brief": "Ride the long switchback, then manage alternating wormholes and laser tiles near the beacon.",
+    "maxRounds": 6,
     "rows": 9,
     "columns": 15,
     "start": [
-      8,
-      0,
-      "east"
+      7,
+      3,
+      "south"
     ],
     "goal": [
-      0,
-      14
+      1,
+      2
     ],
     "pits": [
       [
+        4,
+        10
+      ],
+      [
+        0,
+        2
+      ],
+      [
         7,
-        11
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        3,
+        10
+      ]
+    ],
+    "deadSquares": [
+      [
+        4,
+        1
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        4,
+        4
       ],
       [
         4,
         5
       ],
       [
-        1,
-        4
-      ]
-    ],
-    "deadSquares": [],
-    "belts": [
-      [
-        8,
         5,
-        "east"
-      ],
-      [
-        8,
-        6,
-        "east"
-      ],
-      [
-        8,
-        7,
-        "north"
-      ],
-      [
-        5,
-        11,
-        "north"
-      ],
-      [
-        4,
-        11,
-        "north"
-      ]
-    ],
-    "gears": [
-      [
-        7,
-        7,
-        -1
-      ],
-      [
-        3,
-        11,
         1
-      ]
-    ],
-    "wormholes": [],
-    "warp": null,
-    "lasers": [
-      [
-        6,
-        0,
-        true,
-        "horizontal",
-        "#da2722"
       ],
       [
-        3,
-        0,
-        false,
-        "horizontal",
-        "#da2722"
-      ]
-    ],
-    "walls": [
-      "7,2,n",
-      "6,2,s",
-      "5,7,e",
-      "5,9,w",
-      "2,12,s",
-      "3,12,n"
-    ],
-    "deck": [
-      "forward1",
-      "forward1",
-      "forward2",
-      "forward2",
-      "forward3",
-      "left",
-      "left",
-      "right",
-      "right",
-      "uturn",
-      "back1"
-    ],
-    "tip": "A good algorithm includes timing. Use a turn card to wait safely when a laser is active."
-  },
-  {
-    "id": "laser-c",
-    "title": "Laser Lab · Switchback route",
-    "brief": "Lasers toggle after each round. Cross their rows when the beams are offline.",
-    "maxRounds": 12,
-    "rows": 9,
-    "columns": 15,
-    "start": [
-      8,
-      14,
-      "west"
-    ],
-    "goal": [
-      0,
-      0
-    ],
-    "pits": [
+        5,
+        2
+      ],
       [
-        7,
+        5,
+        3
+      ],
+      [
+        5,
         4
       ],
       [
-        4,
-        12
+        5,
+        5
       ],
       [
-        1,
-        7
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        8
       ]
     ],
-    "deadSquares": [],
     "belts": [
       [
-        8,
+        6,
+        10,
+        "east"
+      ],
+      [
+        6,
         11,
+        "east"
+      ],
+      [
+        6,
+        12,
         "north"
       ],
       [
-        7,
+        5,
+        12,
+        "north"
+      ],
+      [
+        4,
+        12,
+        "north"
+      ],
+      [
+        3,
+        12,
+        "north"
+      ],
+      [
+        2,
+        12,
+        "west"
+      ],
+      [
+        2,
         11,
         "west"
       ],
       [
-        7,
+        2,
         10,
         "west"
       ],
       [
-        7,
+        2,
         9,
         "west"
       ],
       [
-        3,
-        5,
-        "north"
+        2,
+        8,
+        "west"
+      ],
+      [
+        2,
+        7,
+        "west"
+      ],
+      [
+        2,
+        6,
+        "west"
       ],
       [
         2,
         5,
         "west"
-      ]
-    ],
-    "gears": [
-      [
-        7,
-        7,
-        1
       ],
       [
         2,
         4,
-        -1
+        "north"
       ]
     ],
-    "wormholes": [],
-    "warp": null,
+    "gears": [
+      [
+        6,
+        9,
+        -1
+      ],
+      [
+        1,
+        5,
+        1
+      ]
+    ],
+    "wormholes": [
+      [
+        3,
+        0,
+        true
+      ],
+      [
+        8,
+        0,
+        true
+      ],
+      [
+        2,
+        1,
+        true
+      ],
+      [
+        6,
+        14,
+        false
+      ]
+    ],
+    "warp": [
+      1,
+      14,
+      true
+    ],
     "lasers": [
       [
         5,
         0,
-        true,
+        false,
         "horizontal",
         "#da2722"
       ],
       [
-        2,
         0,
+        11,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        1,
+        10,
         false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        1,
+        7,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        0,
+        6,
+        false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        1,
+        4,
+        true,
         "horizontal",
         "#da2722"
       ]
     ],
     "walls": [
-      "6,12,w",
-      "6,11,e",
-      "4,7,n",
-      "3,7,s",
-      "1,2,e",
-      "1,4,w"
+      "3,6,n",
+      "3,7,n",
+      "3,8,n",
+      "3,9,n",
+      "7,13,n",
+      "7,14,n",
+      "5,8,e",
+      "6,8,e",
+      "7,8,e",
+      "1,8,s",
+      "1,6,s"
     ],
     "deck": [
       "forward1",
@@ -1047,13 +2251,1020 @@
       "forward2",
       "forward3",
       "left",
+      "right",
+      "right",
+      "back1"
+    ],
+    "tip": "The Warp is only helpful when available. Have a safe continuation ready for rounds when it is not."
+  },
+  {
+    "id": "elite-a",
+    "title": "Elite - Core",
+    "brief": "Navigate two constrained conveyor loops, timed laser gates, and a dangerous central shortcut.",
+    "maxRounds": 6,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      4,
+      6,
+      "west"
+    ],
+    "goal": [
+      4,
+      13
+    ],
+    "pits": [
+      [
+        4,
+        2
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        5,
+        8
+      ],
+      [
+        3,
+        13
+      ],
+      [
+        5,
+        13
+      ]
+    ],
+    "deadSquares": [
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        3,
+        12
+      ],
+      [
+        5,
+        12
+      ],
+      [
+        2,
+        13
+      ],
+      [
+        6,
+        13
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        8,
+        6
+      ],
+      [
+        8,
+        7
+      ]
+    ],
+    "belts": [
+      [
+        2,
+        4,
+        "north"
+      ],
+      [
+        1,
+        4,
+        "east"
+      ],
+      [
+        1,
+        5,
+        "east"
+      ],
+      [
+        1,
+        6,
+        "east"
+      ],
+      [
+        1,
+        7,
+        "east"
+      ],
+      [
+        1,
+        8,
+        "east"
+      ],
+      [
+        1,
+        9,
+        "south"
+      ],
+      [
+        2,
+        9,
+        "south"
+      ],
+      [
+        6,
+        4,
+        "south"
+      ],
+      [
+        7,
+        4,
+        "east"
+      ],
+      [
+        7,
+        5,
+        "east"
+      ],
+      [
+        7,
+        6,
+        "east"
+      ],
+      [
+        7,
+        7,
+        "east"
+      ],
+      [
+        7,
+        8,
+        "east"
+      ],
+      [
+        7,
+        9,
+        "north"
+      ],
+      [
+        6,
+        9,
+        "north"
+      ]
+    ],
+    "gears": [
+      [
+        3,
+        9,
+        -1
+      ],
+      [
+        5,
+        9,
+        1
+      ],
+      [
+        3,
+        5,
+        -1
+      ],
+      [
+        5,
+        5,
+        1
+      ],
+      [
+        4,
+        12,
+        1
+      ]
+    ],
+    "wormholes": [
+      [
+        4,
+        4,
+        true
+      ]
+    ],
+    "warp": [
+      4,
+      10,
+      true
+    ],
+    "lasers": [
+      [
+        3,
+        10,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        5,
+        10,
+        false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        4,
+        11,
+        false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        2,
+        10,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        6,
+        10,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        4,
+        9,
+        true,
+        "vertical",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "2,5,s",
+      "6,8,n",
+      "3,6,e",
+      "5,6,e",
+      "2,11,s",
+      "6,11,n",
+      "4,6,w"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
       "left",
       "right",
       "right",
-      "uturn",
       "back1"
     ],
-    "tip": "A good algorithm includes timing. Use a turn card to wait safely when a laser is active."
+    "tip": "The direct center line is volatile. Compare its timing risk with the longer conveyor loops."
+  },
+  {
+    "id": "elite-b",
+    "title": "Elite - Crossflow",
+    "brief": "Coordinate crossflow conveyors with laser timing and a Warp that can radically change the route.",
+    "maxRounds": 6,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      7,
+      12,
+      "west"
+    ],
+    "goal": [
+      1,
+      2
+    ],
+    "pits": [
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        7,
+        6
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        6,
+        10
+      ]
+    ],
+    "deadSquares": [
+      [
+        0,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        0,
+        11
+      ],
+      [
+        0,
+        12
+      ],
+      [
+        0,
+        13
+      ],
+      [
+        0,
+        14
+      ],
+      [
+        1,
+        9
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        1,
+        11
+      ],
+      [
+        1,
+        12
+      ],
+      [
+        1,
+        13
+      ],
+      [
+        1,
+        14
+      ],
+      [
+        2,
+        11
+      ],
+      [
+        2,
+        12
+      ],
+      [
+        2,
+        13
+      ],
+      [
+        2,
+        14
+      ],
+      [
+        3,
+        12
+      ],
+      [
+        3,
+        13
+      ],
+      [
+        3,
+        14
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        4,
+        13
+      ],
+      [
+        4,
+        14
+      ],
+      [
+        6,
+        0
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        7,
+        2
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        6,
+        7
+      ]
+    ],
+    "belts": [
+      [
+        6,
+        11,
+        "north"
+      ],
+      [
+        5,
+        11,
+        "west"
+      ],
+      [
+        5,
+        10,
+        "west"
+      ],
+      [
+        5,
+        9,
+        "west"
+      ],
+      [
+        5,
+        8,
+        "west"
+      ],
+      [
+        5,
+        7,
+        "north"
+      ],
+      [
+        1,
+        6,
+        "west"
+      ],
+      [
+        1,
+        5,
+        "west"
+      ],
+      [
+        1,
+        4,
+        "west"
+      ],
+      [
+        0,
+        3,
+        "west"
+      ],
+      [
+        0,
+        2,
+        "west"
+      ],
+      [
+        0,
+        1,
+        "west"
+      ],
+      [
+        0,
+        0,
+        "south"
+      ]
+    ],
+    "gears": [
+      [
+        4,
+        7,
+        -1
+      ],
+      [
+        1,
+        3,
+        1
+      ],
+      [
+        4,
+        6,
+        1
+      ],
+      [
+        7,
+        9,
+        -1
+      ],
+      [
+        5,
+        2,
+        1
+      ]
+    ],
+    "wormholes": [
+      [
+        3,
+        6,
+        true
+      ],
+      [
+        1,
+        1,
+        true
+      ],
+      [
+        6,
+        9,
+        false
+      ],
+      [
+        4,
+        11,
+        true
+      ],
+      [
+        8,
+        9,
+        true
+      ]
+    ],
+    "warp": [
+      8,
+      9,
+      true
+    ],
+    "lasers": [
+      [
+        4,
+        9,
+        true,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        2,
+        6,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        3,
+        7,
+        true,
+        "horizontal",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "3,5,e",
+      "3,7,w",
+      "2,5,e",
+      "2,7,w",
+      "7,10,w",
+      "8,10,w",
+      "7,9,n",
+      "7,7,n",
+      "4,10,n",
+      "2,4,s",
+      "5,5,e",
+      "5,6,w"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "right",
+      "right",
+      "back1"
+    ],
+    "tip": "Before using a wormhole, decide whether the active Warp destination improves or destroys your current plan."
+  },
+  {
+    "id": "elite-c",
+    "title": "Elite - Switchback",
+    "brief": "Master the full switchback while accounting for forced turns, alternating hazards, and random Warp availability.",
+    "maxRounds": 7,
+    "rows": 9,
+    "columns": 15,
+    "start": [
+      7,
+      3,
+      "south"
+    ],
+    "goal": [
+      1,
+      2
+    ],
+    "pits": [
+      [
+        4,
+        10
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        3,
+        10
+      ],
+      [
+        5,
+        10
+      ],
+      [
+        1,
+        12
+      ],
+      [
+        7,
+        2
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "deadSquares": [
+      [
+        4,
+        1
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        8
+      ],
+      [
+        7,
+        6
+      ],
+      [
+        8,
+        6
+      ],
+      [
+        7,
+        7
+      ]
+    ],
+    "belts": [
+      [
+        6,
+        10,
+        "east"
+      ],
+      [
+        6,
+        11,
+        "east"
+      ],
+      [
+        6,
+        12,
+        "north"
+      ],
+      [
+        5,
+        12,
+        "north"
+      ],
+      [
+        4,
+        12,
+        "north"
+      ],
+      [
+        3,
+        12,
+        "north"
+      ],
+      [
+        2,
+        12,
+        "west"
+      ],
+      [
+        2,
+        11,
+        "west"
+      ],
+      [
+        2,
+        10,
+        "west"
+      ],
+      [
+        2,
+        9,
+        "west"
+      ],
+      [
+        2,
+        8,
+        "west"
+      ],
+      [
+        2,
+        7,
+        "west"
+      ],
+      [
+        2,
+        6,
+        "west"
+      ],
+      [
+        2,
+        5,
+        "west"
+      ],
+      [
+        2,
+        4,
+        "north"
+      ]
+    ],
+    "gears": [
+      [
+        6,
+        9,
+        -1
+      ],
+      [
+        1,
+        5,
+        1
+      ],
+      [
+        1,
+        9,
+        -1
+      ],
+      [
+        7,
+        10,
+        1
+      ]
+    ],
+    "wormholes": [
+      [
+        3,
+        0,
+        true
+      ],
+      [
+        8,
+        0,
+        true
+      ],
+      [
+        2,
+        1,
+        true
+      ],
+      [
+        6,
+        14,
+        false
+      ],
+      [
+        1,
+        6,
+        true
+      ]
+    ],
+    "warp": [
+      1,
+      14,
+      true
+    ],
+    "lasers": [
+      [
+        5,
+        0,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        0,
+        11,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        1,
+        10,
+        false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        1,
+        7,
+        true,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        0,
+        6,
+        false,
+        "vertical",
+        "#da2722"
+      ],
+      [
+        1,
+        4,
+        true,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        3,
+        11,
+        false,
+        "horizontal",
+        "#da2722"
+      ],
+      [
+        4,
+        13,
+        true,
+        "vertical",
+        "#da2722"
+      ]
+    ],
+    "walls": [
+      "3,6,n",
+      "3,7,n",
+      "3,8,n",
+      "3,9,n",
+      "7,13,n",
+      "7,14,n",
+      "5,8,e",
+      "6,8,e",
+      "7,8,e",
+      "1,8,s",
+      "1,6,s",
+      "2,3,e",
+      "1,11,s",
+      "0,9,s"
+    ],
+    "deck": [
+      "forward1",
+      "forward1",
+      "forward2",
+      "forward2",
+      "forward3",
+      "left",
+      "right",
+      "right",
+      "back1"
+    ],
+    "tip": "Build in checkpoints. After each forced movement, verify position, facing, laser state, and Warp availability before choosing the next five cards."
   },
   {
     "id": "mr-1",
@@ -1272,176 +3483,5 @@
       "uturn",
       "back1"
     ]
-  },
-  {
-    "id": "legion-a",
-    "title": "Legion · Core route",
-    "brief": "Reach the beacon. Landing on the blue belt carries the robot through its exit.",
-    "maxRounds": 3,
-    "rows": 9,
-    "columns": 15,
-    "start": [
-      4,
-      1,
-      "west"
-    ],
-    "goal": [
-      4,
-      12
-    ],
-    "pits": [
-      [
-        4,
-        2
-      ]
-    ],
-    "deadSquares": [
-      [
-        6,
-        3
-      ],
-      [
-        2,
-        3
-      ],
-      [
-        3,
-        12
-      ],
-      [
-        5,
-        12
-      ]
-    ],
-    "belts": [
-      [
-        2,
-        4,
-        "north"
-      ],
-      [
-        1,
-        4,
-        "east"
-      ],
-      [
-        1,
-        5,
-        "east"
-      ],
-      [
-        1,
-        6,
-        "east"
-      ],
-      [
-        1,
-        7,
-        "east"
-      ],
-      [
-        1,
-        8,
-        "east"
-      ],
-      [
-        2,
-        9,
-        "south"
-      ],
-      [
-        6,
-        4,
-        "south"
-      ],
-      [
-        7,
-        5,
-        "east"
-      ],
-      [
-        7,
-        6,
-        "east"
-      ],
-      [
-        7,
-        7,
-        "east"
-      ],
-      [
-        7,
-        8,
-        "east"
-      ],
-      [
-        7,
-        9,
-        "north"
-      ],
-      [
-        6,
-        9,
-        "north"
-      ],
-      [
-        1,
-        9,
-        "south"
-      ],
-      [
-        7,
-        4,
-        "east"
-      ]
-    ],
-    "gears": [
-      [
-        3,
-        9,
-        -1
-      ],
-      [
-        5,
-        9,
-        1
-      ]
-    ],
-    "wormholes": [],
-    "warp": null,
-    "lasers": [
-      [
-        3,
-        10,
-        true,
-        "vertical",
-        "#da2722"
-      ],
-      [
-        5,
-        10,
-        false,
-        "vertical",
-        "#da2722"
-      ]
-    ],
-    "walls": [
-      "3,7,w",
-      "4,7,w",
-      "5,7,w",
-      "4,11,w"
-    ],
-    "deck": [
-      "forward1",
-      "forward1",
-      "forward2",
-      "forward2",
-      "forward3",
-      "left",
-      "right",
-      "right",
-      "back1"
-    ],
-    "tip": "Break the route into smaller parts: first reach the belt, then use its movement."
   }
 ]
