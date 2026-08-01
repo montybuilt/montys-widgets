@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Monty's Character Encoding Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <section class="widget" aria-labelledby="widget-title">
+      <header class="banner">
+        <div>
+          <p class="eyebrow">Character encoding visualizer</p>
+          <h1 id="widget-title">Monty's Character Encoding Lab</h1>
+        </div>
+        <div class="controls">
+          <label class="character-control">
+            <span>Type a character</span>
+            <input id="character-input" value="😀" autocomplete="off" spellcheck="false" aria-describedby="input-help">
+          </label>
+          <label>
+            <span>Encoding</span>
+            <select id="encoding-select">
+              <option value="utf8">UTF-8</option>
+              <option value="utf16le">UTF-16 LE</option>
+              <option value="utf16be">UTF-16 BE</option>
+              <option value="utf32le">UTF-32 LE</option>
+              <option value="utf32be">UTF-32 BE</option>
+            </select>
+          </label>
+          <label class="bom-control">
+            <input id="bom-toggle" type="checkbox">
+            <span>Include BOM</span>
+          </label>
+          <button id="fullscreen-toggle" class="fullscreen-toggle" type="button" aria-label="Open lab in full screen">⛶ <span>Full Screen</span></button>
+        </div>
+        <p id="input-help" class="help">The first visible grapheme is analyzed. Paste an emoji sequence or a letter with a combining mark.</p>
+      </header>
+
+      <nav class="examples" aria-label="Character examples">
+        <span>Try</span>
+        <button type="button" data-example="A">A</button>
+        <button type="button" data-example="é">é</button>
+        <button type="button" data-example="é">e + ◌́</button>
+        <button type="button" data-example="中" title="Chinese">中</button>
+        <button type="button" data-example="あ" title="Japanese">あ</button>
+        <button type="button" data-example="한" title="Korean">한</button>
+        <button type="button" data-example="Ж" title="Cyrillic">Ж</button>
+        <button type="button" data-example="Ω" title="Greek">Ω</button>
+        <button type="button" data-example="😀">😀</button>
+        <button type="button" data-example="👩‍💻">👩‍💻</button>
+      </nav>
+
+      <div class="pipeline" aria-live="polite">
+        <section class="stage character-stage">
+          <div class="stage-heading"><span class="step">01</span><h2>Character</h2></div>
+          <div class="character-summary">
+            <div id="glyph" class="glyph" aria-label="Selected character">😀</div>
+            <div><strong id="grapheme-label">One grapheme</strong><p id="grapheme-note"></p></div>
+          </div>
+          <div id="codepoint-list" class="codepoint-list"></div>
+        </section>
+
+        <div class="connector" aria-hidden="true">↓</div>
+
+        <section class="stage">
+          <div class="stage-heading"><span class="step">02</span><h2>Code point value</h2></div>
+          <div id="value-list" class="value-list"></div>
+          <p class="lesson-note"><span class="dot payload"></span>Unicode assigns numbers to characters; it does not choose their byte layout.</p>
+        </section>
+
+        <div class="connector" aria-hidden="true">↓</div>
+
+        <section class="stage">
+          <div class="stage-heading"><span class="step">03</span><h2 id="units-title">Encoding rule</h2></div>
+          <p id="encoding-explanation" class="explanation"></p>
+          <div id="unit-list" class="unit-list"></div>
+          <details id="rule-key" class="rule-key"></details>
+          <div class="legend" aria-label="Bit color legend">
+            <span><i class="marker"></i>marker / structure</span>
+            <span><i class="payload"></i>code-point payload</span>
+            <span><i class="bom"></i>BOM</span>
+          </div>
+        </section>
+
+        <div class="connector" aria-hidden="true">↓</div>
+
+        <section class="stage output-stage">
+          <div class="stage-heading"><span class="step">04</span><h2>Final byte stream</h2></div>
+          <div class="output-label">Binary · transmitted from left to right</div>
+          <div id="binary-output" class="byte-stream"></div>
+          <div class="output-grid">
+            <div><span>HEX</span><strong id="hex-output"></strong></div>
+            <div><span>DECIMAL BYTES</span><strong id="decimal-output"></strong></div>
+            <div><span>SIZE</span><strong id="size-output"></strong></div>
+          </div>
+          <p id="bom-note" class="lesson-note"></p>
+          <details class="bom-explainer">
+            <summary>What is a BOM?</summary>
+            <div id="bom-breakdown"></div>
+          </details>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
