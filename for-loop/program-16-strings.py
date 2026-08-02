@@ -1,4 +1,4 @@
-text = "The PASSword is #44@home!"
+text = "PASSword: #44@hm!"
 metadata = [0, 0, 0, 0]
 
 for char in text:
